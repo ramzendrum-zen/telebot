@@ -24,7 +24,7 @@ app.use('/api/admin', adminRouter);
 
 // Dashboard Frontend (React Build)
 app.use(express.static('dashboard/dist'));
-app.get('/admin*', (req, res) => {
+app.get('/admin/:any*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dashboard', 'dist', 'index.html'));
 });
 
