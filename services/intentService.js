@@ -4,7 +4,7 @@
 export const detectIntent = (query) => {
   const q = query.toLowerCase();
   
-  if (/\b(bus|route|stop|driver|timing|travel|transport|reach|go to|ar-?\d+|r-?\d+)\b/.test(q)) {
+  if (/\b(bus|route|stop|driver|timing|travel|transport|reach|go to|ar-?\d+|r-?\d+|mtc|570|519|102|Central|Broadway|T\. Nagar|Tambaram)\b/i.test(q)) {
     return 'transport';
   }
   

@@ -46,6 +46,7 @@ QUERY INTERPRETATION GUIDE:
 - "college head / boss / who runs msajce" → Who is the Principal?
 - "AR-8 / ar8 / bus 8" → What is bus route AR-8 (stops, timings, driver)?
 - "bus from velachery" → Which bus routes pass through Velachery?
+- "MTC / public bus / how to reach by MTC" → Information about public MTC routes (19, 519, 102, etc.) to Siruseri IT Park.
 - "hostel warden / hostel" → Hostel rules and warden information.
 
 ${history}
