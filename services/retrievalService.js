@@ -12,26 +12,34 @@ const performHybridSearch = async (queryText) => {
     const collection = db.collection(config.mongodb.vectorCollection);
 
     // 1. Generate Query Embedding
-    const queryEmbedding = await generateEmbedding(queryText);
+    let queryEmbedding = null;
+    try {
+      queryEmbedding = await generateEmbedding(queryText);
+    } catch (e) {
+      logger.warn(`Vector Search Bypass: Embedding failed, falling back to keywords only. (${e.message})`);
+    }
 
-    // 2. Perform Vector Search
-    const vectorResults = await collection.aggregate([
-      {
-        "$vectorSearch": {
-          "index": config.mongodb.vectorIndex,
-          "path": "embedding",
-          "queryVector": queryEmbedding,
-          "numCandidates": 100,
-          "limit": 5
+    // 2. Perform Vector Search (only if embedding succeeded)
+    let vectorResults = [];
+    if (queryEmbedding) {
+      vectorResults = await collection.aggregate([
+        {
+          "$vectorSearch": {
+            "index": config.mongodb.vectorIndex,
+            "path": "embedding",
+            "queryVector": queryEmbedding,
+            "numCandidates": 100,
+            "limit": 5
+          }
+        },
+        {
+          "$project": {
+            "text": 1,
+            "score": { "$meta": "vectorSearchScore" }
+          }
         }
-      },
-      {
-        "$project": {
-          "text": 1,
-          "score": { "$meta": "vectorSearchScore" }
-        }
-      }
-    ]).toArray();
+      ]).toArray();
+    }
 
     // 3. Perform Keyword Matching (Fallback/Boost)
     const keywords = queryText.toLowerCase().split(/\s+/).filter(w => w.length > 3);

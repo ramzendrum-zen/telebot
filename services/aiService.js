@@ -22,7 +22,7 @@ const getAIReponse = async (prompt, modelType = 'cheap') => {
           'Authorization': `Bearer ${config.openRouter.apiKey}`,
           'Content-Type': 'application/json'
         },
-        timeout: 15000
+        timeout: 30000 // Increased to 30 seconds
       }
     );
 

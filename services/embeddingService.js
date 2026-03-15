@@ -17,7 +17,8 @@ const generateEmbedding = async (text) => {
         headers: {
           'Authorization': `Bearer ${config.openRouter.apiKey}`,
           'Content-Type': 'application/json'
-        }
+        },
+        timeout: 15000 // 15 second timeout for embeddings
       }
     );
 
