@@ -22,7 +22,7 @@ export const getAIReponse = async (prompt, modelType = 'cheap') => {
         model: model,
         messages: [{ role: 'user', content: prompt }]
       }),
-      signal: AbortSignal.timeout(30000) // 30 second timeout
+      signal: AbortSignal.timeout(60000) // 60 second timeout
     });
 
     if (!response.ok) {

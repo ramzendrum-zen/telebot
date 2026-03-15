@@ -8,11 +8,11 @@ export const detectIntent = (query) => {
     return 'transport';
   }
   
-  if (/\b(who is|principal|hod|professor|dr\.|faculty|staff|dean)\b/.test(q)) {
+  if (/\b(who is|principal|hod|professor|dr\.|faculty|staff|dean|leader|boss|runs|control|top person|head of)\b/.test(q)) {
     return 'faculty';
   }
 
-  if (/\b(fe|admission|cutoff|placement|recruit|package|salary|job)\b/.test(q)) {
+  if (/\b(fee|admission|cutoff|placement|recruit|package|salary|job|cost|scholarship)\b/.test(q)) {
     return 'admission_placement';
   }
   

@@ -19,7 +19,7 @@ export const generateEmbedding = async (text) => {
         // Using 3072 to match MongoDB vector store. Acknowledging user feedback "3027 dimensions" as a typo.
         dimensions: 3072
       }),
-      signal: AbortSignal.timeout(15000)
+      signal: AbortSignal.timeout(60000)
     });
 
     if (!response.ok) {

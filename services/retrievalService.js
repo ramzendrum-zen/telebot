@@ -29,10 +29,18 @@ export const performHybridSearch = async (queryText, intent = 'general') => {
         $or: [
           // Match in the main text field (most important)
           { text: { $regex: simplePatterns.join('|'), $options: 'i' } },
-          // Match in content field (same as text but backup)
+          // Match in content field
           { content: { $regex: simplePatterns.join('|'), $options: 'i' } },
           // Match in title
           { title: { $regex: simplePatterns.join('|'), $options: 'i' } },
+          // Match in summary (LLM-generated one-liner)
+          { summary: { $regex: simplePatterns.join('|'), $options: 'i' } },
+          // Match in query_variations array (LLM-generated alternative phrasings)
+          { query_variations: { $elemMatch: { $regex: simplePatterns.join('|'), $options: 'i' } } },
+          // Match in keywords array
+          { keywords: { $elemMatch: { $regex: simplePatterns.join('|'), $options: 'i' } } },
+          // Match in entities array
+          { entities: { $elemMatch: { $regex: simplePatterns.join('|'), $options: 'i' } } },
           // Match route field for transport queries
           { 'metadata.route': { $regex: simplePatterns.join('|'), $options: 'i' } },
           // Match name field for faculty queries
@@ -47,6 +55,10 @@ export const performHybridSearch = async (queryText, intent = 'general') => {
         let score = 1.0;
         const txt = (doc.text || doc.content || '').toLowerCase();
         const titleLower = (doc.title || '').toLowerCase();
+        const summaryLower = (doc.summary || '').toLowerCase();
+        const queryVars = (doc.query_variations || []).map(q => q.toLowerCase());
+        const docEntities = (doc.entities || []).map(e => e.toLowerCase());
+        const docKeywords = (doc.keywords || []).map(k => k.toLowerCase());
 
         words.forEach(w => {
           // Exact route match = highest priority for transport
@@ -55,16 +67,28 @@ export const performHybridSearch = async (queryText, intent = 'general') => {
           // Name match for faculty
           if (doc.metadata?.name && doc.metadata.name.toLowerCase().includes(w)) score += 7.0;
 
+          // Query variation match — strongest signal for vague queries (e.g. "principal" matches "who is the principal")
+          if (queryVars.some(qv => qv.includes(w))) score += 6.0;
+
+          // Entity match (e.g. "Principal" in entities list)
+          if (docEntities.some(e => e.includes(w))) score += 5.0;
+
+          // Keyword array match
+          if (docKeywords.some(k => k.includes(w))) score += 4.0;
+
           // Title match
           if (titleLower.includes(w)) score += 4.0;
 
-          // Full word in text = high relevance signal
+          // Summary match
+          if (summaryLower.includes(w)) score += 2.0;
+
+          // Full word in text
           const wordRegex = new RegExp(`\\b${w}\\b`, 'i');
           if (wordRegex.test(txt)) score += 3.0;
-          else if (txt.includes(w)) score += 1.0; // partial match
+          else if (txt.includes(w)) score += 1.0;
         });
 
-        // Boost verified/curated sources
+        // Boost curated sources
         if (doc.source === 'verified_transport') score += 5.0;
         if (doc.source === 'verified_faculty') score += 5.0;
         if (doc.source === 'verified_trust') score += 3.0;
