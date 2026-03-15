@@ -94,8 +94,10 @@ export default async function handler(req, res) {
 
 async function sendTelegramMessage(chatId, text) {
   const url = `https://api.telegram.org/bot${config.telegram.token}/sendMessage`;
+  
+  // Try sending with Markdown first
   try {
-    await fetch(url, {
+    const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -105,7 +107,42 @@ async function sendTelegramMessage(chatId, text) {
       }),
       signal: AbortSignal.timeout(10000)
     });
+
+    if (response.ok) {
+      await pushLog('info', `Telegram Message Sent (Markdown) to ${chatId}`);
+      return;
+    }
+
+    const firstError = await response.json();
+    logger.error(`Telegram Markdown Error: ${response.status} - ${JSON.stringify(firstError)}`);
+
+    // If it's a 400 error, it's likely a Markdown issue. Retry without Markdown.
+    if (response.status === 400) {
+      await pushLog('warning', `Markdown failed for ${chatId}, falling back to plain text.`, firstError);
+      
+      const retryResponse = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: text
+          // No parse_mode
+        }),
+        signal: AbortSignal.timeout(10000)
+      });
+
+      if (retryResponse.ok) {
+        await pushLog('info', `Telegram Message Sent (Plain Text Fallback) to ${chatId}`);
+      } else {
+        const secondError = await retryResponse.json();
+        logger.error(`Telegram Plain Text Error: ${retryResponse.status} - ${JSON.stringify(secondError)}`);
+        await pushLog('error', `Telegram Final Send Failed: ${retryResponse.status}`, secondError);
+      }
+    } else {
+      await pushLog('error', `Telegram Send Failed: ${response.status}`, firstError);
+    }
   } catch (error) {
     logger.error(`Info Bot failed to send message: ${error.message}`);
+    await pushLog('error', `Network Error sending to Telegram: ${error.message}`);
   }
 }

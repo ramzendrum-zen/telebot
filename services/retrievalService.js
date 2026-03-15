@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import config from '../config/config.js';
 import { generateEmbedding } from './embeddingService.js';
 import logger from '../utils/logger.js';
+import { pushLog } from './monitorService.js';
 
 /**
  * PRODUCTION-GRADE HYBRID SEARCH
@@ -31,16 +32,16 @@ export const performHybridSearch = async (queryText, intent = 'general') => {
       
       const searchFilter = {
         $or: [
-          ...words.map(w => ({ "metadata.keywords": { $regex: w.replace('-', '[\\W_]?'), $options: 'i' } })),
-          ...words.map(w => ({ "metadata.route": { $regex: w.replace('-', '[\\W_]?'), $options: 'i' } })),
-          ...words.map(w => ({ "metadata.name": { $regex: w.replace('-', '[\\W_]?'), $options: 'i' } })),
-          ...words.map(w => ({ "metadata.nickname": { $regex: w.replace('-', '[\\W_]?'), $options: 'i' } })),
+          ...words.map(w => ({ "metadata.keywords": { $regex: w.split('').join('[\\W_]?'), $options: 'i' } })),
+          ...words.map(w => ({ "metadata.route": { $regex: w.split('').join('[\\W_]?'), $options: 'i' } })),
+          ...words.map(w => ({ "metadata.name": { $regex: w.split('').join('[\\W_]?'), $options: 'i' } })),
+          ...words.map(w => ({ "metadata.nickname": { $regex: w.split('').join('[\\W_]?'), $options: 'i' } })),
           ...words.map(w => ({ "metadata.url": { $regex: w, $options: 'i' } })),
           { text: { $regex: regexPatterns, $options: 'i' } }
         ]
       };
 
-      keywordResults = await collection.find(searchFilter).limit(50).toArray();
+      keywordResults = await collection.find(searchFilter).limit(250).toArray();
       
       // Initial Score for Keyword Matches
       keywordResults = keywordResults.map(kr => {
@@ -94,24 +95,20 @@ export const performHybridSearch = async (queryText, intent = 'general') => {
     // 3. Merge & Ranking
     const mergedMap = new Map();
     
-    // Sort keyword results by their specific score first
-    keywordResults.sort((a, b) => b.score - a.score);
-    const topKeywordScore = keywordResults.length > 0 ? keywordResults[0].score : 0;
-
     // Process keyword results
-    keywordResults.forEach(r => mergedMap.set(r._id.toString(), r));
+    keywordResults.forEach(r => {
+        mergedMap.set(r._id.toString(), { ...r, source: 'keyword' });
+    });
 
     // Process vector results
     vectorResults.forEach(vr => {
       const id = vr._id.toString();
       if (!mergedMap.has(id)) {
-        // Only add vector results if they are relevant and we don't have overwhelming keyword matches
-        if (topKeywordScore < 5.0) {
-          mergedMap.set(id, vr);
-        }
+        mergedMap.set(id, { ...vr, score: vr.score * 3, source: 'vector' }); // Boost semantic relevance
       } else {
         const existing = mergedMap.get(id);
-        existing.score = (existing.score || 0) + (vr.score * 2); 
+        existing.score = (existing.score || 0) + (vr.score * 5); // Hybrid boost
+        existing.source = 'hybrid';
       }
     });
 
@@ -120,10 +117,6 @@ export const performHybridSearch = async (queryText, intent = 'general') => {
     // Log chunk names for dashboard visibility
     const chunkNames = finalResults.map(r => r.metadata?.route || r.metadata?.name || 'General Info').slice(0, 5).join(', ');
     pushLog('rag_step', `Found Chunks: [${chunkNames}]`).catch(() => {});
-
-    if (topKeywordScore > 5.0) {
-      finalResults = finalResults.filter(r => r.score > 2.0);
-    }
 
     finalResults = finalResults
       .sort((a, b) => (b.score || 0) - (a.score || 0))
