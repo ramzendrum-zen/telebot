@@ -1,17 +1,17 @@
-const mongoose = require('mongoose');
-const config = require('../config/config');
-const { generateEmbedding } = require('./embeddingService');
-const logger = require('../utils/logger');
+import mongoose from 'mongoose';
+import config from '../config/config.js';
+import { generateEmbedding } from './embeddingService.js';
+import logger from '../utils/logger.js';
 
 /**
  * Performs hybrid search (Vector + Keyword) on MongoDB.
  */
-const performHybridSearch = async (queryText) => {
+export const performHybridSearch = async (queryText) => {
   try {
     const db = mongoose.connection.db;
     const collection = db.collection(config.mongodb.vectorCollection);
 
-    // 1. Generate Query Embedding
+    // 1. Generate Query Embedding with timeout handling
     let queryEmbedding = null;
     try {
       queryEmbedding = await generateEmbedding(queryText);
@@ -28,8 +28,8 @@ const performHybridSearch = async (queryText) => {
             "index": config.mongodb.vectorIndex,
             "path": "embedding",
             "queryVector": queryEmbedding,
-            "numCandidates": 100,
-            "limit": 5
+            "numCandidates": 200, // Increased for better accuracy
+            "limit": 10 // Get more candidates to ensure we find the right one
           }
         },
         {
@@ -42,32 +42,42 @@ const performHybridSearch = async (queryText) => {
     }
 
     // 3. Perform Keyword Matching (Fallback/Boost)
-    const keywords = queryText.toLowerCase().split(/\s+/).filter(w => w.length > 3);
-    const regexQuery = keywords.length > 0 ? keywords.join('|') : null;
+    // We clean the query for common MSAJCE terms to ensure hits
+    const rawKeywords = queryText.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/);
+    const stopWords = new Set(['who', 'is', 'the', 'what', 'where', 'tell', 'me', 'about']);
+    const keywords = rawKeywords.filter(w => w.length > 2 && !stopWords.has(w));
     
     let keywordResults = [];
-    if (regexQuery) {
+    if (keywords.length > 0) {
+      const regexQuery = keywords.join('|');
       keywordResults = await collection.find({
-        "text": { "$regex": regexQuery, "$options": "i" }
-      }).limit(3).toArray();
+        $or: [
+          { text: { "$regex": regexQuery, "$options": "i" } },
+          { content: { "$regex": regexQuery, "$options": "i" } }
+        ]
+      }).limit(5).toArray();
     }
 
     // 4. Merge and Re-rank
     const mergedResults = [...vectorResults];
     
-    // Add keyword results if they aren't already in vector results (by simple string prefix check or deduplication)
+    // Add keyword results with a boost if they aren't already in vector results
     keywordResults.forEach(kr => {
-      if (!mergedResults.find(vr => vr.text && vr.text.substring(0, 50) === kr.text.substring(0, 50))) {
-        mergedResults.push({ ...kr, score: 0.5 }); // Static boost score
+      const snippet = kr.text || kr.content || "";
+      if (!mergedResults.find(vr => (vr.text || "").substring(0, 30) === snippet.substring(0, 30))) {
+        mergedResults.push({ text: snippet, score: 0.8 }); // Boosted score for exact keyword matches
       }
     });
 
-    // Sort by score
-    return mergedResults.sort((a, b) => b.score - a.score).slice(0, 5);
+    // Sort by score and limit to top K
+    const finalResults = mergedResults
+      .sort((a, b) => (b.score || 0) - (a.score || 0))
+      .slice(0, config.rag.topK);
+
+    logger.info(`Hybrid Search found ${finalResults.length} chunks for: ${queryText}`);
+    return finalResults;
   } catch (error) {
-    logger.error(`Retrieval Error: ${error.message}`);
+    logger.error(`Retrieval Service Error: ${error.message}`);
     return [];
   }
 };
-
-module.exports = { performHybridSearch };

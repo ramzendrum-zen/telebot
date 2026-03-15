@@ -1,36 +1,38 @@
-const axios = require('axios');
-const config = require('../config/config');
-const logger = require('../utils/logger');
+import config from '../config/config.js';
+import logger from '../utils/logger.js';
 
 /**
  * Generates embeddings using OpenRouter's text-embedding-3-small model.
+ * Switched to native fetch for better serverless performance.
  */
-const generateEmbedding = async (text) => {
+export const generateEmbedding = async (text) => {
   try {
-    const response = await axios.post(
-      'https://openrouter.ai/api/v1/embeddings',
-      {
+    const response = await fetch('https://openrouter.ai/api/v1/embeddings', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${config.openRouter.apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
         model: config.openRouter.models.embedding,
         input: text.replace(/\n/g, ' ')
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${config.openRouter.apiKey}`,
-          'Content-Type': 'application/json'
-        },
-        timeout: 15000 // 15 second timeout for embeddings
-      }
-    );
+      }),
+      signal: AbortSignal.timeout(15000)
+    });
 
-    if (response.data && response.data.data && response.data.data[0]) {
-      return response.data.data[0].embedding;
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Embedding API Error: ${response.status} - ${JSON.stringify(errorData)}`);
+    }
+
+    const data = await response.json();
+    if (data && data.data && data.data[0]) {
+      return data.data[0].embedding;
     } else {
-      throw new Error('Invalid embedding response from OpenRouter');
+      throw new Error('Invalid embedding response format');
     }
   } catch (error) {
-    logger.error(`Embedding Error: ${error.message}`, { data: error.response?.data });
+    logger.error(`Embedding Service Error: ${error.message}`);
     throw error;
   }
 };
-
-module.exports = { generateEmbedding };

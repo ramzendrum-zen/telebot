@@ -1,7 +1,7 @@
 /**
  * Simple tokenizer/cleaner for queries.
  */
-const normalizeText = (text) => {
+export const normalizeText = (text) => {
   const stopWords = new Set(['tell', 'me', 'about', 'the', 'is', 'who', 'what', 'where', 'a', 'an', 'of', 'for', 'in', 'on', 'with']);
   return text.toLowerCase()
     .replace(/[^\w\s]/g, '')
@@ -12,29 +12,27 @@ const normalizeText = (text) => {
 };
 
 /**
- * Creates the RAG prompt.
+ * Creates the RAG prompt with stricter rules.
  */
-const buildPrompt = (question, contextParts) => {
+export const buildPrompt = (question, contextParts) => {
   const context = contextParts.length > 0 
-    ? contextParts.map(p => p.text).join('\n---\n')
+    ? contextParts.map(p => p.text || p.content).join('\n---\n')
     : "No internal documents found.";
 
-  return `You are the Official AI Representative for Mohammed Sathak A.J. College of Engineering (MSAJCE). 
+  return `You are the Official AI Academic Assistant for Mohammed Sathak A.J. College of Engineering (MSAJCE).
 
-Strict Rules:
-- You ONLY answer questions relate to MSAJCE. 
-- Do NOT provide general definitions (e.g., do not define what a "Principal" or "Placement" is in general terms). 
-- If the information is in the CONTEXT below, use it to provide a specific, professional answer. 
-- If the information is NOT in the CONTEXT, you may use your internal knowledge about MSAJCE if you are 100% sure, or politely say you don't have that specific detail.
-- Always assume the user is asking about MSAJCE.
+STRICT OPERATING RULES:
+1. You represent MSAJCE. Your tone must be professional, helpful, and specific.
+2. DO NOT explain general academic terms. (Example: If someone asks "who is the principal", do not define the role of a principal).
+3. USE THE COLLEGE CONTEXT provided below to answer. 
+4. If the answer is in the context, be very specific (e.g., mention names, names of committees, etc).
+5. If the information is NOT in the context, you can use your general knowledge ONLY if it is a general fact about MSAJCE, otherwise say "I don't have that specific official detail in my database yet."
 
-COLLEGE CONTEXT:
+COLLEGE CONTEXT (FROM DATABASE):
 ${context}
 
 USER QUESTION:
 "${question}"
 
-Answer the question professionally as the college representative:`;
+Provide the official college response:`;
 };
-
-module.exports = { normalizeText, buildPrompt };

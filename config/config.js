@@ -1,4 +1,5 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 const config = {
   port: process.env.PORT || 3000,
@@ -32,10 +33,10 @@ const config = {
   },
   
   rag: {
-    topK: 5,
-    maxContextTokens: 1500,
-    similarityThreshold: 0.7
+    topK: 10, // Increased for better accuracy
+    maxContextTokens: 2000,
+    similarityThreshold: 0.6
   }
 };
 
-module.exports = config;
+export default config;

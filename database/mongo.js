@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
-const config = require('../config/config');
-const logger = require('../utils/logger');
+import mongoose from 'mongoose';
+import config from '../config/config.js';
+import logger from '../utils/logger.js';
 
 let isConnected = false;
 
@@ -15,9 +15,8 @@ const connectDB = async () => {
     logger.info(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     logger.error(`MongoDB Connection Error: ${error.message}`);
-    // In serverless, we might not want to hard exit, but here it's critical
     throw error;
   }
 };
 
-module.exports = connectDB;
+export default connectDB;

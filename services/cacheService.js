@@ -1,6 +1,6 @@
-const { Redis } = require('@upstash/redis');
-const config = require('../config/config');
-const logger = require('../utils/logger');
+import { Redis } from '@upstash/redis';
+import config from '../config/config.js';
+import logger from '../utils/logger.js';
 
 let redis;
 
@@ -10,10 +10,10 @@ if (config.redis.url && config.redis.token) {
     token: config.redis.token,
   });
 } else {
-  logger.warn("Cache Service: Redis credentials missing. Caching is disabled.");
+  logger.warn("Cache Service: Redis credentials missing.");
 }
 
-const getCache = async (key) => {
+export const getCache = async (key) => {
   if (!redis) return null;
   try {
     return await redis.get(key);
@@ -23,7 +23,7 @@ const getCache = async (key) => {
   }
 };
 
-const setCache = async (key, value) => {
+export const setCache = async (key, value) => {
   if (!redis) return;
   try {
     await redis.set(key, value, { ex: config.redis.ttl });
@@ -31,5 +31,3 @@ const setCache = async (key, value) => {
     logger.error(`Cache Set Error: ${error.message}`);
   }
 };
-
-module.exports = { getCache, setCache };
