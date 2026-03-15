@@ -1,3 +1,4 @@
+import fetch from 'node-fetch';
 import connectDB from '../database/mongo.js';
 import { handleGrievanceFlow, trackComplaint, MAIN_MENU } from '../services/complaintService.js';
 import { getCache, setCache } from '../services/cacheService.js';

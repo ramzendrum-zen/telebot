@@ -1,3 +1,4 @@
+import fetch from 'node-fetch';
 import connectDB from '../database/mongo.js';
 import { getCache, setCache } from '../services/cacheService.js';
 import { performHybridSearch } from '../services/retrievalService.js';
