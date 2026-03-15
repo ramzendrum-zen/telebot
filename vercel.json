@@ -6,6 +6,10 @@
       "destination": "/api/telegram-webhook.js"
     },
     {
+      "source": "/api/complaint-webhook",
+      "destination": "/api/complaint-webhook.js"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.js"
     }
