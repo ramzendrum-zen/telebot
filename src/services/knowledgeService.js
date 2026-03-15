@@ -11,18 +11,33 @@ const getContextFromDB = async (query) => {
     const db = mongoose.connection.db;
     const collection = db.collection(process.env.VECTOR_COLLECTION || 'vector_store');
     
-    // Simple regex search as a fallback if vector search isn't indexed yet
-    // This looks for matching keywords in the data
+    // Clean and tokenize the query
+    const stopWords = new Set(['tell', 'me', 'about', 'the', 'is', 'who', 'what', 'where', 'a', 'an', 'of', 'for', 'in', 'on', 'with']);
+    const keywords = query.toLowerCase()
+      .replace(/[^\w\s]/g, '')
+      .split(/\s+/)
+      .filter(word => word.length > 2 && !stopWords.has(word));
+
+    if (keywords.length === 0) return "";
+
+    // Create a regex that matches any of the keywords
+    const regexQuery = keywords.join('|');
+    logger.info(`Searching DB for keywords: ${keywords.join(', ')}`);
+
     const results = await collection.find({
       $or: [
-        { text: { $regex: query, $options: 'i' } },
-        { content: { $regex: query, $options: 'i' } },
-        { metadata: { $regex: query, $options: 'i' } }
+        { text: { $regex: regexQuery, $options: 'i' } },
+        { content: { $regex: regexQuery, $options: 'i' } },
+        { metadata: { $regex: regexQuery, $options: 'i' } }
       ]
-    }).limit(3).toArray();
+    }).limit(5).toArray();
 
-    if (results.length === 0) return "";
+    if (results.length === 0) {
+      logger.info("No matching documents found in DB.");
+      return "";
+    }
 
+    logger.info(`Found ${results.length} relevant documents.`);
     return results.map(doc => doc.text || doc.content || JSON.stringify(doc)).join("\n---\n");
   } catch (error) {
     logger.error("Database Search Error: ", error);

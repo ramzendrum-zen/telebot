@@ -5,3 +5,6 @@ logs
 .DS_Store
 dist
 build
+
+.vercel
+.env*.local
