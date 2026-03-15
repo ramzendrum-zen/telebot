@@ -30,9 +30,8 @@ const complaintSchema = new mongoose.Schema({
 });
 
 // Update updated_at on change
-complaintSchema.pre('save', function(next) {
+complaintSchema.pre('save', function() {
   this.updated_at = Date.now();
-  next();
 });
 
 const Complaint = mongoose.model('Complaint', complaintSchema);
