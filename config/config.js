@@ -17,7 +17,7 @@ const config = {
   },
 
   cloudinary: {
-    cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME || 'dzqcuxchc',
     apiKey: process.env.CLOUDINARY_API_KEY || '771675394986651',
     apiSecret: process.env.CLOUDINARY_API_SECRET || 'eBFjmujdu4yvlfGmPs2N-Z31CjI'
   },
