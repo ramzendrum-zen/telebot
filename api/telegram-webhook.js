@@ -24,16 +24,7 @@ export default async function handler(req, res) {
     await connectDB();
 
     // ──────────────────────────────────────────────
-    // 1. Welcome / Start (Academic Assistant Only)
-    // ──────────────────────────────────────────────
-    if (rawText === '/start') {
-      const welcome = "👋 *Welcome to the MSAJCE Academic Assistant!*\n\nI can help you with questions about:\n• Bus Routes & Timings\n• Faculty & HOD details\n• College Fees & Admissions\n• Trust Information\n\nJust ask me anything!";
-      await sendTelegramMessage(chatId, welcome);
-      return res.status(200).send('ok');
-    }
-
-    // ──────────────────────────────────────────────
-    // 2. RAG Academic Assistant with Query Rewriting
+    // 1. RAG Academic Assistant with Query Rewriting
     // ──────────────────────────────────────────────
     const normalizedQuery = normalizeQuery(rawText);
     const cacheKey = `v16:assistant:${normalizeText(normalizedQuery)}`;
