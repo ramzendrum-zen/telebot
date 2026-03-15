@@ -6,7 +6,8 @@ const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const getSmartReply = async (userMessage, context = "") => {
   try {
     if (!OPENROUTER_API_KEY) {
-      throw new Error("OPENROUTER_API_KEY is missing in environment variables");
+      logger.error("CRITICAL: OPENROUTER_API_KEY is missing from process.env");
+      throw new Error("OPENROUTER_API_KEY is missing");
     }
 
     let prompt = "";
@@ -25,6 +26,8 @@ const getSmartReply = async (userMessage, context = "") => {
       prompt = `You are a helpful Telegram bot. The user said: "${userMessage}". Give a short, smart, and friendly response.`;
     }
 
+    logger.info(`Requesting OpenRouter for message: ${userMessage.substring(0, 50)}...`);
+
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
@@ -37,16 +40,25 @@ const getSmartReply = async (userMessage, context = "") => {
         headers: {
           "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
-          "HTTP-Referer": "https://msajce-bot.vercel.app", // Optional
-          "X-Title": "MSAJCE Bot" // Optional
-        }
+          "HTTP-Referer": "https://msajce-bot.vercel.app",
+          "X-Title": "MSAJCE Bot"
+        },
+        timeout: 10000 // 10 second timeout
       }
     );
 
-    return response.data.choices[0].message.content;
+    if (response.data && response.data.choices && response.data.choices[0] && response.data.choices[0].message) {
+      return response.data.choices[0].message.content;
+    } else {
+      logger.error("OpenRouter Unexpected Response Structure:", response.data);
+      throw new Error("Invalid response format from OpenRouter");
+    }
   } catch (error) {
-    logger.error(`OpenRouter API Error: ${error.message}`, { stack: error.stack, data: error.response?.data });
-    return "I'm having trouble thinking of a smart reply right now. Please ensure OPENROUTER_API_KEY is correctly set.";
+    const errorDetail = error.response ? JSON.stringify(error.response.data) : error.message;
+    logger.error(`OpenRouter API Error: ${errorDetail}`);
+    
+    // Return a more descriptive error back to the user for debugging
+    return `Error: ${error.message}. ${error.response ? '(Check Vercel logs for API response)' : ''}`;
   }
 };
 
