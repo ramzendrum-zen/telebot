@@ -8,3 +8,15 @@ build
 
 .vercel
 .env*.local
+
+# Debug and Temp
+*_debug*
+debug_out.txt
+test_out.txt
+test_rag.js
+read_logs.js
+ingestCollege.js
+ingestProduction.js
+keywords_out.txt
+final_debug*
+api/test-db.js

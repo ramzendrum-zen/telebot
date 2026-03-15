@@ -7,13 +7,14 @@ const config = {
   
   telegram: {
     token: process.env.TELEGRAM_BOT_TOKEN,
+    complaintBotToken: process.env.COMPLAINT_BOT_TOKEN,
     webhookUrl: process.env.WEBHOOK_URL,
   },
   
   openRouter: {
     apiKey: process.env.OPENROUTER_API_KEY,
     models: {
-      cheap: 'openrouter/hunter-alpha',
+      cheap: 'google/gemini-2.0-flash-001', // Faster and more reliable
       advanced: 'google/gemini-2.0-flash-001',
       embedding: 'openai/text-embedding-3-small'
     }
