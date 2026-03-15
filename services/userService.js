@@ -4,11 +4,17 @@ import logger from '../utils/logger.js';
 /**
  * Finds a user by telegram ID or creates a new one.
  */
-export const getOrCreateUser = async (telegramId) => {
+export const getOrCreateUser = async (chatId, message = {}) => {
   try {
-    let user = await User.findOne({ telegram_id: telegramId });
+    let user = await User.findOne({ telegram_id: chatId });
     if (!user) {
-      user = new User({ telegram_id: telegramId });
+      const { username, first_name, last_name } = message.from || {};
+      user = new User({ 
+        telegram_id: chatId,
+        telegram_username: username,
+        telegram_first_name: first_name,
+        telegram_last_name: last_name
+      });
       await user.save();
     }
     return user;

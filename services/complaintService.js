@@ -29,6 +29,14 @@ const DEPT_ROUTING = {
   'Administration': 'Admin Office',
   'Harassment / Misconduct': 'Principal / Disciplinary Committee',
   'Infrastructure': 'Estate Office',
+  'Library Issues': 'Librarian',
+  'Sports / Gym': 'Physical Director',
+  'Placement / Training': 'Placement Officer',
+  'Fee / Scholarship': 'Accounts Office',
+  'Certificate / Document': 'Exam Cell',
+  'Cleanliness / Hygiene': 'Maintenance Team',
+  'Lab Equipment': 'Lab In-charge',
+  'Marks / Attendance': 'HOD Department',
   'Other': 'General Admin'
 };
 
@@ -50,54 +58,158 @@ const generateComplaintId = async () => {
   return `GRV-${(count + 2043).toString().padStart(4, '0')}`;
 };
 
-export const handleVerificationFlow = async (chatId, text) => {
+const generateUserId = async () => {
+  const count = await User.countDocuments({ verified: true });
+  return `USR-${(count + 1001).toString()}`;
+};
+
+export const handleVerificationFlow = async (chatId, text, message) => {
   const stateKey = `${VERIFY_STATE_PREFIX}${chatId}`;
   const state = await getCache(stateKey);
 
   if (!state) {
-    await setCache(stateKey, { step: 'asking_reg' });
+    await setCache(stateKey, { step: 'asking_role' });
     return { 
-      text: "🔐 *First-time Setup*\n\nTo use the grievance system, please verify your identity.\n\nEnter your *Register Number* (e.g., 312221104001):",
-      keyboard: { keyboard: [['❌ Cancel']], resize_keyboard: true }
+      text: "👋 *Welcome to MSAJCE Grievance Bot*\n\nTo ensure a secure and authenticated environment, please verify your identity.\n\nAre you a:",
+      keyboard: { keyboard: [['Student', 'Staff'], ['❌ Cancel']], resize_keyboard: true }
     };
   }
 
-  if (text === '❌ Cancel') {
+  if (text === '❌ Cancel' || text === '🏫 Back to Menu') {
     await setCache(stateKey, null);
     return MAIN_MENU;
   }
 
   let nextState = { ...state };
-  if (state.step === 'asking_reg') {
-    nextState.register_number = text;
+
+  // 1. Role Selection
+  if (state.step === 'asking_role') {
+    if (!['Student', 'Staff'].includes(text)) return { text: "⚠️ Please select from the menu.", keyboard: { keyboard: [['Student', 'Staff'], ['❌ Cancel']], resize_keyboard: true } };
+    nextState.role = text.toLowerCase();
+    nextState.step = nextState.role === 'student' ? 'asking_reg' : 'asking_emp_id';
+    await setCache(stateKey, nextState);
+    return { 
+      text: nextState.role === 'student' ? "🆔 Please enter your *Register Number* (e.g., 22IT045):" : "🆔 Please enter your *Employee ID* (e.g., EMP102):",
+      keyboard: { keyboard: [['❌ Cancel']], resize_keyboard: true } 
+    };
+  }
+
+  // 2. ID Collection (Reg Num or Emp ID)
+  if (state.step === 'asking_reg' || state.step === 'asking_emp_id') {
+    if (state.role === 'student') {
+        const existing = await User.findOne({ register_number: text.trim().toUpperCase() });
+        if (existing) return { text: "⚠️ This Register Number is already linked to another account." };
+        nextState.register_number = text.trim().toUpperCase();
+    } else {
+        const existing = await User.findOne({ employee_id: text.trim().toUpperCase() });
+        if (existing) return { text: "⚠️ This Employee ID is already linked to another account." };
+        nextState.employee_id = text.trim().toUpperCase();
+    }
     nextState.step = 'asking_name';
     await setCache(stateKey, nextState);
-    return { text: "✅ Register number saved!\n\nNow enter your *Full Name*:", keyboard: { keyboard: [['❌ Cancel']], resize_keyboard: true } };
-  } else if (state.step === 'asking_name') {
+    return { text: "👤 Enter your *Full Name*:", keyboard: { keyboard: [['❌ Cancel']], resize_keyboard: true } };
+  }
+
+  // 3. Name Collection
+  if (state.step === 'asking_name') {
     nextState.name = text;
     nextState.step = 'asking_dept';
     await setCache(stateKey, nextState);
     return { 
-      text: "Now enter your *Department*:", 
-      keyboard: { keyboard: [['CSE', 'ECE'], ['EEE', 'Mech'], ['IT', 'Civil'], ['❌ Cancel']], resize_keyboard: true } 
+      text: "🏢 Enter your *Department*:", 
+      keyboard: { keyboard: [['CSE', 'ECE'], ['EEE', 'Mech'], ['IT', 'Civil'], ['Artificial Intelligence', 'Cyber Security'], ['❌ Cancel']], resize_keyboard: true } 
     };
-  } else if (state.step === 'asking_dept') {
+  }
+
+  // 4. Dept Collection -> Student (Year) / Staff (Designation)
+  if (state.step === 'asking_dept') {
     nextState.department = text;
-    nextState.step = 'asking_year';
+    if (state.role === 'student') {
+        nextState.step = 'asking_year';
+        await setCache(stateKey, nextState);
+        return { 
+          text: "📅 Enter your *Year of Study*:", 
+          keyboard: { keyboard: [['1', '2'], ['3', '4'], ['❌ Cancel']], resize_keyboard: true } 
+        };
+    } else {
+        nextState.step = 'asking_designation';
+        await setCache(stateKey, nextState);
+        return { text: "💼 Enter your *Designation* (e.g., Assistant Professor):" };
+    }
+  }
+
+  // 5a. Student Year -> Residence Type
+  if (state.step === 'asking_year') {
+    nextState.year = parseInt(text);
+    if (isNaN(nextState.year)) return { text: "⚠️ Please use the buttons for Year." };
+    nextState.step = 'asking_residence';
     await setCache(stateKey, nextState);
     return { 
-      text: "Enter your *Year of Study*:", 
-      keyboard: { keyboard: [['1st Year', '2nd Year'], ['3rd Year', '4th Year'], ['❌ Cancel']], resize_keyboard: true } 
+        text: "🏠 Are you a:", 
+        keyboard: { keyboard: [['Hostel', 'Day Scholar'], ['❌ Cancel']], resize_keyboard: true } 
     };
-  } else if (state.step === 'asking_year') {
-    const yearMap = { '1st Year': 1, '2nd Year': 2, '3rd Year': 3, '4th Year': 4 };
-    const year = yearMap[text] || parseInt(text);
-    if (!year) return { text: "⚠️ Invalid! Use buttons.", keyboard: { keyboard: [['1st Year', '2nd Year'], ['3rd Year', '4th Year']], resize_keyboard: true } };
-    
-    await verifyUser(chatId, { register_number: state.register_number, name: state.name, department: state.department, year });
-    await setCache(stateKey, null);
-    return { text: `✅ *Verified!*\n\nWelcome, *${state.name}*!`, keyboard: MAIN_MENU.keyboard };
   }
+
+  // 5b. Staff Designation -> Phone
+  if (state.step === 'asking_designation') {
+    nextState.designation = text;
+    nextState.step = 'asking_phone';
+    await setCache(stateKey, nextState);
+    return { text: "📞 Finally, enter your *Phone Number* (Optional, type Skip):", keyboard: { keyboard: [['Skip'], ['❌ Cancel']], resize_keyboard: true } };
+  }
+
+  // 6a. Residence Type -> Room No or Phone
+  if (state.step === 'asking_residence') {
+    nextState.residence_type = text;
+    if (text === 'Hostel') {
+        nextState.step = 'asking_room';
+        await setCache(stateKey, nextState);
+        return { text: "🔑 Enter your *Room Number* (e.g., H2-104):" };
+    } else {
+        nextState.step = 'asking_phone';
+        await setCache(stateKey, nextState);
+        return { text: "📞 Enter your *Phone Number* (Optional, type Skip):", keyboard: { keyboard: [['Skip'], ['❌ Cancel']], resize_keyboard: true } };
+    }
+  }
+
+  // 6b. Room No -> Phone
+  if (state.step === 'asking_room') {
+    nextState.room_number = text;
+    nextState.step = 'asking_phone';
+    await setCache(stateKey, nextState);
+    return { text: "📞 Enter your *Phone Number* (Optional, type Skip):", keyboard: { keyboard: [['Skip'], ['❌ Cancel']], resize_keyboard: true } };
+  }
+
+  // Final Step: Phone & Verification
+  if (state.step === 'asking_phone') {
+    if (text.toLowerCase() !== 'skip') nextState.phone = text;
+    
+    const usrId = await generateUserId();
+    const finalData = {
+        user_id: usrId,
+        role: nextState.role,
+        register_number: nextState.register_number,
+        employee_id: nextState.employee_id,
+        name: nextState.name,
+        department: nextState.department,
+        year: nextState.year,
+        residence_type: nextState.residence_type,
+        room_number: nextState.room_number,
+        designation: nextState.designation,
+        phone: nextState.phone,
+        verified: true
+    };
+
+    await verifyUser(chatId, finalData);
+    await setCache(stateKey, null);
+
+    return { 
+      text: `🎉 *Registration Successful!*\n\n*Name:* ${nextState.name}\n*Role:* ${nextState.role.toUpperCase()}\n*User ID:* \`${usrId}\`\n\nYou can now register complaints.`,
+      keyboard: MAIN_MENU.keyboard 
+    };
+  }
+
+  return MAIN_MENU;
 };
 
 export const listUserComplaints = async (chatId) => {
@@ -116,9 +228,9 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
   if (text === '💡 FAQ / Help') return { text: "💡 *Help Center*\n\nContact admin for deep issues.", keyboard: MAIN_MENU.keyboard };
   if (text === '📞 Contact Administration') return { text: "📞 Office: +91 99400 04500", keyboard: MAIN_MENU.keyboard };
   
-  const user = await getOrCreateUser(chatId);
+  const user = await getOrCreateUser(chatId, message);
   if (!user) return { text: "⚠️ Error accessing profile.", keyboard: MAIN_MENU.keyboard };
-  if (!user.verified) return await handleVerificationFlow(chatId, text);
+  if (!user.verified) return await handleVerificationFlow(chatId, text, message);
 
   if (text === '📋 My Complaints') return await listUserComplaints(chatId);
   if (text === '🔍 Track Complaint') {
@@ -134,7 +246,17 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
     return {
       text: "📝 *Select Category*:",
       keyboard: {
-        keyboard: [['Hostel Issues', 'Transport / Bus'], ['Mess / Food', 'Faculty Issues'], ['Other', '❌ Cancel']],
+        keyboard: [
+          ['Hostel Issues', 'Transport / Bus'],
+          ['Mess / Food', 'Faculty Issues'],
+          ['WiFi / IT Issues', 'Infrastructure'],
+          ['Library Issues', 'Sports / Gym'],
+          ['Placement / Training', 'Fee / Scholarship'],
+          ['Certificate / Document', 'Cleanliness / Hygiene'],
+          ['Lab Equipment', 'Marks / Attendance'],
+          ['Harassment / Misconduct', 'Other'],
+          ['❌ Cancel']
+        ],
         resize_keyboard: true
       }
     };
@@ -219,8 +341,9 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
             <div style="font-family: sans-serif; border: 1px solid #eee; padding: 20px;">
                 <h2>New Grievance: ${grvId}</h2>
                 <p><b>Category:</b> ${state.category}</p>
-                <p><b>Student:</b> ${user.name} (${user.register_number})</p>
+                <p><b>Student:</b> ${user.name} (${user.register_number || user.employee_id})</p>
                 <p><b>Department:</b> ${user.department}</p>
+                <p><b>Role:</b> ${user.role.toUpperCase()}</p>
                 <hr/>
                 <p><b>Issue Description:</b></p>
                 <div style="background: #f9f9f9; padding: 10px;">${state.description}</div>

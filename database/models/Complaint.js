@@ -10,7 +10,10 @@ const complaintSchema = new mongoose.Schema({
     enum: [
       'Hostel Issues', 'Transport / Bus', 'Mess / Food', 
       'Faculty Issues', 'Infrastructure', 'WiFi / IT Issues', 
-      'Administration', 'Harassment / Misconduct', 'Other'
+      'Administration', 'Harassment / Misconduct', 'Other',
+      'Library Issues', 'Sports / Gym', 'Placement / Training',
+      'Fee / Scholarship', 'Certificate / Document', 
+      'Cleanliness / Hygiene', 'Lab Equipment', 'Marks / Attendance'
     ]
   },
   description: { type: String, required: true },
