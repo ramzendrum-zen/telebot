@@ -2,6 +2,15 @@ import { getCache, setCache } from './cacheService.js';
 import Complaint from '../database/models/Complaint.js';
 import config from '../config/config.js';
 import logger from '../utils/logger.js';
+import nodemailer from 'nodemailer';
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'eventbooking.otp@gmail.com',
+    pass: 'bcfr ckfv emwp vwbi'
+  }
+});
 
 const COMPLAINT_STATE_PREFIX = 'complaint_state:';
 
@@ -52,6 +61,18 @@ Please provide your **Full Name** to begin:`;
       });
       await newComplaint.save();
       
+      try {
+        await transporter.sendMail({
+          from: 'eventbooking.otp@gmail.com',
+          to: 'cookwithcomali5@gmail.com',
+          subject: `New Grievance Submitted by ${nextState.name}`,
+          text: `A new grievance has been submitted:\n\nName: ${nextState.name}\nRoll Number: ${nextState.rollNumber}\nIssue:\n${text}`
+        });
+        logger.info(`Complaint email sent successfully for ${nextState.name}`);
+      } catch (err) {
+        logger.error(`Error sending complaint email: ${err.message}`);
+      }
+
       response = "✅ **Complaint Registered Successfully!**\n\nYour grievance has been captured and sent to the college administration for review. \n\nIs there anything else I can help you with?";
       nextState = null; // Clear state
     } catch (error) {

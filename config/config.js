@@ -16,7 +16,7 @@ const config = {
     models: {
       cheap: 'google/gemini-2.0-flash-001', 
       advanced: 'meta-llama/llama-3.3-70b-instruct',
-      embedding: 'openai/text-embedding-3-small'
+      embedding: 'openai/text-embedding-3-large'
     }
   },
   
