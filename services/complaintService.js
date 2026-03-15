@@ -122,7 +122,26 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
 
   const stateKey = `${COMPLAINT_STATE_PREFIX}${chatId}`;
   const state = await getCache(stateKey) || { step: 'init' };
-// ... remaining logic same as before (I'll just replace the whole file for safety if needed, but I'll use replace_file_content smartly)
+  
+  let response = "";
+  let nextState = { ...state };
+
+  // STEP-BY-STEP FLOW
+  if (text === '1️⃣ Register Complaint' || state.step === 'init') {
+    nextState.step = 'asking_category';
+    const initRes = {
+      text: "Select a **Complaint Category**:",
+      keyboard: [
+        ['Hostel Issues', 'Transport / Bus'],
+        ['Mess / Food', 'Faculty Issues'],
+        ['Infrastructure', 'WiFi / IT Issues'],
+        ['Administration', 'Harassment / Misconduct'],
+        ['Other']
+      ]
+    };
+    await setCache(stateKey, nextState);
+    return initRes;
+  }
 
   if (state.step === 'asking_category') {
     const categories = Object.keys(DEPT_ROUTING);
