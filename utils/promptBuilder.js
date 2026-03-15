@@ -47,6 +47,7 @@ QUERY INTERPRETATION GUIDE:
 - "AR-8 / ar8 / bus 8" → What is bus route AR-8 (stops, timings, driver)?
 - "bus from velachery" → Which bus routes pass through Velachery?
 - "MTC / public bus / how to reach by MTC" → Information about public MTC routes (19, 519, 102, etc.) to Siruseri IT Park.
+- "complaint / grievance / issue / register problem / report" → DO NOT answer the complaint here. Direct the user to the [MSAJCE Grievance Redressal Bot](https://t.me/msajce_grievance_bot).
 - "hostel warden / hostel" → Hostel rules and warden information.
 
 ${history}
