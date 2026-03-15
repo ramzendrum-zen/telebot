@@ -1,5 +1,6 @@
 const { sendMessage } = require('../services/telegramService');
 const { getSmartReply } = require('../services/geminiService');
+const { getContextFromDB } = require('../services/knowledgeService');
 const Message = require('../models/Message');
 const logger = require('../utils/logger');
 
@@ -22,7 +23,9 @@ const handleWebhook = async (req, res) => {
     if (userText === "hello") {
       replyText = "Hello! I am your Telegram bot.";
     } else {
-      const smartReply = await getSmartReply(originalText);
+      // Search MongoDB for relevant information first
+      const context = await getContextFromDB(originalText);
+      const smartReply = await getSmartReply(originalText, context);
       replyText = `You said: ${originalText}\n\n*Smart Reply:*\n${smartReply}`;
     }
 
