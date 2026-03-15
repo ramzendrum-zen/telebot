@@ -14,8 +14,8 @@ const config = {
   openRouter: {
     apiKey: process.env.OPENROUTER_API_KEY,
     models: {
-      cheap: 'google/gemini-2.0-flash-001', // Faster and more reliable
-      advanced: 'google/gemini-2.0-flash-001',
+      cheap: 'google/gemini-2.0-flash-001', 
+      advanced: 'meta-llama/llama-3.3-70b-instruct',
       embedding: 'openai/text-embedding-3-small'
     }
   },

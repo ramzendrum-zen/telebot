@@ -25,7 +25,7 @@ export default async function handler(req, res) {
   
   // STEP 1: Normalize Query
   const normalizedQuery = normalizeQuery(rawText);
-  const cleanKey = `v13:query:${normalizeText(normalizedQuery)}`;
+  const cleanKey = `v14:query:${normalizeText(normalizedQuery)}`;
 
   await pushLog('info', `Incoming Request: "${rawText}" (User: ${chatId})`);
 

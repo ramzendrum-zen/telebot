@@ -31,11 +31,11 @@ export const performHybridSearch = async (queryText, intent = 'general') => {
       
       const searchFilter = {
         $or: [
-          ...words.map(w => ({ "metadata.keywords": { $regex: `^${w.replace('-', '[\\W_]?')}$`, $options: 'i' } })),
-          ...words.map(w => ({ "metadata.route": { $regex: `^${w.replace('-', '[\\W_]?')}$`, $options: 'i' } })),
-          ...words.map(w => ({ "metadata.name": { $regex: `^${w.replace('-', '[\\W_]?')}$`, $options: 'i' } })),
-          ...words.map(w => ({ "metadata.nickname": { $regex: `^${w.replace('-', '[\\W_]?')}$`, $options: 'i' } })),
-          ...words.map(w => ({ "metadata.stops": { $regex: `^${w}$`, $options: 'i' } })),
+          ...words.map(w => ({ "metadata.keywords": { $regex: w.replace('-', '[\\W_]?'), $options: 'i' } })),
+          ...words.map(w => ({ "metadata.route": { $regex: w.replace('-', '[\\W_]?'), $options: 'i' } })),
+          ...words.map(w => ({ "metadata.name": { $regex: w.replace('-', '[\\W_]?'), $options: 'i' } })),
+          ...words.map(w => ({ "metadata.nickname": { $regex: w.replace('-', '[\\W_]?'), $options: 'i' } })),
+          ...words.map(w => ({ "metadata.url": { $regex: w, $options: 'i' } })),
           { text: { $regex: regexPatterns, $options: 'i' } }
         ]
       };
@@ -55,10 +55,10 @@ export const performHybridSearch = async (queryText, intent = 'general') => {
           // Absolute priority for route match
           if (kr.metadata?.route && kr.metadata.route.toLowerCase().includes(w)) score += 5.0;
           
-          // Boost for stops
-          if (kr.metadata?.stops && kr.metadata.stops.some(s => s.toLowerCase() === w)) score += 3.0;
-
-          if (txt.includes(w)) score += 0.5;
+          // Boost for URL match (Very relevant for "Principal" page)
+          if (kr.metadata?.url && kr.metadata.url.toLowerCase().includes(w)) score += 4.0;
+          
+          if (txt.includes(w)) score += 1.0;
         });
 
         return { ...kr, score };
@@ -119,11 +119,8 @@ export const performHybridSearch = async (queryText, intent = 'general') => {
     
     // Log chunk names for dashboard visibility
     const chunkNames = finalResults.map(r => r.metadata?.route || r.metadata?.name || 'General Info').slice(0, 5).join(', ');
-    await pushLog('rag_step', `Found Chunks: [${chunkNames}]`);
+    pushLog('rag_step', `Found Chunks: [${chunkNames}]`).catch(() => {});
 
-    // CRITICAL NOISE FILTER: 
-    // If we have a very strong keyword match (score > 5), 
-    // remove anything that doesn't have a keyword match at all.
     if (topKeywordScore > 5.0) {
       finalResults = finalResults.filter(r => r.score > 2.0);
     }
