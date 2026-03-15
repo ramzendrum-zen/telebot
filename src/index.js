@@ -19,7 +19,7 @@ app.use('/api', apiRoutes);
 
 // Root route
 app.get('/', (req, res) => {
-  res.send('Telegram Bot Backend is running...');
+  res.send('MSAJCE Telegram Bot - Hunter Alpha Engine is running...');
 });
 
 // Error handling middleware
