@@ -1,12 +1,38 @@
 import mongoose from 'mongoose';
 
 const complaintSchema = new mongoose.Schema({
-  chatId: { type: Number, required: true },
-  name: { type: String, required: true },
-  rollNumber: { type: String },
-  issue: { type: String, required: true },
-  status: { type: String, enum: ['pending', 'resolved'], default: 'pending' },
-  createdAt: { type: Date, default: Date.now }
+  complaint_id: { type: String, required: true, unique: true }, // GRV-XXXX
+  student_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  telegram_id: { type: Number, required: true },
+  category: { 
+    type: String, 
+    required: true,
+    enum: [
+      'Hostel Issues', 'Transport / Bus', 'Mess / Food', 
+      'Faculty Issues', 'Infrastructure', 'WiFi / IT Issues', 
+      'Administration', 'Harassment / Misconduct', 'Other'
+    ]
+  },
+  description: { type: String, required: true },
+  evidence_url: { type: String },
+  status: { 
+    type: String, 
+    enum: ['submitted', 'under_review', 'assigned', 'in_progress', 'resolved', 'rejected'], 
+    default: 'submitted' 
+  },
+  department_assigned: { type: String },
+  admin_response: { type: String },
+  resolution_notes: { type: String },
+  feedback: { type: String, enum: ['Yes', 'No'] },
+  is_emergency: { type: Boolean, default: false },
+  created_at: { type: Date, default: Date.now },
+  updated_at: { type: Date, default: Date.now }
+});
+
+// Update updated_at on change
+complaintSchema.pre('save', function(next) {
+  this.updated_at = Date.now();
+  next();
 });
 
 const Complaint = mongoose.model('Complaint', complaintSchema);
