@@ -16,10 +16,17 @@ const normalizeText = (text) => {
  */
 const buildPrompt = (question, contextParts) => {
   const context = contextParts.length > 0 
-    ? contextParts.map(p => `- ${p.text}`).join('\n')
+    ? contextParts.map(p => p.text).join('\n---\n')
     : "No internal documents found.";
 
-  return `You are the official AI assistant for Mohammed Sathak A.J. College of Engineering (MSAJCE). 
+  return `You are the Official AI Representative for Mohammed Sathak A.J. College of Engineering (MSAJCE). 
+
+Strict Rules:
+- You ONLY answer questions relate to MSAJCE. 
+- Do NOT provide general definitions (e.g., do not define what a "Principal" or "Placement" is in general terms). 
+- If the information is in the CONTEXT below, use it to provide a specific, professional answer. 
+- If the information is NOT in the CONTEXT, you may use your internal knowledge about MSAJCE if you are 100% sure, or politely say you don't have that specific detail.
+- Always assume the user is asking about MSAJCE.
 
 COLLEGE CONTEXT:
 ${context}
@@ -27,10 +34,7 @@ ${context}
 USER QUESTION:
 "${question}"
 
-INSTRUCTIONS:
-1. Answer using the COLLEGE CONTEXT first.
-2. If the answer is not in the context, use your general knowledge but clearly state that you are using general knowledge.
-3. Keep the response professional, friendly, and concise.`;
+Answer the question professionally as the college representative:`;
 };
 
 module.exports = { normalizeText, buildPrompt };
