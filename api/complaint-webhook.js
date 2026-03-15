@@ -1,5 +1,5 @@
 import connectDB from '../database/mongo.js';
-import { handleComplaintFlow } from '../services/complaintService.js';
+import { handleGrievanceFlow } from '../services/complaintService.js';
 import logger from '../utils/logger.js';
 import config from '../config/config.js';
 
@@ -20,7 +20,7 @@ export default async function handler(req, res) {
     await connectDB();
 
     logger.info(`Complaint Bot: Handling message from ${chatId}`);
-    const reply = await handleComplaintFlow(chatId, rawText);
+    const reply = await handleGrievanceFlow(chatId, rawText, message);
     
     await sendTelegramMessage(chatId, reply);
     return res.status(200).json({ status: 'success' });
