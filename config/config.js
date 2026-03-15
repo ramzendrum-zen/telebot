@@ -15,6 +15,12 @@ const config = {
     user: process.env.EMAIL_USER || 'eventbooking.otp@gmail.com',
     pass: process.env.EMAIL_PASS || 'bcfr ckfv emwp vwbi'
   },
+
+  cloudinary: {
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+    apiKey: process.env.CLOUDINARY_API_KEY || '771675394986651',
+    apiSecret: process.env.CLOUDINARY_API_SECRET || 'eBFjmujdu4yvlfGmPs2N-Z31CjI'
+  },
   
   openRouter: {
     apiKey: process.env.OPENROUTER_API_KEY,

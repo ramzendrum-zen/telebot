@@ -14,7 +14,6 @@ export default async function handler(req, res) {
 
   const chatId = message.chat.id;
   const rawText = (message.text || body?.callback_query?.data || '').trim();
-
   const hasMedia = !!(message.photo || message.document || message.video || message.voice);
 
   if (!rawText && !hasMedia) return res.status(200).send('ok');
@@ -22,54 +21,57 @@ export default async function handler(req, res) {
   try {
     await connectDB();
 
-    // 1. /start or Back to Menu — always show main menu for Grievance Bot
+    // 1. Root Commands for Grievance Bot
     if (rawText === '/start' || rawText === '🏠 Back to Menu' || rawText === '🏫 Back to Menu') {
       await sendReply(chatId, MAIN_MENU);
       return res.status(200).send('ok');
     }
 
-    // 2. Complaint Tracking flow
+    // 2. Tracking Mode
     if (rawText === '🔍 Track Complaint') {
       await setCache(`track_state:${chatId}`, true);
       await sendReply(chatId, {
         text: "🔍 *Track Your Complaint*\n\nEnter your Complaint ID (e.g., *GRV-2043*):",
-        keyboard: { keyboard: [['🏠 Back to Menu']], resize_keyboard: true }
+        keyboard: { keyboard: [['🏫 Back to Menu']], resize_keyboard: true }
       });
       return res.status(200).send('ok');
     }
 
     const isTracking = await getCache(`track_state:${chatId}`);
-    if (isTracking) {
+    if (isTracking && rawText.toUpperCase().startsWith('GRV-')) {
       await setCache(`track_state:${chatId}`, null);
       const result = await trackComplaint(rawText);
       await sendReply(chatId, result);
       return res.status(200).send('ok');
     }
 
-    // 3. Handle Grievance Flow (Verification, Registration, Shortcuts)
+    // 3. Main Grievance Flow
     const result = await handleGrievanceFlow(chatId, rawText, message);
-    await sendReply(chatId, result);
+    if (result) {
+        await sendReply(chatId, result);
+    }
     
     return res.status(200).json({ status: 'success' });
+
   } catch (error) {
-    logger.error(`Complaint Webhook Error: ${error.message}`);
-    await sendReply(chatId, { text: "⚠️ An error occurred in the grievance system. Please try again later." });
+    logger.error(`Complaint Webhook CRASH: ${error.stack}`);
+    await sendReply(chatId, { 
+      text: "⚠️ *System Timeout or Error*\n\nWe encountered a temporary issue processing your request. Please try again in a few moments.",
+      keyboard: MAIN_MENU.keyboard
+    });
     return res.status(200).json({ status: 'error_handled' });
   }
 }
 
 /**
- * Unified reply sender for the Grievance Bot
+ * Robust reply sender for Grievance Bot
  */
 async function sendReply(chatId, result) {
   const text = typeof result === 'string' ? result : result?.text;
   const keyboard = typeof result === 'object' ? result?.keyboard : null;
 
   if (!text) return;
-  await sendTelegramMessage(chatId, text, keyboard);
-}
 
-async function sendTelegramMessage(chatId, text, keyboard = null) {
   const token = config.telegram.complaintBotToken || config.telegram.token;
   const url = `https://api.telegram.org/bot${token}/sendMessage`;
   
@@ -81,18 +83,13 @@ async function sendTelegramMessage(chatId, text, keyboard = null) {
   if (keyboard) payload.reply_markup = keyboard;
 
   try {
-    const response = await fetch(url, {
+    await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
       signal: AbortSignal.timeout(10000)
     });
-
-    if (!response.ok) {
-        const err = await response.json();
-        logger.error(`Grievance Bot Send Error: ${JSON.stringify(err)}`);
-    }
-  } catch (error) {
-    logger.error(`Complaint Bot failed to send message: ${error.message}`);
+  } catch (err) {
+    logger.error(`Send Message Fail: ${err.message}`);
   }
 }
