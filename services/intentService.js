@@ -30,7 +30,7 @@ export const normalizeQuery = (query) => {
   q = q.replace(/r\s?(\d+)/g, 'r-$1');
   
   // Common nicknames/shorthand
-  q = q.replace(/\bram\b/g, 'ramanathan');
+  // Removing hardcoded 'ram' -> 'ramanathan' as it lacks data support
   
   return q;
 };

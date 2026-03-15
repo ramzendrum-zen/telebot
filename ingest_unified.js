@@ -15,7 +15,7 @@ const transportDetailed = [
     stops: ["T. Nagar", "Saidapet", "Guindy", "Velachery", "Medavakkam", "Camp Road", "Mambakkam", "College"],
     statements: [
       "The driver for bus route AR-3 is Mr. Sathish K (+91-9789970304).",
-      "Bus route AR-3 follows the path: T. Nagar → Saidapet → Guindy → Velachery → Medavakkam → Camp Road → Mambakkam → College.",
+      "Bus route AR-3 path: T. Nagar (06:20 AM) → Saidapet → Guindy → Velachery → Medavakkam → Camp Road → Mambakkam → College.",
       "The AR-3 bus starts at 06:20 AM from T. Nagar."
     ]
   },
@@ -26,8 +26,8 @@ const transportDetailed = [
     stops: ["MMDA School", "Anna Nagar", "Skywalk", "Saidapet", "Velachery", "OMR", "Ladies Hostel", "College"],
     statements: [
       "The driver for bus route AR-5 is Mr. Murugan (+91-9962254425) or Mr. Velu (+91-9940050685).",
-      "Bus route AR-5 route details: MMDA School (6:15 AM) → Skywalk → Saidapet → Ladies Hostel → College.",
-      "AR-5 / N-3 bus route includes stops at Anna Nagar, Velachery, and OMR."
+      "Bus route AR-5 route details: MMDA School (6:15 AM) → Skywalk → Saidapet → Velachery → OMR → Ladies Hostel → College.",
+      "AR-5 bus route includes stops at Anna Nagar, Skywalk, Saidapet, Velachery, OMR, and Ladies Hostel."
     ]
   },
   {
@@ -37,7 +37,8 @@ const transportDetailed = [
     stops: ["Manjambakkam", "Retteri", "Senthil Nagar", "Anna Nagar (Blue Star)", "Nerkundrum", "Maduravoyal", "Porur", "Perungalathur", "College"],
     statements: [
       "The driver for bus route AR-8 is Mr. Raju (+91-9790750906).",
-      "Bus route AR-8 full route: Manjambakkam (7:10 AM) → Retteri → Anna Nagar (Blue Star 7:25) → Porur (7:45) → Perungalathur → College."
+      "Bus route AR-8 FULL ROUTE with Timings: Manjambakkam (7:10 AM) → Retteri → Senthil Nagar → Anna Nagar (Blue Star 7:25) → Nerkundrum → Maduravoyal → Porur (7:45) → Perungalathur → College.",
+      "The AR-8 bus route includes stops at Manjambakkam, Retteri, Senthil Nagar, Anna Nagar, Nerkundrum, Maduravoyal, Porur, and Perungalathur."
     ]
   }
 ];
@@ -52,18 +53,58 @@ async function ingestDetailed(col) {
         category: "transport",
         title: `Bus Route ${item.route}`,
         content, text: content,
-        keywords: [item.route, "bus", "transport", "driver", "route", ...item.stops],
-        query_variations: [`who is the driver for ${item.route}`, `timings for ${item.route}`],
         embedding,
-        metadata: { route: item.route, driver: item.driver, phone: item.phone, created_at: new Date().toISOString() }
+        metadata: { 
+            route: item.route, 
+            driver: item.driver, 
+            phone: item.phone,
+            keywords: [item.route, "bus", "transport", "driver", "route", "full", ...item.stops],
+            created_at: new Date().toISOString() 
+        }
       });
     }
+  }
+}
+
+async function ingestTrust(col) {
+  const trustInfo = [
+    {
+      title: "Mohamed Sathak Trust Overview",
+      content: "The Mohamed Sathak Trust was established in 1973 by the philanthropic Mohamed Sathak Family of Kilakarai, Ramanathapuram District, Tamil Nadu. It aims to provide quality education to rural and financially disadvantaged students.",
+      keywords: ["trust", "mohamed sathak", "founder", "ramanathapuram", "kilakarai", "ram", "about trust"]
+    },
+    {
+      title: "Trust Leadership",
+      content: "The Mohamed Sathak Trust is led by Mr. Mohamed Yousuf S.M. (Chairman), Janaba. S.M.H. Sharmila (Secretary), and Janab. P.R.L. Hamid Ibrahim (Executive Director).",
+      keywords: ["chairman", "secretary", "yousuf", "sharmila", "hamid", "leadership", "trustee"]
+    }
+  ];
+
+  for (const item of trustInfo) {
+    const embedding = await generateEmbedding(item.content);
+    await col.insertOne({
+      document_id: new mongoose.Types.ObjectId().toString(),
+      source: "verified_trust",
+      category: "general",
+      title: item.title,
+      content: item.content,
+      text: item.content,
+      embedding,
+      metadata: { 
+          name: item.title,
+          keywords: item.keywords,
+          created_at: new Date().toISOString() 
+      }
+    });
   }
 }
 
 async function run() {
   await mongoose.connect(process.env.MONGO_URI, { dbName: process.env.DB_NAME });
   const col = mongoose.connection.db.collection(config.mongodb.vectorCollection);
+  
+  console.log("Wiping collection for clean ingestion...");
+  await col.deleteMany({});
   
   // Scraped Data
   if (fs.existsSync('scraped_data.json')) {
@@ -74,8 +115,15 @@ async function run() {
       for (const chunk of chunks) {
         const embedding = await generateEmbedding(chunk.content);
         await col.insertOne({
-           ...chunk, text: chunk.content, embedding, source: "scraped",
-           metadata: { created_at: new Date().toISOString(), url: page.url }
+           ...chunk, 
+           text: chunk.content, 
+           embedding, 
+           source: "scraped",
+           metadata: { 
+               created_at: new Date().toISOString(), 
+               url: page.url,
+               keywords: chunk.keywords || [] 
+           }
         });
       }
     }
@@ -83,6 +131,9 @@ async function run() {
 
   // Detailed Data
   await ingestDetailed(col);
+  
+  // Trust Data
+  await ingestTrust(col);
 
   console.log("Unified Ingestion Done.");
   process.exit(0);
