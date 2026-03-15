@@ -19,8 +19,8 @@ const VERIFY_STATE_PREFIX = 'verify_state:';
 
 // Department Routing Mapping
 const DEPT_ROUTING = {
-  'Transport / Bus': 'Transport Manager',
   'Hostel Issues': 'Hostel Warden',
+  'Transport / Bus': 'Transport Manager',
   'Mess / Food': 'Mess Committee',
   'WiFi / IT Issues': 'IT Support Team',
   'Faculty Issues': 'Academic Office',
@@ -30,161 +30,261 @@ const DEPT_ROUTING = {
   'Other': 'General Admin'
 };
 
-/**
- * Auto-generates a unique Complaint ID: GRV-XXXX
- */
+/** The main menu keyboard structure */
+export const MAIN_MENU = {
+  text: "🏫 *MSAJCE Grievance Portal*\n\nWelcome! How can we help you today?",
+  keyboard: {
+    keyboard: [
+      ['📝 Register Complaint', '🔍 Track Complaint'],
+      ['📋 My Complaints', '🚨 Emergency Complaint'],
+      ['💡 FAQ / Help', '📞 Contact Administration']
+    ],
+    resize_keyboard: true,
+    one_time_keyboard: false
+  }
+};
+
+/** Auto-generates a unique Complaint ID: GRV-XXXX */
 const generateComplaintId = async () => {
   const count = await Complaint.countDocuments();
-  const hex = (count + 2043).toString().padStart(4, '0'); // Start from 2043 as per prompt example
-  return `GRV-${hex}`;
+  return `GRV-${(count + 2043).toString().padStart(4, '0')}`;
 };
 
 /**
  * Handles the Student Verification Flow
+ * Shows a prompt BEFORE accepting input so the user knows what to enter.
  */
 export const handleVerificationFlow = async (chatId, text) => {
   const stateKey = `${VERIFY_STATE_PREFIX}${chatId}`;
-  const state = await getCache(stateKey) || { step: 'asking_reg' };
-  
-  let response = "";
+  const state = await getCache(stateKey);
+
+  // No active state — start the verification
+  if (!state) {
+    await setCache(stateKey, { step: 'asking_reg' });
+    return { 
+      text: "🔐 *First-time Setup*\n\nTo use the grievance system, please verify your identity.\n\nEnter your *Register Number* (e.g., 312221104001):",
+      keyboard: { keyboard: [['❌ Cancel']], resize_keyboard: true }
+    };
+  }
+
+  if (text === '❌ Cancel') {
+    await setCache(stateKey, null);
+    return MAIN_MENU;
+  }
+
   let nextState = { ...state };
+  let response;
 
   if (state.step === 'asking_reg') {
     nextState.register_number = text;
+    nextState.step = 'asking_name';
+    await setCache(stateKey, nextState);
+    response = { 
+      text: "✅ Register number saved!\n\nNow enter your *Full Name*:",
+      keyboard: { keyboard: [['❌ Cancel']], resize_keyboard: true }
+    };
+  } else if (state.step === 'asking_name') {
+    nextState.name = text;
     nextState.step = 'asking_dept';
-    response = "Please enter your **Department** (e.g., CSE, EEE, Mech):";
+    await setCache(stateKey, nextState);
+    response = { 
+      text: "Now enter your *Department* (e.g., CSE, ECE, EEE, Mech, IT):",
+      keyboard: { keyboard: [['CSE', 'ECE'], ['EEE', 'Mech'], ['IT', 'Civil'], ['❌ Cancel']], resize_keyboard: true }
+    };
   } else if (state.step === 'asking_dept') {
     nextState.department = text;
     nextState.step = 'asking_year';
-    response = "Please enter your **Year of Study** (1, 2, 3, or 4):";
+    await setCache(stateKey, nextState);
+    response = { 
+      text: "Enter your *Year of Study*:",
+      keyboard: { keyboard: [['1st Year', '2nd Year'], ['3rd Year', '4th Year'], ['❌ Cancel']], resize_keyboard: true }
+    };
   } else if (state.step === 'asking_year') {
-    const year = parseInt(text);
-    if (isNaN(year) || year < 1 || year > 4) {
-      return "Invalid year. Please enter a number between 1 and 4:";
+    const yearMap = { '1st Year': 1, '2nd Year': 2, '3rd Year': 3, '4th Year': 4, '1': 1, '2': 2, '3': 3, '4': 4 };
+    const year = yearMap[text];
+    if (!year) {
+      return { 
+        text: "⚠️ Invalid! Please tap one of the year buttons:",
+        keyboard: { keyboard: [['1st Year', '2nd Year'], ['3rd Year', '4th Year']], resize_keyboard: true }
+      };
     }
-    
+
     await verifyUser(chatId, {
       register_number: nextState.register_number,
+      name: nextState.name,
       department: nextState.department,
-      year: year
+      year
     });
 
-    response = "✅ **Verification Successful!** You can now register complaints. Use the menu below:";
-    nextState = null;
+    await setCache(stateKey, null);
+    return {
+      text: `✅ *Verified Successfully!*\n\nWelcome, *${nextState.name}*! (${nextState.department}, Year ${year})\n\nYou can now register and track your complaints.`,
+      keyboard: MAIN_MENU.keyboard
+    };
   }
-
-  if (nextState) await setCache(stateKey, nextState);
-  else await setCache(stateKey, null);
 
   return response;
 };
 
 /**
- * Lists all complaints for a specific user
+ * Lists recent complaints for a user
  */
 export const listUserComplaints = async (chatId) => {
   try {
     const complaints = await Complaint.find({ telegram_id: chatId }).sort({ created_at: -1 }).limit(5);
-    if (complaints.length === 0) return "You haven't submitted any complaints yet.";
-    
-    let text = "📋 **Your Recent Complaints**\n\n";
+    if (complaints.length === 0) return { 
+      text: "📋 You haven't submitted any complaints yet.\n\nUse *Register Complaint* to submit one.",
+      keyboard: MAIN_MENU.keyboard
+    };
+
+    let text = "📋 *Your Recent Complaints*\n\n";
     complaints.forEach((c, i) => {
-        text += `${i+1}. **${c.complaint_id}** — ${c.status.toUpperCase()}\n   Category: ${c.category}\n\n`;
+      const statusIcon = c.status === 'resolved' ? '✅' : c.status === 'in_progress' ? '🔄' : '⏳';
+      text += `${i + 1}. *${c.complaint_id}* ${statusIcon}\n   • Category: ${c.category}\n   • Status: ${c.status.toUpperCase()}\n\n`;
     });
-    return text;
-  } catch (e) { return "Error fetching your complaints."; }
+    return { text, keyboard: MAIN_MENU.keyboard };
+  } catch (e) {
+    return { text: "Error fetching complaints. Please try again.", keyboard: MAIN_MENU.keyboard };
+  }
 };
 
 /**
- * Handles the Main Grievance Flow Controller (Updated)
+ * Main Grievance Flow Controller
  */
 export const handleGrievanceFlow = async (chatId, text, message) => {
+  // --- Handle menu shortcuts BEFORE checking verification ---
+  if (text === '/start' || text === '🏫 Back to Menu') return MAIN_MENU;
+
+  if (text === '💡 FAQ / Help') {
+    return {
+      text: "💡 *MSAJCE FAQ & Help*\n\n" +
+            "• *Hostel Timings*: 6:00 AM – 8:30 PM\n" +
+            "• *Bus Routes*: Ask the MSAJCE Assistant bot\n" +
+            "• *Office Hours*: Mon–Fri, 9:00 AM – 4:30 PM\n" +
+            "• *Exam Timetable*: Check msajce-edu.in\n" +
+            "• *Complaint ID*: Use GRV-XXXX to track status\n\n" +
+            "For any other help, tap 📞 Contact Administration.",
+      keyboard: MAIN_MENU.keyboard
+    };
+  }
+
+  if (text === '📞 Contact Administration') {
+    return {
+      text: "📞 *Administration Contacts*\n\n" +
+            "• *College Office*: +91 99400 04500\n" +
+            "• *Email*: msajce.office@gmail.com\n" +
+            "• *Principal*: principal@msajce-edu.in\n" +
+            "• *Address*: 34, Rajiv Gandhi Salai (OMR), Siruseri IT Park, Chennai – 603103",
+      keyboard: MAIN_MENU.keyboard
+    };
+  }
+
+  if (text === '🚨 Emergency Complaint') {
+    return {
+      text: "🚨 *Emergency Grievance*\n\nYour complaint will be *immediately escalated* to the Principal and Disciplinary Committee.\n\nPlease use *📝 Register Complaint* and select *Harassment / Misconduct* as the category.",
+      keyboard: MAIN_MENU.keyboard
+    };
+  }
+
+  if (text === '📋 My Complaints') {
+    const user = await getOrCreateUser(chatId);
+    if (!user.verified) return MAIN_MENU;
+    return await listUserComplaints(chatId);
+  }
+
+  if (text === '🔍 Track Complaint') {
+    await setCache(`track_state:${chatId}`, true);
+    return {
+      text: "🔍 *Track Your Complaint*\n\nEnter your Complaint ID (e.g., *GRV-2043*):",
+      keyboard: { keyboard: [['🏠 Back to Menu']], resize_keyboard: true }
+    };
+  }
+
+  // --- Check verification for complaint registration ---
   const user = await getOrCreateUser(chatId);
-  if (!user.verified) return await handleVerificationFlow(chatId, text);
-
-  // My Complaints Shortcut
-  if (text.includes('My Complaints')) return await listUserComplaints(chatId);
-  
-  // FAQ / Help Shortcut
-  if (text.includes('FAQ / Help')) {
-    return "💡 **MSAJCE FAQ & Help**\n\n" +
-           "• **Hostel Timings**: 6:00 AM - 8:30 PM\n" +
-           "• **Bus Routes**: Check 'Transport' in main bot menu\n" +
-           "• **Office Timings**: 9:00 AM - 4:30 PM\n" +
-           "• **Exam Timetable**: Available on college website\n\n" +
-           "Use 'Register Complaint' for official grievances.";
+  if (!user.verified) {
+    return await handleVerificationFlow(chatId, text);
   }
 
-  // Contact administration
-  if (text.includes('Contact Administration')) {
-      return "📞 **Administration Contact**\n\n• **General Office**: 044-27477025\n• **Email**: info@msajce-edu.in\n• **Address**: OMR, IT Highway, Chennai.";
+  // Trigger verification from menu
+  if (text === '📝 Register Complaint') {
+    const stateKey = `${COMPLAINT_STATE_PREFIX}${chatId}`;
+    const newState = { step: 'asking_category' };
+    await setCache(stateKey, newState);
+    return {
+      text: "📝 *New Complaint Registration*\n\nSelect a category:",
+      keyboard: {
+        keyboard: [
+          ['Hostel Issues', 'Transport / Bus'],
+          ['Mess / Food', 'Faculty Issues'],
+          ['Infrastructure', 'WiFi / IT Issues'],
+          ['Administration', 'Harassment / Misconduct'],
+          ['Other', '❌ Cancel']
+        ],
+        resize_keyboard: true,
+        one_time_keyboard: true
+      }
+    };
   }
 
+  // --- Active complaint registration state machine ---
   const stateKey = `${COMPLAINT_STATE_PREFIX}${chatId}`;
-  const state = await getCache(stateKey) || { step: 'init' };
-  
-  let response = "";
+  const state = await getCache(stateKey);
+
+  if (!state) {
+    return MAIN_MENU;
+  }
+
   let nextState = { ...state };
 
-  // STEP-BY-STEP FLOW
-  if (text === '1️⃣ Register Complaint' || state.step === 'init') {
-    nextState.step = 'asking_category';
-    const initRes = {
-      text: "Select a **Complaint Category**:",
-      keyboard: [
-        ['Hostel Issues', 'Transport / Bus'],
-        ['Mess / Food', 'Faculty Issues'],
-        ['Infrastructure', 'WiFi / IT Issues'],
-        ['Administration', 'Harassment / Misconduct'],
-        ['Other']
-      ]
-    };
-    await setCache(stateKey, nextState);
-    return initRes;
+  if (text === '❌ Cancel') {
+    await setCache(stateKey, null);
+    return { text: "❌ Complaint registration cancelled.", keyboard: MAIN_MENU.keyboard };
   }
 
   if (state.step === 'asking_category') {
     const categories = Object.keys(DEPT_ROUTING);
-    if (!categories.includes(text)) return "Please select a valid category from the buttons.";
-    
+    if (!categories.includes(text)) return {
+      text: "⚠️ Please select a valid category using the buttons below:",
+      keyboard: {
+        keyboard: [
+          ['Hostel Issues', 'Transport / Bus'],
+          ['Mess / Food', 'Faculty Issues'],
+          ['Infrastructure', 'WiFi / IT Issues'],
+          ['Administration', 'Harassment / Misconduct'],
+          ['Other', '❌ Cancel']
+        ],
+        resize_keyboard: true
+      }
+    };
+
     nextState.category = text;
     nextState.step = 'asking_desc';
+    await setCache(stateKey, nextState);
     return {
-      text: `Category: **${text}**\n\nPlease describe your issue clearly. Include location, time, and specific details:`,
-      keyboard: [['Cancel']]
+      text: `📂 Category: *${text}*\n\nPlease describe your issue in detail. Include:\n• Location / Date / Time\n• People involved\n• What happened`,
+      keyboard: { keyboard: [['❌ Cancel']], resize_keyboard: true }
     };
   }
 
   if (state.step === 'asking_desc') {
-    if (text === 'Cancel') {
-      await setCache(stateKey, null);
-      return "Complaint registration cancelled.";
-    }
     nextState.description = text;
     nextState.step = 'asking_evidence';
+    await setCache(stateKey, nextState);
     return {
-      text: "Would you like to upload any **Evidence**? (Image, Document, or Video)\n\nType 'Skip' if you don't have any.",
-      keyboard: [['Skip', 'Cancel']]
+      text: "📎 Would you like to attach *Evidence*?\n\n• Send a photo, document, or video\n• Or tap *Skip* to continue without evidence",
+      keyboard: { keyboard: [['⏭️ Skip Evidence', '❌ Cancel']], resize_keyboard: true }
     };
   }
 
   if (state.step === 'asking_evidence') {
-    if (text === 'Cancel') {
-      await setCache(stateKey, null);
-      return "Complaint registration cancelled.";
-    }
-    
     let evidenceUrl = 'None';
-    if (message.photo) {
-        // In a real app, upload to Cloudinary. For now, we'll store the file_id or a placeholder.
-        evidenceUrl = `telegram_file_id:${message.photo[message.photo.length - 1].file_id}`;
-    } else if (message.document) {
-        evidenceUrl = `telegram_file_id:${message.document.file_id}`;
+    if (message?.photo) {
+      evidenceUrl = `tg_photo:${message.photo[message.photo.length - 1].file_id}`;
+    } else if (message?.document) {
+      evidenceUrl = `tg_doc:${message.document.file_id}`;
     }
-    
-    nextState.evidence_url = evidenceUrl;
-    
-    // Final Confirmation
+
     const grvId = await generateComplaintId();
     const dept = DEPT_ROUTING[nextState.category];
 
@@ -195,27 +295,40 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
       category: nextState.category,
       description: nextState.description,
       evidence_url: evidenceUrl,
-      department_assigned: dept
+      department_assigned: dept,
+      is_emergency: nextState.category === 'Harassment / Misconduct'
     });
 
     await newComplaint.save();
 
-    // Send Email Alert
+    // Email alert
     try {
       await transporter.sendMail({
         from: 'eventbooking.otp@gmail.com',
         to: 'cookwithcomali5@gmail.com',
-        subject: `[EMERGENCY: ${nextState.category === 'Harassment / Misconduct' ? 'YES' : 'NO'}] New Grievance: ${grvId}`,
-        text: `ID: ${grvId}\nCategory: ${nextState.category}\nStudent: ${user.name || 'Anonymous'}\nDescription: ${nextState.description}\nAssigned To: ${dept}`
+        subject: `[${nextState.category === 'Harassment / Misconduct' ? '🚨 URGENT' : 'NEW'}] Grievance ${grvId}`,
+        html: `<h2>New Grievance: ${grvId}</h2>
+          <p><b>Category:</b> ${nextState.category}</p>
+          <p><b>Student:</b> ${user.name || 'Anonymous'} (${user.register_number})</p>
+          <p><b>Department:</b> ${user.department}</p>
+          <p><b>Description:</b></p><p>${nextState.description}</p>
+          <p><b>Assigned To:</b> ${dept}</p>`
       });
     } catch (e) { logger.error(`Email fail: ${e.message}`); }
 
-    response = `✅ **Complaint Submitted Successfully**\n\n**Complaint ID:** ${grvId}\n**Category:** ${nextState.category}\n**Status:** Submitted\n**Assigned To:** ${dept}\n\nYou can track this using the **Track Complaint** option.`;
     await setCache(stateKey, null);
-    return response;
+    return {
+      text: `✅ *Complaint Submitted Successfully!*\n\n` +
+            `🆔 *Complaint ID:* \`${grvId}\`\n` +
+            `📂 *Category:* ${nextState.category}\n` +
+            `🏢 *Assigned To:* ${dept}\n` +
+            `📊 *Status:* Submitted\n\n` +
+            `Save your Complaint ID to track progress. You'll be notified of updates.`,
+      keyboard: MAIN_MENU.keyboard
+    };
   }
 
-  return "I didn't quite catch that. Use the menu or type /start.";
+  return MAIN_MENU;
 };
 
 /**
@@ -223,11 +336,25 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
  */
 export const trackComplaint = async (complaintId) => {
   try {
-    const grv = await Complaint.findOne({ complaint_id: complaintId.toUpperCase() });
-    if (!grv) return "❌ Complaint ID not found. Please double-check and try again.";
-    
-    return `**Complaint Tracking** 🔍\n\n**ID:** ${grv.complaint_id}\n**Category:** ${grv.category}\n**Status:** ${grv.status.toUpperCase()}\n**Assigned To:** ${grv.department_assigned}\n**Last Update:** ${new Date(grv.updated_at).toLocaleDateString()}`;
+    const grv = await Complaint.findOne({ complaint_id: complaintId.toUpperCase().trim() });
+    if (!grv) return {
+      text: "❌ Complaint ID not found. Please check the ID and try again.\n\nFormat: *GRV-2043*",
+      keyboard: MAIN_MENU.keyboard
+    };
+
+    const statusIcon = grv.status === 'resolved' ? '✅' : grv.status === 'in_progress' ? '🔄' : '⏳';
+    return {
+      text: `🔍 *Complaint Tracking*\n\n` +
+            `🆔 *ID:* ${grv.complaint_id}\n` +
+            `📂 *Category:* ${grv.category}\n` +
+            `${statusIcon} *Status:* ${grv.status.toUpperCase()}\n` +
+            `🏢 *Assigned To:* ${grv.department_assigned}\n` +
+            `📅 *Submitted:* ${new Date(grv.created_at).toLocaleDateString('en-IN')}\n` +
+            `🔄 *Updated:* ${new Date(grv.updated_at).toLocaleDateString('en-IN')}` +
+            (grv.admin_response ? `\n\n💬 *Admin Response:* ${grv.admin_response}` : ''),
+      keyboard: MAIN_MENU.keyboard
+    };
   } catch (e) {
-    return "Error tracking complaint.";
+    return { text: "Error tracking complaint. Please try again.", keyboard: MAIN_MENU.keyboard };
   }
 };
