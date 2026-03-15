@@ -15,7 +15,9 @@ export default async function handler(req, res) {
   const chatId = message.chat.id;
   const rawText = (message.text || body?.callback_query?.data || '').trim();
 
-  if (!rawText) return res.status(200).send('ok');
+  const hasMedia = !!(message.photo || message.document || message.video || message.voice);
+
+  if (!rawText && !hasMedia) return res.status(200).send('ok');
 
   try {
     await connectDB();

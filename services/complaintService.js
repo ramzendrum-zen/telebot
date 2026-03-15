@@ -9,8 +9,8 @@ import { getOrCreateUser, verifyUser } from './userService.js';
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'eventbooking.otp@gmail.com',
-    pass: 'bcfr ckfv emwp vwbi'
+    user: config.email.user,
+    pass: config.email.pass
   }
 });
 
@@ -202,11 +202,15 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
 
   // --- Check verification for complaint registration ---
   const user = await getOrCreateUser(chatId);
+  if (!user) {
+    return { text: "⚠️ Error accessing your profile. Please try /start again.", keyboard: MAIN_MENU.keyboard };
+  }
+
   if (!user.verified) {
     return await handleVerificationFlow(chatId, text);
   }
 
-  // Trigger verification from menu
+  // Handle Register Complaint button
   if (text === '📝 Register Complaint') {
     const stateKey = `${COMPLAINT_STATE_PREFIX}${chatId}`;
     const newState = { step: 'asking_category' };
@@ -235,12 +239,12 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
     return MAIN_MENU;
   }
 
-  let nextState = { ...state };
-
   if (text === '❌ Cancel') {
     await setCache(stateKey, null);
     return { text: "❌ Complaint registration cancelled.", keyboard: MAIN_MENU.keyboard };
   }
+
+  let nextState = { ...state };
 
   if (state.step === 'asking_category') {
     const categories = Object.keys(DEPT_ROUTING);
@@ -268,25 +272,44 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
   }
 
   if (state.step === 'asking_desc') {
+    if (!text || text.length < 5) return { 
+        text: "⚠️ Description too short. Please provide more details:", 
+        keyboard: { keyboard: [['❌ Cancel']], resize_keyboard: true } 
+    };
     nextState.description = text;
     nextState.step = 'asking_evidence';
     await setCache(stateKey, nextState);
     return {
-      text: "📎 Would you like to attach *Evidence*?\n\n• Send a photo, document, or video\n• Or tap *Skip* to continue without evidence",
-      keyboard: { keyboard: [['⏭️ Skip Evidence', '❌ Cancel']], resize_keyboard: true }
+      text: "📎 Would you like to attach *Evidence*?\n\n" +
+            "• Send a **Photo**, **Document**, or **Video**\n" +
+            "• Or tap **⏭️ Skip Evidence** to finish",
+      keyboard: { keyboard: [['⏭️ Skip Evidence'], ['❌ Cancel']], resize_keyboard: true }
     };
   }
 
   if (state.step === 'asking_evidence') {
-    let evidenceUrl = 'None';
+    let evidenceUrl = state.evidence_url || 'None';
+    const isSkip = text === '⏭️ Skip Evidence';
+    
+    // Handle Media Upload
     if (message?.photo) {
       evidenceUrl = `tg_photo:${message.photo[message.photo.length - 1].file_id}`;
     } else if (message?.document) {
       evidenceUrl = `tg_doc:${message.document.file_id}`;
+    } else if (message?.video) {
+        evidenceUrl = `tg_video:${message.video.file_id}`;
     }
 
+    // If it was a photo and not a "Skip" or "Cancel", we can either finish immediately or wait for more/confirmation
+    // For simplicity, we finish now but prioritize the media if present.
     const grvId = await generateComplaintId();
-    const dept = DEPT_ROUTING[nextState.category];
+    const dept = DEPT_ROUTING[nextState.category] || 'General Admin';
+
+    // Guard against missing state
+    if (!nextState.category || !nextState.description) {
+        await setCache(stateKey, null);
+        return { text: "⚠️ Session expired. Please start again.", keyboard: MAIN_MENU.keyboard };
+    }
 
     const newComplaint = new Complaint({
       complaint_id: grvId,
@@ -301,20 +324,35 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
 
     await newComplaint.save();
 
-    // Email alert
+    // Email alert (Gmail)
     try {
       await transporter.sendMail({
-        from: 'eventbooking.otp@gmail.com',
+        from: '"MSAJCE Grievance Bot" <eventbooking.otp@gmail.com>',
         to: 'cookwithcomali5@gmail.com',
         subject: `[${nextState.category === 'Harassment / Misconduct' ? '🚨 URGENT' : 'NEW'}] Grievance ${grvId}`,
-        html: `<h2>New Grievance: ${grvId}</h2>
-          <p><b>Category:</b> ${nextState.category}</p>
-          <p><b>Student:</b> ${user.name || 'Anonymous'} (${user.register_number})</p>
-          <p><b>Department:</b> ${user.department}</p>
-          <p><b>Description:</b></p><p>${nextState.description}</p>
-          <p><b>Assigned To:</b> ${dept}</p>`
+        html: `
+          <div style="font-family: Arial; padding: 20px; border: 1px solid #ddd; border-top: 5px solid ${nextState.category === 'Harassment / Misconduct' ? '#d9534f' : '#337ab7'};">
+            <h2 style="color: #333;">New Grievance Submitted</h2>
+            <p><b>ID:</b> ${grvId}</p>
+            <p><b>Category:</b> ${nextState.category}</p>
+            <p><b>Severity:</b> ${nextState.category === 'Harassment / Misconduct' ? 'EMERGENCY' : 'Standard'}</p>
+            <hr/>
+            <p><b>Student Name:</b> ${user.name || 'N/A'}</p>
+            <p><b>Reg No:</b> ${user.register_number || 'N/A'}</p>
+            <p><b>Dept:</b> ${user.department} (Year ${user.year})</p>
+            <hr/>
+            <p><b>Description:</b></p>
+            <div style="background: #f9f9f9; padding: 10px; border-radius: 5px;">${nextState.description}</div>
+            <p><b>Evidence:</b> ${evidenceUrl !== 'None' ? 'Attached (View in Telegram)' : 'None'}</p>
+            <p><b>Assigned To:</b> ${dept}</p>
+            <p style="font-size: 12px; color: #777; margin-top: 20px;">This is an automated notification from the MSAJCE Grievance System.</p>
+          </div>
+        `
       });
-    } catch (e) { logger.error(`Email fail: ${e.message}`); }
+      logger.info(`Email sent successfully for ${grvId}`);
+    } catch (e) { 
+      logger.error(`Email fail for ${grvId}: ${e.message}`); 
+    }
 
     await setCache(stateKey, null);
     return {
@@ -323,10 +361,11 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
             `📂 *Category:* ${nextState.category}\n` +
             `🏢 *Assigned To:* ${dept}\n` +
             `📊 *Status:* Submitted\n\n` +
-            `Save your Complaint ID to track progress. You'll be notified of updates.`,
+            `You will be notified via Telegram when an administrator responds to your complaint.`,
       keyboard: MAIN_MENU.keyboard
     };
   }
+
 
   return MAIN_MENU;
 };

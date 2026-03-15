@@ -11,6 +11,11 @@ const config = {
     webhookUrl: process.env.WEBHOOK_URL,
   },
   
+  email: {
+    user: process.env.EMAIL_USER || 'eventbooking.otp@gmail.com',
+    pass: process.env.EMAIL_PASS || 'bcfr ckfv emwp vwbi'
+  },
+  
   openRouter: {
     apiKey: process.env.OPENROUTER_API_KEY,
     models: {
