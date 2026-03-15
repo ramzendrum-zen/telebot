@@ -23,8 +23,14 @@ export default async function handler(req, res) {
   try {
     await connectDB();
 
+    // 1. Force Remove Legacy Keyboards / Handle Start
+    if (rawText === '/start') {
+      await sendTelegramMessage(chatId, "👋 Welcome to the *MSAJCE Academic Assistant*!\n\nI am here to help you with college information, bus routes, faculty details, and admissions. Just ask me your question!");
+      return res.status(200).send('ok');
+    }
+
     // ──────────────────────────────────────────────
-    // 1. RAG Academic Assistant with Query Rewriting
+    // 2. RAG Academic Assistant with Query Rewriting
     // ──────────────────────────────────────────────
     const normalizedQuery = normalizeQuery(rawText);
     const cacheKey = `v16:assistant:${normalizeText(normalizedQuery)}`;
@@ -120,7 +126,8 @@ async function sendTelegramMessage(chatId, text) {
       body: JSON.stringify({
         chat_id: chatId,
         text: text,
-        parse_mode: 'Markdown'
+        parse_mode: 'Markdown',
+        reply_markup: { remove_keyboard: true }
       }),
       signal: AbortSignal.timeout(10000)
     });
@@ -130,7 +137,11 @@ async function sendTelegramMessage(chatId, text) {
       await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id: chatId, text: text }),
+        body: JSON.stringify({ 
+          chat_id: chatId, 
+          text: text,
+          reply_markup: { remove_keyboard: true }
+        }),
         signal: AbortSignal.timeout(10000)
       });
     }
