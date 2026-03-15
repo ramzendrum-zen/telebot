@@ -334,21 +334,64 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
 
     try {
       await transporter.sendMail({
-        from: '"MSAJCE Grievance System" <eventbooking.otp@gmail.com>',
+        from: '"MSAJCE Grievance Automation" <eventbooking.otp@gmail.com>',
         to: 'cookwithcomali5@gmail.com',
-        subject: `[NEW] Grievance ${grvId} - ${state.category}`,
+        subject: `🚨 [${state.category.toUpperCase()}] New Grievance: ${grvId}`,
         html: `
-            <div style="font-family: sans-serif; border: 1px solid #eee; padding: 20px;">
-                <h2>New Grievance: ${grvId}</h2>
-                <p><b>Category:</b> ${state.category}</p>
-                <p><b>Student:</b> ${user.name} (${user.register_number || user.employee_id})</p>
-                <p><b>Department:</b> ${user.department}</p>
-                <p><b>Role:</b> ${user.role.toUpperCase()}</p>
-                <hr/>
-                <p><b>Issue Description:</b></p>
-                <div style="background: #f9f9f9; padding: 10px;">${state.description}</div>
-                <hr/>
-                <p><i>The media evidence is attached to this email.</i></p>
+            <div style="background-color: #0a0a0a; color: #ffffff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; border-radius: 24px; max-width: 600px; margin: auto; border: 1px solid #1f1f1f;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 30px;">
+                    <div style="background: linear-gradient(135deg, #3b82f6, #6366f1); padding: 12px; border-radius: 12px; font-size: 20px;">🏫</div>
+                    <h1 style="margin: 0; font-size: 22px; font-weight: 900; letter-spacing: -0.5px; color: #ffffff;">MSAJCE <span style="color: #3b82f6;">ADMIN</span></h1>
+                </div>
+
+                <div style="background: #141414; padding: 25px; border-radius: 20px; border: 1px solid #262626; margin-bottom: 25px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+                        <div>
+                            <span style="font-size: 10px; font-weight: 900; color: #737373; letter-spacing: 2px; text-transform: uppercase; display: block; margin-bottom: 5px;">TICKET ID</span>
+                            <span style="font-size: 18px; font-weight: 900; color: #3b82f6; font-family: monospace;">${grvId}</span>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="font-size: 10px; font-weight: 900; color: #737373; letter-spacing: 2px; text-transform: uppercase; display: block; margin-bottom: 5px;">STATUS</span>
+                            <span style="font-size: 10px; font-weight: 900; color: #fbbf24; background: rgba(251, 191, 36, 0.1); padding: 4px 10px; border-radius: 100px; border: 1px solid rgba(251, 191, 36, 0.2);">UNRESOLVED</span>
+                        </div>
+                    </div>
+                    
+                    <h2 style="margin: 0 0 10px 0; font-size: 24px; font-weight: 900; color: #ffffff;">${state.category}</h2>
+                    <p style="margin: 0; font-size: 14px; color: #a3a3a3; font-weight: 500;">Assigned to: <b style="color: #3b82f6;">${dept}</b></p>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <h3 style="font-size: 12px; font-weight: 900; color: #525252; letter-spacing: 2px; text-transform: uppercase; border-bottom: 1px solid #1f1f1f; padding-bottom: 10px; margin-bottom: 15px;">User Information</h3>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 8px 0; color: #737373; font-size: 13px; font-weight: 500;">Full Name</td>
+                            <td style="padding: 8px 0; color: #ffffff; font-size: 13px; font-weight: 700; text-align: right;">${user.name}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #737373; font-size: 13px; font-weight: 500;">Role / Dept</td>
+                            <td style="padding: 8px 0; color: #ffffff; font-size: 13px; font-weight: 700; text-align: right;">${user.role.toUpperCase()} • ${user.department}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #737373; font-size: 13px; font-weight: 500;">ID Number</td>
+                            <td style="padding: 8px 0; color: #3b82f6; font-size: 13px; font-weight: 900; text-align: right; font-family: monospace;">${user.register_number || user.employee_id}</td>
+                        </tr>
+                        ${user.phone ? `
+                        <tr>
+                            <td style="padding: 8px 0; color: #737373; font-size: 13px; font-weight: 500;">Phone</td>
+                            <td style="padding: 8px 0; color: #ffffff; font-size: 13px; font-weight: 700; text-align: right;">${user.phone}</td>
+                        </tr>` : ''}
+                    </table>
+                </div>
+
+                <div style="background: #000000; padding: 25px; border-radius: 20px; border: 1px solid #1f1f1f; margin-bottom: 30px;">
+                    <h3 style="font-size: 12px; font-weight: 900; color: #3b82f6; letter-spacing: 2px; text-transform: uppercase; margin-top: 0; margin-bottom: 15px;">Issue Description</h3>
+                    <p style="margin: 0; font-size: 15px; color: #d4d4d4; line-height: 1.6; font-weight: 500;">${state.description}</p>
+                </div>
+
+                <div style="text-align: center; border-top: 1px solid #1f1f1f; padding-top: 30px; margin-top: 10px;">
+                    <p style="font-size: 11px; color: #525252; margin-bottom: 20px; font-weight: 500;">This is an automated notification from the MSAJCE Grievance Portal. Manage this ticket in your dashboard.</p>
+                    <a href="https://telebot-ram.vercel.app/admin" style="background: #3b82f6; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 12px; font-size: 13px; font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);">OPEN DASHBOARD</a>
+                </div>
             </div>
         `,
         attachments: attachments
