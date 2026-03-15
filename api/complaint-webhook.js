@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import connectDB from '../database/mongo.js';
 import { handleGrievanceFlow, trackComplaint, MAIN_MENU } from '../services/complaintService.js';
 import { getCache, setCache } from '../services/cacheService.js';
@@ -88,7 +87,7 @@ async function sendReply(chatId, result) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
-      signal: AbortSignal.timeout(10000)
+      signal: AbortSignal.timeout(8000)
     });
   } catch (err) {
     logger.error(`Send Message Fail: ${err.message}`);
