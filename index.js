@@ -23,8 +23,8 @@ app.get('/api/monitor', monitorHandler);
 app.use('/api/admin', adminRouter);
 
 // Dashboard Frontend (React Build)
-app.use(express.static('dashboard/dist'));
-app.get('/admin/:any*', (req, res) => {
+app.use('/admin', express.static(path.join(__dirname, 'dashboard', 'dist')));
+app.use('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'dashboard', 'dist', 'index.html'));
 });
 

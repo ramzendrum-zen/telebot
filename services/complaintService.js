@@ -4,6 +4,8 @@ import User from '../database/models/User.js';
 import config from '../config/config.js';
 import logger from '../utils/logger.js';
 import nodemailer from 'nodemailer';
+import axios from 'axios';
+import path from 'path';
 import { getOrCreateUser, verifyUser } from './userService.js';
 import { uploadTelegramMedia } from '../utils/cloudinary.js';
 
@@ -124,7 +126,6 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
     return { text: "🔍 Enter Complaint ID:", keyboard: { keyboard: [['🏫 Back to Menu']], resize_keyboard: true } };
   }
 
-  // State Machine
   const stateKey = `${COMPLAINT_STATE_PREFIX}${chatId}`;
   const state = await getCache(stateKey);
 
@@ -163,17 +164,39 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
 
   if (state.step === 'asking_evidence') {
     const isSkip = text === '⏭️ Skip Evidence';
-    let evidenceUrl = 'None';
-    
-    const media = message?.photo?.[message.photo.length-1] || message?.document || message?.video;
-    if (media && !isSkip) {
-      const token = config.telegram.complaintBotToken || config.telegram.token;
-      const res = await uploadTelegramMedia(token, media.file_id);
-      evidenceUrl = res?.url || `tg_file:${media.file_id}`;
-    }
-
     const grvId = await generateComplaintId();
     const dept = DEPT_ROUTING[state.category] || 'General Admin';
+
+    let attachments = [];
+    let evidenceUrl = 'None';
+    
+    // Process Media
+    const media = message?.photo?.[message.photo.length-1] || message?.document || message?.video;
+    if (media && !isSkip) {
+      try {
+        const token = config.telegram.complaintBotToken || config.telegram.token;
+        const fileInfo = await axios.get(`https://api.telegram.org/bot${token}/getFile?file_id=${media.file_id}`);
+        const filePath = fileInfo.data?.result?.file_path;
+        if (filePath) {
+            const fileUrl = `https://api.telegram.org/file/bot${token}/${filePath}`;
+            const fileResponse = await axios.get(fileUrl, { responseType: 'arraybuffer' });
+            attachments.push({
+                filename: `evidence_${grvId}${path.extname(filePath) || '.jpg'}`,
+                content: Buffer.from(fileResponse.data)
+            });
+
+            // Cloudinary Fallback
+            if (config.cloudinary.cloudName) {
+                const res = await uploadTelegramMedia(token, media.file_id);
+                evidenceUrl = res?.url || `tg_file:${media.file_id}`;
+            } else {
+                evidenceUrl = `tg_file:${media.file_id}`;
+            }
+        }
+      } catch (e) {
+        logger.error(`Media processing failed: ${e.message}`);
+      }
+    }
 
     const newComplaint = new Complaint({
       complaint_id: grvId,
@@ -189,15 +212,31 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
 
     try {
       await transporter.sendMail({
-        from: '"MSAJCE Grievance" <eventbooking.otp@gmail.com>',
+        from: '"MSAJCE Grievance System" <eventbooking.otp@gmail.com>',
         to: 'cookwithcomali5@gmail.com',
-        subject: `[NEW] Grievance ${grvId}`,
-        html: `<b>ID:</b> ${grvId}<br/><b>Student:</b> ${user.name}<br/><b>Desc:</b> ${state.description}<br/><br/><img src="${evidenceUrl}" width="300"/>`
+        subject: `[NEW] Grievance ${grvId} - ${state.category}`,
+        html: `
+            <div style="font-family: sans-serif; border: 1px solid #eee; padding: 20px;">
+                <h2>New Grievance: ${grvId}</h2>
+                <p><b>Category:</b> ${state.category}</p>
+                <p><b>Student:</b> ${user.name} (${user.register_number})</p>
+                <p><b>Department:</b> ${user.department}</p>
+                <hr/>
+                <p><b>Issue Description:</b></p>
+                <div style="background: #f9f9f9; padding: 10px;">${state.description}</div>
+                <hr/>
+                <p><i>The media evidence is attached to this email.</i></p>
+            </div>
+        `,
+        attachments: attachments
       });
-    } catch (e) { logger.error(`Mail Error: ${e.message}`); }
+    } catch (e) { logger.error(`Email Error: ${e.message}`); }
 
     await setCache(stateKey, null);
-    return { text: `✅ *Submitted!*\n\nID: \`${grvId}\``, keyboard: MAIN_MENU.keyboard };
+    return { 
+      text: `✅ *Grievance Submitted!* \n\nID: \`${grvId}\` \n\nThe administration (assigned to *${dept}*) has been notified with your evidence via email.`,
+      keyboard: MAIN_MENU.keyboard 
+    };
   }
 
   return MAIN_MENU;
