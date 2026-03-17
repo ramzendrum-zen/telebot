@@ -30,7 +30,13 @@ const userSchema = new mongoose.Schema({
   last_topic: { type: String },
   last_question: { type: String },
   
-  created_at: { type: Date, default: Date.now }
+  created_at: { type: Date, default: Date.now },
+  updated_at: { type: Date, default: Date.now }
+});
+
+// Update updated_at on change
+userSchema.pre('save', function() {
+  this.updated_at = Date.now();
 });
 
 const User = mongoose.model('User', userSchema);

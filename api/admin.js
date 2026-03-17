@@ -67,22 +67,22 @@ router.get('/stats', async (req, res) => {
         const alertsToday = await Complaint.countDocuments({ is_emergency: true, created_at: { $gte: startOfDay } });
         const complaintsToday = await Complaint.countDocuments({ created_at: { $gte: startOfDay } });
 
-        constByCategory = await Complaint.aggregate([
+        const constByCategory = (await Complaint.aggregate([
             { $group: { _id: "$category", count: { $sum: 1 } } }
-        ]);
+        ])) || [];
 
-        constByStatus = await Complaint.aggregate([
+        const constByStatus = (await Complaint.aggregate([
             { $group: { _id: "$status", count: { $sum: 1 } } }
-        ]);
+        ])) || [];
 
         res.json({
-            users: { total: totalUsers, active_today: activeToday },
+            users: { total: totalUsers || 0, active_today: activeToday || 0 },
             complaints: {
-                total: totalComplaints,
-                open: openComplaints,
-                resolved: resolvedComplaints,
-                alerts_today: alertsToday,
-                today: complaintsToday
+                total: totalComplaints || 0,
+                open: openComplaints || 0,
+                resolved: resolvedComplaints || 0,
+                alerts_today: alertsToday || 0,
+                today: complaintsToday || 0
             },
             byCategory: constByCategory,
             byStatus: constByStatus

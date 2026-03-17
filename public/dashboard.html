@@ -317,6 +317,10 @@
                     fetch('/api/monitor')
                 ]);
 
+                if (!statsRes.ok || !complaintsRes.ok || !usersRes.ok || !logsRes.ok) {
+                    throw new Error("One or more server requests failed");
+                }
+
                 stats = await statsRes.json();
                 complaints = await complaintsRes.json();
                 users = await usersRes.json();
@@ -328,10 +332,13 @@
                 renderUsers();
                 renderLogs();
                 
-                document.getElementById('loader').style.display = 'none';
                 document.getElementById('lastSync').innerText = 'SYNCED ' + new Date().toLocaleTimeString();
             } catch (e) {
                 console.error("Dashboard Fetch Fail", e);
+                document.getElementById('lastSync').innerText = 'CONNECTION ERROR';
+                document.getElementById('lastSync').style.color = 'var(--error)';
+            } finally {
+                document.getElementById('loader').style.display = 'none';
             }
         }
 
@@ -354,6 +361,10 @@
         }
 
         function renderOverview() {
+            if (!stats || !stats.users || !stats.complaints) {
+                console.warn("Stats data incomplete, skipping renderOverview");
+                return;
+            }
             document.getElementById('stat-total-users').innerText = stats.users.total;
             document.getElementById('stat-complaints-today').innerText = stats.complaints.today;
             document.getElementById('stat-emergency-today').innerText = stats.complaints.alerts_today;
