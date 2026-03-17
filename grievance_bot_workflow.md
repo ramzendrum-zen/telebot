@@ -1,68 +1,98 @@
-# 🛡️ MSAJCE Grievance Bot - Command & Workflow Blueprint
+# 🛡️ MSAJCE Grievance Bot - Institutional Workflow Blueprint
 
-## 🤖 Bot Overview
-The MSAJCE Grievance Bot is a professional, human-centric automated assistant designed to handle college-wide complaints, emergency alerts, and student/staff inquiries with high semantic precision and administrative accountability.
+## 🤖 Interaction Architecture
+The bot operates as an **Official Administrative Gateway**. It uses a state-driven conversational UI with strict adherence to institutional etiquette and data protection standards.
 
----
+```mermaid
+graph TD
+    Start["/start"] --> Unverified["Verification Workflow"]
+    Unverified --> Verified["Main Portal Dashboard"]
+    
+    subgraph "Portal Functions"
+        Verified --> B1["📝 Register Complaint"]
+        Verified --> B2["🚨 Emergency Alert"]
+        Verified --> B3["🔍 Track Complaint"]
+        Verified --> B4["👤 My Profile"]
+        Verified --> B5["💡 FAQ & Help"]
+    end
 
-## 🎮 CORE COMMANDS
+    B1 --> Privacy["Select Privacy Mode"]
+    Privacy --> Categories["Select Category"]
+    Categories --> Description["Submit Details"]
+    Description --> Evidence["Evidence Upload"]
+    Evidence --> Review["Final Review"]
+    Review --> Success["Submission Success"]
 
-### `/start`
-**Primary Entry Point**
-- **Unverified Users**: Automatically funneled into the **Profile Registration Workflow**.
-- **Verified Users**: Welcomes the user by name (e.g., "Hello, Mr. Ram!") and displays the **Main Dashboard**.
-
-### `/register` or `📝 Register Complaint`
-**Formal Grievance Submission**
-- **Flow**: Privacy Selection → Category Selection → Description → Evidence Upload → Submission.
-- **Privacy Mode**: Users can choose **Anonymous** (details hidden from admins) or **Visible**.
-
-### `🚨 Emergency Complaint`
-**High-Priority Alert System**
-- Triggers immediate notifications to the Principal, Security, and Administrative heads.
-- Collects: Incident Type, Precise Location, and Brief Description.
-
-### `/track` or `🔍 Track Complaint`
-**Ticket Monitoring**
-- Allows users to check live status (Submitted, Under Review, Resolved) using their **GRV-ID**.
-
-### `/profile` or `👤 My Profile`
-**Identity Management**
-- Displays current academic/staff details and verification status.
-
-### `💡 FAQ & Help`
-**Knowledge Retrieval**
-- Provides instant answers regarding college timings, contact info, vision, mission, and department details pulled from the verified knowledge base.
+    B2 --> EType["Emergency Type"]
+    EType --> ELoc["Exact Location"]
+    ELoc --> EConfirm["Immediate Broadcast"]
+    
+    B5 --> RAG["RAG Knowledge Assistant"]
+```
 
 ---
 
-## 🔄 WORKFLOW LOGIC
+## 🏛️ IDENTITY & REGISTRATION
 
-### 1. Registration Workflow
-1. **Salutation**: User selects "Mr." or "Ms." for personalized interaction.
-2. **Role**: Selects "Student" or "Staff".
-3. **Identification**: Enter University Register Number or Staff ID.
-4. **Name**: Full Name as per college records.
-5. **Department**: Dropdown selection of academic departments.
-6. **Year/Designation**: Academic year for students; Job role for staff.
-7. **Contact**: Interactive Telegram button to share Phone Number securely.
-
-### 2. Complaint Submission Workflow
-1. **Trigger**: User clicks "Register Complaint".
-2. **Privacy Choice**: "👤 Normal (Visible)" vs "🎭 Anonymous (Hide Identity)".
-3. **Category**: Select from 17 specific college departments (Hostel, Transport, Mess, etc.).
-4. **Description**: Human assistant asks, "_Certainly [Name], could you describe the issue in detail?_"
-5. **Evidence**: Optional photo/document upload.
-6. **Routing**: Automated routing to the specific Department Head via glassmorphism-styled email.
-
-### 3. Emergency Signal Workflow
-1. **Type**: Medical, Harassment, Theft, Fire.
-2. **Location**: Precise campus spot.
-3. **Alert**: Sends high-priority email with red-alert styling and emergency phone links.
+### `/start` (The Greeting)
+| Step | Bot Personality / Message | Options / Inputs |
+| :--- | :--- | :--- |
+| **Step 1** | "Welcome to the Official MSAJCE Grievance Assistance System..." | `[👨 Mr.]` `[👩 Ms.]` |
+| **Step 2** | "Thank you. Please select your role in the institution." | `[🎓 Student]` `[👨‍🏫 Staff]` |
+| **Step 3** | "Please enter your University Register Number / Staff ID." | *Manual ID Input* |
+| **Step 4** | "Thank you Mr. [Name]. We have verified your identity..." | `[CSE]` `[IT]` `[ECE]` ... |
+| **Step 5** | "Please confirm your phone number for official communication." | `[📱 Share Phone Number]` |
 
 ---
 
-## 🛠️ ADMIN INTEGRATION
-- All complaints are stored in **MongoDB** with 3072-dim support.
-- Emails are sent using **Nodemailer** with professional responsive templates.
-- Media evidence is hosted on **Cloudinary**.
+## 📝 COMPLAINT MANAGEMENT
+
+### `📝 Register Complaint`
+| Sequence | Interaction Message | User Options |
+| :--- | :--- | :--- |
+| **1. Privacy** | "Mr./Ms. [Name], how would you like to submit this?" | `[👤 Normal]` `[🎭 Anonymous]` |
+| **2. Category** | "Please select the category that best describes your issue." | `[🏠 Hostel]` `[🚌 Transport]` `[🍱 Mess]` `[📚 Academics]` ... |
+| **3. Details** | "Certainly Mr. [Name]. Please describe the issue in detail." | *Rich Text Input* |
+| **4. Evidence** | "You may upload supporting evidence (photo/doc) now." | `[➡ Skip]` or *Upload* |
+| **5. Review** | "Please review your complaint before submission." | `[✅ Submit]` `[❌ Cancel]` |
+
+---
+
+## 🚨 PRIORITY DISPATCH
+
+### `🚨 Emergency Alert`
+| Sequence | Interaction Message | User Options |
+| :--- | :--- | :--- |
+| **1. Type** | "⚠️ Alerts immediately notify security and administration." | `[🚑 Medical]` `[🔥 Fire]` `[🆘 Harassment]` `[🚨 Theft]` |
+| **2. Location** | "Please provide the exact location of the incident." | *e.g., Hostel Block B* |
+| **3. Finality** | "Confirm sending emergency alert?" | `[🚨 Send Now]` `[❌ Cancel]` |
+
+---
+
+## 💡 INTUITIVE ASSISTANCE
+
+### `💡 FAQ & Help` (RAG Pipeline)
+- **Engine**: Connected to the Unified **RAG Service** (Redis Cache -> Semantic FAQ -> Cross-Encoder Rerank).
+- **Scope**: Handles natural language queries about bus routes, faculty names, college timings, and departments.
+- **Workflow**: 
+  1. User enters FAQ Mode.
+  2. Submits question (e.g., *"Where is the Principal's office?"*).
+  3. Bot retrieves verified data and generates a professional response using institutional context.
+
+---
+
+## 📩 ADMINISTRATIVE NOTIFICATIONS
+Every valid submission triggers a **Senior-Grade Professional Email** to the HOD/Principal.
+- **Header**: Institutional Branding with Emergency/Normal Status Tags.
+- **Content**: Organized metadata (ID, Category, Description, Location).
+- **Security**: Anonymous flags strip identity meta from the Department-level email.
+- **Links**: Direct action links for HOD to `Review Ticket` or `Respond`.
+
+---
+
+## ⚙️ TECHNICAL STACK
+- **Database**: MongoDB Atlas (Vector Similarity + Persistent Sessions).
+- **Cache**: Upstash Redis (Latency optimization < 100ms).
+- **Search**: Hybrid (Keyword Match + OpenAI Embedding Vector Search).
+- **Reranker**: BGE-Reranker-Large (Ensuring 99%+ contextual accuracy).
+- **Notification**: Nodemailer (Responsive Professional Templates).

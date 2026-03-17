@@ -4,7 +4,7 @@ import { getCache, setCache } from '../services/cacheService.js';
 import { performHybridSearch } from '../services/retrievalService.js';
 import { getAIReponse } from '../services/aiService.js';
 import { normalizeText, buildPrompt } from '../utils/promptBuilder.js';
-import { getUserMemory, setUserMemory } from '../services/historyService.js';
+import { getUserMemory, setUserMemory, rewriteQuery } from '../services/historyService.js';
 import { pushLog, updateMetrics } from '../services/monitorService.js';
 import { normalizeQueryBasic } from '../services/normalizationService.js';
 import { checkSemanticCache, storeInSemanticCache } from '../services/faqLearningService.js';
@@ -35,83 +35,19 @@ export default async function handler(req, res) {
     }
 
     // ──────────────────────────────────────────────
-    // NEW PRODUCTION RAG PIPELINE
+    // PRODUCTION RAG PIPELINE (Unified)
     // ──────────────────────────────────────────────
-    
-    // 1. Normalize Query
-    const { normalizedText, cacheKey } = normalizeQueryBasic(rawText);
-    const redisKey = `v17:assistant:${cacheKey}`;
+    const { processRAGQuery } = await import('../services/ragService.js');
+    const ragResult = await processRAGQuery(chatId, rawText);
 
-    // 2. Check Strict Redis Cache (<100ms)
-    const cached = await getCache(redisKey);
-    if (cached) {
-      await sendTelegramMessage(chatId, cached);
-      const latency = Date.now() - startTime;
-      await pushLog('assistant', 'info', `Redis Hit: "${cached.slice(0, 40)}..."`, { latency });
-      await updateMetrics('assistant', latency, true);
-      return res.status(200).json({ status: 'cached_redis' });
-    }
-
-    // 3. Generate Embedding & Check Semantic FAQ Cache (Similarity > 0.9)
-    const queryEmbedding = await generateEmbedding(normalizedText);
-    const faqAnswer = await checkSemanticCache(queryEmbedding);
-    if (faqAnswer) {
-      await sendTelegramMessage(chatId, faqAnswer);
-      const latency = Date.now() - startTime;
-      await pushLog('assistant', 'info', `FAQ Semantic Hit: "${faqAnswer.slice(0, 40)}..."`, { latency });
-      await updateMetrics('assistant', latency, true);
-      return res.status(200).json({ status: 'cached_semantic' });
-    }
-
-    // 4. Query Context & Decomposition
-    const memory = await getUserMemory(chatId);
-    let contextualQuery = normalizedText;
-    if (memory && memory.last_entity && normalizedText.split(' ').length <= 4) {
-        contextualQuery = `${memory.last_entity} ${normalizedText}`;
-    }
-
-    const subQueries = await decomposeAndSelfQuery(contextualQuery);
-
-    // 5. Hybrid Retrieval (Top 20 per sub-query, merged)
-    const allChunks = new Map();
-    for (const sq of subQueries) {
-      const chunks = await performHybridSearch(sq.query, sq.category);
-      chunks.forEach(c => {
-        const id = c._id?.toString() || c.text?.slice(0, 30);
-        if (!allChunks.has(id) || allChunks.get(id).score < c.score) {
-          allChunks.set(id, c);
-        }
-      });
-    }
-
-    const mergedTop20 = Array.from(allChunks.values())
-      .sort((a, b) => (b.score || 0) - (a.score || 0))
-      .slice(0, 20);
-
-    // 6. Cross-Encoder Reranking (Top 5)
-    const top5Chunks = await rerankChunks(contextualQuery, mergedTop20);
-
-    if (top5Chunks.length === 0) {
-        const noInfo = "I currently do not have that information in the MSAJCE knowledge base.";
-        await sendTelegramMessage(chatId, noInfo);
-        return res.status(200).send('ok');
-    }
-
-    // 7. Generate LLM Answer
-    const finalPrompt = buildPrompt(contextualQuery, top5Chunks, memory.last_entity);
-    const aiReply = await getAIReponse(finalPrompt);
-
-    // 8. Output, Cache, & Learn
-    await sendTelegramMessage(chatId, aiReply);
-    await setCache(redisKey, aiReply); // 24h Redis cache
-    
-    // Store in continuous learning FAQ Semantic DB
-    storeInSemanticCache(normalizedText, queryEmbedding, aiReply).catch(()=>null);
-
-    await setUserMemory(chatId, contextualQuery, subQueries[0]?.category || 'general');
+    await sendTelegramMessage(chatId, ragResult.aiReply);
     
     const latency = Date.now() - startTime;
-    await pushLog('assistant', 'info', `RAG Generated: "${aiReply.slice(0, 40)}..."`, { latency, chunks: top5Chunks.length });
+    await pushLog('assistant', 'info', `RAG Query: ${rawText.slice(0, 20)}`, { 
+        latency, 
+        source: ragResult.source,
+        chunks: ragResult.chunkCount 
+    });
     await updateMetrics('assistant', latency, true);
 
     return res.status(200).json({ status: 'success' });

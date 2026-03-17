@@ -1,9 +1,9 @@
 /**
- * MSAJCE MASTER INGESTER v2
+ * MSAJCE MASTER INGESTER v3 (Senior Architect Edition)
  * 
- * Optimized for 3072-dimensional RAG.
+ * Optimized for 1536-dimensional RAG.
  * Implements Master Data Ingestion Pipeline:
- * Cleaning -> Recursive Chunking (800 tokens) -> Enrichment -> Embedding -> Backup.
+ * Cleaning -> Recursive Chunking (325 chars) -> Enrichment -> Embedding -> Backup.
  */
 
 import mongoose from 'mongoose';
@@ -139,8 +139,8 @@ async function run() {
     for (const page of scraped) {
       console.log(`Processing Scraped Page: ${page.url}`);
       
-      // Step 2: Intelligent Chunking
-      const rawChunks = splitContent(page.content, 800, 80);
+      // Step 2: Intelligent Chunking (Optimized for Small RAG)
+      const rawChunks = splitContent(page.content, 325, 60);
       
       for (let i = 0; i < rawChunks.length; i++) {
         const chunkText = rawChunks[i];

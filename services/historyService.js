@@ -1,30 +1,37 @@
-import { Redis } from '@upstash/redis';
-import config from '../config/config.js';
+import User from '../database/models/User.js';
 import logger from '../utils/logger.js';
 
-const redis = new Redis({
-  url: config.redis.url,
-  token: config.redis.token,
-});
-
 /**
- * PRODUCTION-GRADE MEMORY SERVICE
- * Stores both the raw subject and the semantic topic for better follow-ups.
+ * PRODUCTION-GRADE PERSISTENT MEMORY SERVICE
+ * Stores context in MongoDB as per Senior Architect request.
  */
 export const getUserMemory = async (chatId) => {
   try {
-    const memory = await redis.get(`mem:v2:${chatId}`);
-    return memory || { last_entity: null, last_topic: null };
+    const user = await User.findOne({ telegram_id: chatId });
+    if (!user) return { last_entity: null, last_topic: null, last_question: null };
+    return { 
+        last_entity: user.last_entity, 
+        last_topic: user.last_topic, 
+        last_question: user.last_question 
+    };
   } catch (error) {
     logger.error(`Memory Get Error: ${error.message}`);
-    return { last_entity: null, last_topic: null };
+    return { last_entity: null, last_topic: null, last_question: null };
   }
 };
 
-export const setUserMemory = async (chatId, entity, topic = 'general') => {
+export const setUserMemory = async (chatId, entity, topic = 'general', question = '') => {
   try {
-    const memory = { last_entity: entity, last_topic: topic, timestamp: Date.now() };
-    await redis.set(`mem:v2:${chatId}`, JSON.stringify(memory), { ex: 1800 }); // 30 mins
+    await User.findOneAndUpdate(
+        { telegram_id: chatId },
+        { 
+            last_entity: entity, 
+            last_topic: topic, 
+            last_question: question,
+            updated_at: Date.now() 
+        },
+        { upsert: false } // Assumes user already created by getOrCreateUser
+    );
   } catch (error) {
     logger.error(`Memory Set Error: ${error.message}`);
   }

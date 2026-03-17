@@ -8,7 +8,7 @@ import { pushLog } from './monitorService.js';
  * PRODUCTION-GRADE HYBRID SEARCH
  * Combines Vector Search (semantic) + Keyword Matching with robust scoring.
  */
-export const performHybridSearch = async (queryText, intent = 'general') => {
+export const performHybridSearch = async (queryText, category = 'general', filters = {}) => {
   try {
     const db = mongoose.connection.db;
     const collection = db.collection(config.mongodb.vectorCollection);
@@ -19,34 +19,33 @@ export const performHybridSearch = async (queryText, intent = 'general') => {
 
     const words = q.split(/\s+/).filter(w => w.length >= 2 && !stopWords.has(w));
 
-    // 1. KEYWORD SEARCH — simple, reliable text matching
+    // 1. KEYWORD SEARCH with METADATA FILTERS (Self-Querying Optimization)
     let keywordResults = [];
     if (words.length > 0) {
-      // Build simple regex from meaningful words
-      const simplePatterns = words.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')); // escape regex chars
+      const simplePatterns = words.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')); 
 
-      const searchFilter = {
-        $or: [
-          // Match in the main text field (most important)
+      const baseOr = [
           { text: { $regex: simplePatterns.join('|'), $options: 'i' } },
-          // Match in content field
           { content: { $regex: simplePatterns.join('|'), $options: 'i' } },
-          // Match in title
           { title: { $regex: simplePatterns.join('|'), $options: 'i' } },
-          // Match in summary (LLM-generated one-liner)
           { summary: { $regex: simplePatterns.join('|'), $options: 'i' } },
-          // Match in query_variations array (LLM-generated alternative phrasings)
           { query_variations: { $elemMatch: { $regex: simplePatterns.join('|'), $options: 'i' } } },
-          // Match in keywords array
           { keywords: { $elemMatch: { $regex: simplePatterns.join('|'), $options: 'i' } } },
-          // Match in entities array
-          { entities: { $elemMatch: { $regex: simplePatterns.join('|'), $options: 'i' } } },
-          // Match route field for transport queries
-          { 'metadata.route': { $regex: simplePatterns.join('|'), $options: 'i' } },
-          // Match name field for faculty queries
-          { 'metadata.name': { $regex: simplePatterns.join('|'), $options: 'i' } },
-        ]
-      };
+          { entities: { $elemMatch: { $regex: simplePatterns.join('|'), $options: 'i' } } }
+      ];
+
+      // Add category constraint if specific
+      const searchFilter = { $or: baseOr };
+      if (category && category !== 'general') {
+          searchFilter.category = category;
+      }
+
+      // Apply metadata filters (e.g. metadata.route: "AR-8")
+      if (filters && Object.keys(filters).length > 0) {
+          for (const [key, val] of Object.entries(filters)) {
+              searchFilter[`metadata.${key}`] = { $regex: val, $options: 'i' };
+          }
+      }
 
       keywordResults = await collection.find(searchFilter).limit(100).toArray();
 
@@ -101,7 +100,7 @@ export const performHybridSearch = async (queryText, intent = 'general') => {
     let vectorResults = [];
     try {
       const queryEmbedding = await generateEmbedding(queryText);
-      vectorResults = await collection.aggregate([
+      const vectorPipeline = [
         {
           "$vectorSearch": {
             "index": config.mongodb.vectorIndex,
@@ -110,15 +109,23 @@ export const performHybridSearch = async (queryText, intent = 'general') => {
             "numCandidates": 100,
             "limit": 15
           }
-        },
-        {
-          "$project": {
-            "text": 1, "content": 1, "title": 1,
-            "metadata": 1, "source": 1,
-            "score": { "$meta": "vectorSearchScore" }
-          }
         }
-      ]).toArray();
+      ];
+
+      // Filter by category within vector search if not general
+      if (category && category !== 'general') {
+          vectorPipeline.push({ $match: { category: category } });
+      }
+
+      vectorPipeline.push({
+        "$project": {
+          "text": 1, "content": 1, "title": 1,
+          "metadata": 1, "source": 1, "category": 1,
+          "score": { "$meta": "vectorSearchScore" }
+        }
+      });
+
+      vectorResults = await collection.aggregate(vectorPipeline).toArray();
     } catch (e) {
       logger.warn(`Vector Search Error: ${e.message}`);
     }

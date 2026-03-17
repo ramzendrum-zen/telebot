@@ -2,10 +2,10 @@ import { getAIReponse } from './aiService.js';
 import logger from '../utils/logger.js';
 
 /**
- * Recursive Character Splitting Logic
- * Logic: Split by double newlines, then single, then periods, then whitespace.
+ * Recursive Character Splitting Logic for Small RAG (Facts & Dates)
+ * Target: 250-400 chars. No mid-sentence splits.
  */
-export const splitContent = (text, chunkSize = 2400, overlapSize = 250) => {
+export const splitContent = (text, chunkSize = 325, overlapSize = 60) => {
     const chunks = [];
     let start = 0;
 
@@ -13,7 +13,7 @@ export const splitContent = (text, chunkSize = 2400, overlapSize = 250) => {
         let end = start + chunkSize;
         if (end > text.length) end = text.length;
 
-        // Boundary Logic: Avoid splitting sentences. Look for period or newline.
+        // Boundary Logic: Avoid splitting sentences. 
         if (end < text.length) {
             const findLast = (str, chars, maxSearch) => {
                 for (let i = 0; i < maxSearch; i++) {
@@ -21,12 +21,17 @@ export const splitContent = (text, chunkSize = 2400, overlapSize = 250) => {
                 }
                 return end;
             };
-            end = findLast(text, ['.', '\n', '!', '?'], 500);
+            end = findLast(text, ['.', '\n', '!', '?'], 150);
         }
 
         chunks.push(text.slice(start, end).trim());
-        start = end - overlapSize;
-        if (start < 0) start = 0;
+        const nextStart = end - overlapSize;
+        // Safety: Ensure we always move forward
+        if (nextStart <= start) {
+            start = end;
+        } else {
+            start = nextStart;
+        }
         if (start >= text.length) break;
     }
 
@@ -34,31 +39,33 @@ export const splitContent = (text, chunkSize = 2400, overlapSize = 250) => {
 };
 
 /**
- * Master Prompt Step 1 & 3: Clean, Normalize, and Enrich
+ * MASTER PROMPT: "Data Engineering Expert" for RAG Ingestion
  */
 export const cleanAndEnrichChunk = async (chunkContent, metadata = {}) => {
     const prompt = `
-        Role: You are a Data Engineering Expert specializing in RAG pipelines.
-        Task: Clean, normalize, and structure this data chunk for a 3072-dimension vector database.
+        Role: You are a Data Engineering Expert specializing in RAG pipelines. 
+        Task: Clean, normalize, and structure this data chunk for a 1536-dimension vector database.
 
-        CHUNK CONTENT:
-        "${chunkContent}"
+        Input: "${chunkContent}"
 
         Step 1: Cleaning & Normalization
-        * Remove Noise: Strip boilerplate (headers/footers) and excessive whitespace.
-        * Fix Errors: Correct encoding and normalize characters.
-        * Standardization: Consistent professional tone.
+        * Remove Noise: Strip HTML, boilerplate, extra whitespace.
+        * Fix Errors: Correct encoding and normalize punctuation.
+        * Standardization: Professional academic tone.
 
-        Step 3: Enrichment & Metadata
-        * Summary: Generate a 1-sentence summary for this chunk.
-        * Keywords: Extract exactly 5 key entities or topics.
-        * Semantic Restructuring: Preserve high semantic density in the content description.
+        Step 2: Semantic Enrichment
+        * Summary: 1-sentence description.
+        * KEYWORDS: High-impact topics (comma-separated).
+        * ENTITIES: Specific names, locations, dates (comma-separated).
+        * QUERY_VARIATIONS: Generate 3 ways a student might ask for this specific info.
 
-        Output EXACT JSON:
+        Output JSON:
         {
-          "content": "Fully cleaned and semantically enriched content string",
-          "summary": "The 1-sentence summary",
-          "keywords": ["key1", "key2", "key3", "key4", "key5"],
+          "content": "semantically dense cleaned string",
+          "summary": "1-sentence summary",
+          "keywords": ["key1", "key2"],
+          "entities": ["entity1", "entity2"],
+          "query_variations": ["var1", "var2", "var3"],
           "metadata": ${JSON.stringify(metadata)}
         }
     `;

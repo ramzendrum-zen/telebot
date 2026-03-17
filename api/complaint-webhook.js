@@ -49,7 +49,20 @@ export default async function handler(req, res) {
     // 3. Main Grievance Flow
     const result = await handleGrievanceFlow(chatId, rawText, message);
     if (result) {
-        await sendReply(chatId, result);
+        if (result.use_rag) {
+            const { processRAGQuery } = await import('../services/ragService.js');
+            const ragResult = await processRAGQuery(chatId, result.query);
+            await sendReply(chatId, { 
+                text: ragResult.aiReply, 
+                keyboard: { keyboard: [['🏠 Back to Menu']], resize_keyboard: true } 
+            });
+            
+            const latency = Date.now() - startTime;
+            await pushLog('grievance_rag', 'info', `RAG Query: ${result.query.slice(0, 20)}`, { latency, source: ragResult.source });
+            await updateMetrics('grievance_rag', latency, true);
+        } else {
+            await sendReply(chatId, result);
+        }
     }
     
     const latency = Date.now() - startTime;

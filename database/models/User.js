@@ -24,6 +24,12 @@ const userSchema = new mongoose.Schema({
   department: { type: String },
   phone: { type: String },
   verified: { type: Boolean, default: false },
+  
+  // RAG Session Context
+  last_entity: { type: String },
+  last_topic: { type: String },
+  last_question: { type: String },
+  
   created_at: { type: Date, default: Date.now }
 });
 
