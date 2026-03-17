@@ -16,8 +16,7 @@ export const generateEmbedding = async (text) => {
       body: JSON.stringify({
         model: config.openRouter.models.embedding,
         input: text.replace(/\n/g, ' '),
-        // Using 3072 to match MongoDB vector store. Acknowledging user feedback "3027 dimensions" as a typo.
-        dimensions: 3072
+        dimensions: 1536
       }),
       signal: AbortSignal.timeout(60000)
     });

@@ -148,7 +148,7 @@ export const performHybridSearch = async (queryText, intent = 'general') => {
 
     let finalResults = Array.from(mergedMap.values())
       .sort((a, b) => (b.finalScore || 0) - (a.finalScore || 0))
-      .slice(0, 5);
+      .slice(0, 20); // Top 20 for Reranker
 
     const chunkNames = finalResults.map(r =>
       r.metadata?.route || r.metadata?.name || r.title || 'General Info'

@@ -27,7 +27,8 @@ const config = {
     models: {
       cheap: 'google/gemini-2.0-flash-001', 
       advanced: 'meta-llama/llama-3.3-70b-instruct',
-      embedding: 'openai/text-embedding-3-large'
+      embedding: 'openai/text-embedding-3-small',
+      reranker: 'bge-reranker-large' // Or specific API endpoint if using external service
     }
   },
   
@@ -45,9 +46,11 @@ const config = {
   },
   
   rag: {
-    topK: 7, // Captures enough context for complex 3072-dim vectors
+    topK: 20, // Used for initial hybrid retrieval
+    finalTopK: 5, // After reranking
     maxContextTokens: 3000,
     similarityThreshold: 0.7,
+    faqSimilarityThreshold: 0.9, // Semantic cache threshold
     temperature: 0.1 // Stay factual
   }
 };

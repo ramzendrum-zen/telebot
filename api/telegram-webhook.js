@@ -4,9 +4,13 @@ import { getCache, setCache } from '../services/cacheService.js';
 import { performHybridSearch } from '../services/retrievalService.js';
 import { getAIReponse } from '../services/aiService.js';
 import { normalizeText, buildPrompt } from '../utils/promptBuilder.js';
-import { getUserMemory, setUserMemory, rewriteQuery } from '../services/historyService.js';
-import { detectIntent, normalizeQuery } from '../services/intentService.js';
+import { getUserMemory, setUserMemory } from '../services/historyService.js';
 import { pushLog, updateMetrics } from '../services/monitorService.js';
+import { normalizeQueryBasic } from '../services/normalizationService.js';
+import { checkSemanticCache, storeInSemanticCache } from '../services/faqLearningService.js';
+import { decomposeAndSelfQuery } from '../services/selfQueryService.js';
+import { rerankChunks } from '../services/rerankService.js';
+import { generateEmbedding } from '../services/embeddingService.js';
 import logger from '../utils/logger.js';
 import config from '../config/config.js';
 
@@ -25,35 +29,53 @@ export default async function handler(req, res) {
   try {
     await connectDB();
 
-    // 1. Force Remove Legacy Keyboards / Handle Start
     if (rawText === '/start') {
       await sendTelegramMessage(chatId, "👋 Welcome to the *MSAJCE Academic Assistant*!\n\nI am here to help you with college information, bus routes, faculty details, and admissions. Just ask me your question!");
       return res.status(200).send('ok');
     }
 
     // ──────────────────────────────────────────────
-    // 2. RAG Academic Assistant with Query Rewriting
+    // NEW PRODUCTION RAG PIPELINE
     // ──────────────────────────────────────────────
-    const normalizedQuery = normalizeQuery(rawText);
-    const cacheKey = `v16:assistant:${normalizeText(normalizedQuery)}`;
+    
+    // 1. Normalize Query
+    const { normalizedText, cacheKey } = normalizeQueryBasic(rawText);
+    const redisKey = `v17:assistant:${cacheKey}`;
 
-    const cached = await getCache(cacheKey);
+    // 2. Check Strict Redis Cache (<100ms)
+    const cached = await getCache(redisKey);
     if (cached) {
       await sendTelegramMessage(chatId, cached);
-      return res.status(200).json({ status: 'cached' });
+      const latency = Date.now() - startTime;
+      await pushLog('assistant', 'info', `Redis Hit: "${cached.slice(0, 40)}..."`, { latency });
+      await updateMetrics('assistant', latency, true);
+      return res.status(200).json({ status: 'cached_redis' });
     }
 
-    const memory = await getUserMemory(chatId);
-    const intent = detectIntent(normalizedQuery);
-    const enrichedQuery = rewriteQuery(normalizedQuery, memory);
+    // 3. Generate Embedding & Check Semantic FAQ Cache (Similarity > 0.9)
+    const queryEmbedding = await generateEmbedding(normalizedText);
+    const faqAnswer = await checkSemanticCache(queryEmbedding);
+    if (faqAnswer) {
+      await sendTelegramMessage(chatId, faqAnswer);
+      const latency = Date.now() - startTime;
+      await pushLog('assistant', 'info', `FAQ Semantic Hit: "${faqAnswer.slice(0, 40)}..."`, { latency });
+      await updateMetrics('assistant', latency, true);
+      return res.status(200).json({ status: 'cached_semantic' });
+    }
 
-    // Query Rewriting: expand for better retrieval
-    const expandedQueries = await expandQuery(enrichedQuery);
-    
-    // Search with all expanded queries and merge
+    // 4. Query Context & Decomposition
+    const memory = await getUserMemory(chatId);
+    let contextualQuery = normalizedText;
+    if (memory && memory.last_entity && normalizedText.split(' ').length <= 4) {
+        contextualQuery = `${memory.last_entity} ${normalizedText}`;
+    }
+
+    const subQueries = await decomposeAndSelfQuery(contextualQuery);
+
+    // 5. Hybrid Retrieval (Top 20 per sub-query, merged)
     const allChunks = new Map();
-    for (const q of expandedQueries) {
-      const chunks = await performHybridSearch(q, intent);
+    for (const sq of subQueries) {
+      const chunks = await performHybridSearch(sq.query, sq.category);
       chunks.forEach(c => {
         const id = c._id?.toString() || c.text?.slice(0, 30);
         if (!allChunks.has(id) || allChunks.get(id).score < c.score) {
@@ -62,20 +84,34 @@ export default async function handler(req, res) {
       });
     }
 
-    const topChunks = Array.from(allChunks.values())
+    const mergedTop20 = Array.from(allChunks.values())
       .sort((a, b) => (b.score || 0) - (a.score || 0))
-      .slice(0, 5);
+      .slice(0, 20);
 
-    const finalPrompt = buildPrompt(enrichedQuery, topChunks, memory.last_entity);
+    // 6. Cross-Encoder Reranking (Top 5)
+    const top5Chunks = await rerankChunks(contextualQuery, mergedTop20);
+
+    if (top5Chunks.length === 0) {
+        const noInfo = "I currently do not have that information in the MSAJCE knowledge base.";
+        await sendTelegramMessage(chatId, noInfo);
+        return res.status(200).send('ok');
+    }
+
+    // 7. Generate LLM Answer
+    const finalPrompt = buildPrompt(contextualQuery, top5Chunks, memory.last_entity);
     const aiReply = await getAIReponse(finalPrompt);
 
-    await setCache(cacheKey, aiReply);
+    // 8. Output, Cache, & Learn
     await sendTelegramMessage(chatId, aiReply);
+    await setCache(redisKey, aiReply); // 24h Redis cache
+    
+    // Store in continuous learning FAQ Semantic DB
+    storeInSemanticCache(normalizedText, queryEmbedding, aiReply).catch(()=>null);
 
-    if (intent !== 'general') await setUserMemory(chatId, normalizedQuery, intent);
+    await setUserMemory(chatId, contextualQuery, subQueries[0]?.category || 'general');
     
     const latency = Date.now() - startTime;
-    await pushLog('assistant', 'info', `Assistant Answer: "${aiReply.slice(0, 50)}..."`, { latency });
+    await pushLog('assistant', 'info', `RAG Generated: "${aiReply.slice(0, 40)}..."`, { latency, chunks: top5Chunks.length });
     await updateMetrics('assistant', latency, true);
 
     return res.status(200).json({ status: 'success' });
