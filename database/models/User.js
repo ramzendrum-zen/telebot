@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema({
   designation: { type: String },
   
   // Common
+  salutation: { type: String, enum: ['Mr.', 'Ms.'] },
   name: { type: String },
   department: { type: String },
   phone: { type: String },

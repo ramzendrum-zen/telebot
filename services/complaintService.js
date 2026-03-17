@@ -54,9 +54,32 @@ export const MAIN_MENU = {
   }
 };
 
+const getHumanGreeting = (user) => {
+    if (!user || !user.verified) return "Hello! I'm your MSAJCE Grievance Assistant.";
+    const title = user.salutation || "";
+    return `Hello ${title} ${user.name.split(' ')[0]}, I'm here to assist you.`;
+};
+
+const FAQ_DATA = {
+  text: "💡 *MSAJCE Knowledge Hub*\n\n" +
+        "*🏫 College Timings*\n" +
+        "• Mon - Fri: 09:00 AM - 08:00 PM\n" +
+        "• Sat: 10:00 AM - 04:00 PM\n\n" +
+        "*🎯 Vision & Mission*\n" +
+        "To be a leading institution for higher education through innovative teaching and sustainable practices.\n\n" +
+        "*📚 Learning Centre (Library)*\n" +
+        "• 29,853+ Volumes | 1885 Reference Books\n" +
+        "• Equipped with Wi-Fi, DELNET and J-Gate.\n\n" +
+        "*📞 Key Contacts*\n" +
+        "• Principal: Dr. K.S. Srinivasan (9150575066)\n" +
+        "• Out-of-State Support: Dr. Vamsi Naga Mohan (9043358674)\n\n" +
+        "Select an option below or ask me anything!",
+  keyboard: MAIN_MENU.keyboard
+};
+
 const HELP_MESSAGE = {
   text: "📖 *MSAJCE Bot Help Guide*\n\n" +
-        "• *Register Complaint*: Formal submission for any college issue.\n" +
+        "• *Register Complaint*: Formal submission for any college issue. (Supports Anonymous mode)\n" +
         "• *Emergency*: High-priority safety/medical alerts.\n" +
         "• *Track*: Check status using your GRV-ID.\n" +
         "• *Profile*: Manage your registered academic details.\n\n" +
@@ -127,11 +150,11 @@ const getProfessionalEmailTemplate = (grvId, user, state, dept, isEmergency = fa
                     <table style="width: 100%; border-collapse: collapse;">
                         <tr>
                             <td style="padding: 8px 0; font-size: 13px; color: #64748b; font-weight: 500;">Name</td>
-                            <td style="padding: 8px 0; font-size: 13px; color: #0f172a; font-weight: 700; text-align: right;">${user.name}</td>
+                            <td style="padding: 8px 0; font-size: 13px; color: #0f172a; font-weight: 700; text-align: right;">${state.is_anonymous ? '🎭 ANONYMOUS' : user.name}</td>
                         </tr>
                         <tr>
                             <td style="padding: 8px 0; font-size: 13px; color: #64748b; font-weight: 500;">College ID</td>
-                            <td style="padding: 8px 0; font-size: 13px; color: #0f172a; font-weight: 700; text-align: right;">${user.register_number || user.employee_id}</td>
+                            <td style="padding: 8px 0; font-size: 13px; color: #0f172a; font-weight: 700; text-align: right;">${state.is_anonymous ? 'REDACTED' : (user.register_number || user.employee_id)}</td>
                         </tr>
                         <tr>
                             <td style="padding: 8px 0; font-size: 13px; color: #64748b; font-weight: 500;">Department</td>
@@ -141,9 +164,9 @@ const getProfessionalEmailTemplate = (grvId, user, state, dept, isEmergency = fa
                             <td style="padding: 8px 0; font-size: 13px; color: #64748b; font-weight: 500;">Role</td>
                             <td style="padding: 8px 0; font-size: 13px; color: #0f172a; font-weight: 700; text-align: right;">${user.role.toUpperCase()}</td>
                         </tr>
-                        ${user.phone ? `
+                        ${user.phone && !state.is_anonymous ? `
                         <tr>
-                            <td style="padding: 8px 0; font-size: 13px; color: #64748b; font-weight: 500;">Emergency Phone</td>
+                            <td style="padding: 8px 0; font-size: 13px; color: #64748b; font-weight: 500;">Contact Phone</td>
                             <td style="padding: 8px 0; font-size: 13px; color: #ef4444; font-weight: 800; text-align: right;">${user.phone}</td>
                         </tr>` : ''}
                     </table>
@@ -170,10 +193,10 @@ export const handleVerificationFlow = async (chatId, text, message) => {
   const state = await getCache(stateKey);
 
   if (!state) {
-    await setCache(stateKey, { step: 'asking_role' });
+    await setCache(stateKey, { step: 'asking_salutation' });
     return { 
-      text: "👋 *Account Registration Needed*\n\nTo ensure privacy and accountability, please register your profile.\n\nChoose your role:",
-      keyboard: { keyboard: [['Student', 'Staff'], ['❌ Cancel Registration']], resize_keyboard: true }
+      text: "👋 *Account Registration Needed*\n\nTo ensure privacy and professional accountability, please register your profile.\n\n*How should I address you?*",
+      keyboard: { keyboard: [['Mr.', 'Ms.'], ['❌ Cancel Registration']], resize_keyboard: true }
     };
   }
 
@@ -183,6 +206,17 @@ export const handleVerificationFlow = async (chatId, text, message) => {
   }
 
   let nextState = { ...state };
+
+  if (state.step === 'asking_salutation') {
+    if (!['Mr.', 'Ms.'].includes(text)) return { text: "⚠️ Please select Mr. or Ms." };
+    nextState.salutation = text;
+    nextState.step = 'asking_role';
+    await setCache(stateKey, nextState);
+    return { 
+      text: "Great! Now, are you a Student or Staff member?",
+      keyboard: { keyboard: [['Student', 'Staff'], ['❌ Cancel Registration']], resize_keyboard: true }
+    };
+  }
 
   if (state.step === 'asking_role') {
     if (!['Student', 'Staff'].includes(text)) return { text: "⚠️ Please use the buttons to select your role." };
@@ -249,7 +283,13 @@ export const handleVerificationFlow = async (chatId, text, message) => {
     nextState.designation = text;
     nextState.step = 'asking_phone';
     await setCache(stateKey, nextState);
-    return { text: "📞 Enter your *Mobile Number* for urgent contact:" };
+    return { 
+        text: "📞 I need your *Mobile Number* for urgent contact. Please click the button below to share it securely via Telegram:",
+        keyboard: { 
+            keyboard: [[{ text: "📲 Share Contact", request_contact: true }], ['❌ Cancel Registration']], 
+            resize_keyboard: true 
+        } 
+    };
   }
 
   if (state.step === 'asking_residence') {
@@ -269,11 +309,21 @@ export const handleVerificationFlow = async (chatId, text, message) => {
     nextState.room_number = text;
     nextState.step = 'asking_phone';
     await setCache(stateKey, nextState);
-    return { text: "📞 Finally, enter your *Mobile Number*:" };
+    return { 
+        text: "📞 Finally, please share your *Mobile Number* by clicking the button below:",
+        keyboard: { 
+            keyboard: [[{ text: "📲 Share Contact", request_contact: true }], ['❌ Cancel Registration']], 
+            resize_keyboard: true 
+        } 
+    };
   }
 
   if (state.step === 'asking_phone') {
-    nextState.phone = text;
+    const contact = message?.contact;
+    if (!contact && !text.match(/^\+?[0-9]{10,15}$/)) {
+        return { text: "⚠️ Please use the 'Share Contact' button or enter a valid number." };
+    }
+    nextState.phone = contact ? contact.phone_number : text;
     const usrId = await generateUserId();
     const finalData = { ...nextState, user_id: usrId, verified: true };
     delete finalData.step;
@@ -370,18 +420,31 @@ export const handleEmergencyFlow = async (chatId, text, message) => {
  * MAIN ENTRY POINT FOR GRIEVANCE BOT
  */
 export const handleGrievanceFlow = async (chatId, text, message) => {
+  const user = await getOrCreateUser(chatId, message);
+  if (!user) return { text: "⚠️ Database connection error." };
+
+  // 1. Force Registration if not verified
+  if (!user.verified) {
+      if (text === '/start') {
+          return await handleVerificationFlow(chatId, null, message);
+      }
+      return await handleVerificationFlow(chatId, text, message);
+  }
+
   // Command Routing
-  if (text === '/start' || text === '🏠 Back to Menu' || text === '🏫 Back to Menu') return MAIN_MENU;
-  if (text === '/help' || text === '💡 FAQ & Help') return HELP_MESSAGE;
+  if (text === '/start' || text === '🏠 Back to Menu' || text === '🏫 Back to Menu') {
+      return {
+          ...MAIN_MENU,
+          text: `👋 ${getHumanGreeting(user)}\n\n${MAIN_MENU.text}`
+      };
+  }
+  if (text === '/help' || text === '💡 FAQ & Help') return FAQ_DATA;
   if (text === '/cancel' || text === '❌ Cancel') {
       await setCache(`${COMPLAINT_STATE_PREFIX}${chatId}`, null);
       await setCache(`${EMERGENCY_STATE_PREFIX}${chatId}`, null);
       await setCache(`${VERIFY_STATE_PREFIX}${chatId}`, null);
       return { text: "🏁 Process terminated. Returning to menu.", keyboard: MAIN_MENU.keyboard };
   }
-
-  const user = await getOrCreateUser(chatId, message);
-  if (!user) return { text: "⚠️ Database connection error." };
 
   if (text === '/profile' || text === '👤 My Profile') {
       const p = user;
@@ -415,9 +478,26 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
   const state = await getCache(stateKey);
 
   if (text === '📝 Register Complaint') {
-    await setCache(stateKey, { step: 'asking_category' });
+    await setCache(stateKey, { step: 'asking_privacy' });
     return {
-      text: "📂 *Select Concern Category:*\n\nChoose the area that best describes your issue.",
+      text: `Certainly ${user.salutation} ${user.name.split(' ')[0]}, I'll help you with that. \n\n🔒 *Privacy First*\nHow would you like to submit this?`,
+      keyboard: {
+        keyboard: [['👤 Normal (Visible)', '🎭 Anonymous'], ['❌ Cancel']],
+        resize_keyboard: true
+      }
+    };
+  }
+
+  if (!state) return MAIN_MENU;
+
+  let nextState = { ...state };
+
+  if (state.step === 'asking_privacy') {
+    nextState.is_anonymous = text.includes('Anonymous');
+    nextState.step = 'asking_category';
+    await setCache(stateKey, nextState);
+    return {
+      text: "📂 *Select Concern Category:*",
       keyboard: {
         keyboard: [
           ['Hostel Issues', 'Transport / Bus'],
@@ -432,16 +512,13 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
     };
   }
 
-  if (!state) return MAIN_MENU;
-
-  let nextState = { ...state };
-
   if (state.step === 'asking_category') {
     nextState.category = text;
     nextState.step = 'asking_desc';
     await setCache(stateKey, nextState);
+    const categoryName = text.split(' ')[0];
     return { 
-        text: `📝 *${text}*\n\nPlease provide a detailed description of the issue. Be specific to help the admin resolve it faster.`, 
+        text: `📝 *${text}*\n\nUnderstood. Could you please describe the ${categoryName} issue in detail?`, 
         keyboard: { keyboard: [['❌ Cancel']], resize_keyboard: true } 
     };
   }
@@ -494,7 +571,8 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
       category: state.category,
       description: state.description,
       evidence_url: evidenceUrl,
-      department_assigned: dept
+      department_assigned: dept,
+      is_anonymous: state.is_anonymous
     });
     await newComplaint.save();
 

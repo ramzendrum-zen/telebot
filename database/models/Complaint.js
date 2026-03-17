@@ -30,6 +30,7 @@ const complaintSchema = new mongoose.Schema({
   location: { type: String },
   incident_type: { type: String },
   is_emergency: { type: Boolean, default: false },
+  is_anonymous: { type: Boolean, default: false },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now }
 });

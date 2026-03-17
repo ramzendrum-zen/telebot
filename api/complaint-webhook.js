@@ -22,13 +22,8 @@ export default async function handler(req, res) {
     await connectDB();
 
     // 1. Root & Utility Commands
-    const triggerReset = ['/start', '🏠 Back to Menu', '🏫 Back to Menu'].includes(rawText);
-    const triggerHelp = ['/help', '💡 FAQ & Help'].includes(rawText);
-    
-    if (triggerReset) {
-      await setCache(`track_state:${chatId}`, null);
-      await sendReply(chatId, MAIN_MENU);
-      return res.status(200).send('ok');
+    if (rawText === '/start') {
+        await setCache(`track_state:${chatId}`, null);
     }
 
     // 2. Tracking Mode (Direct trigger)
