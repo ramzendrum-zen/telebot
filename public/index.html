@@ -165,11 +165,8 @@
             <div class="nav-item active" onclick="showPanel('overview', event)">
                 <i data-lucide="layout-dashboard"></i> Overview
             </div>
-            <div class="nav-item" onclick="showPanel('tickets', event)">
+            <div class="nav-item" id="nav-tickets" onclick="showPanel('tickets', event)">
                 <i data-lucide="ticket"></i> Operational Tickets
-            </div>
-            <div class="nav-item" onclick="showPanel('assistant', event)">
-                <i data-lucide="bot"></i> Academic Assistant
             </div>
             <div class="nav-item" id="nav-grievance" onclick="showPanel('grievance', event)">
                 <i data-lucide="shield-check"><span class="nav-badge" id="emergency-dot"></span></i> Command Center
@@ -277,7 +274,7 @@
                 </div>
 
                 <!-- BOTTOM: Snapshot Table -->
-                <div class="table-container">
+                <div class="table-container" id="overview-tickets-container">
                     <div style="padding: 24px; font-weight: 800; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
                         <span style="letter-spacing:-0.01em">RECENT OPERATIONAL TICKETS</span>
                         <button onclick="showPanel('tickets')" style="border:1px solid #e2e8f0; background:white; color:var(--text-main); font-weight:700; font-size:11px; padding:6px 12px; border-radius:6px; cursor:pointer; display:flex; align-items:center; gap:6px">
@@ -305,10 +302,10 @@
             <div id="panel-tickets" class="panel">
                 <div class="table-container">
                     <div style="padding: 16px 20px; font-weight: 700; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-                        <span>All Active Operational Tickets</span>
+                        <span>Live Operational Tickets (Pending)</span>
                         <div style="display: flex; gap: 8px;">
                             <input type="text" placeholder="Search Ticket ID..." style="padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;">
-                            <span class="badge badge-blue">ALL DEPARTMENTS</span>
+                            <span class="badge badge-blue">ACTIVE ONLY</span>
                         </div>
                     </div>
                     <table id="complaintTable">
@@ -354,16 +351,12 @@
                 </div>
             </div>
 
-            <!-- GRIEVANCE PANEL (COMMAND CENTER) -->
+            <!-- GRIEVANCE PANEL -->
             <div id="panel-grievance" class="panel">
                 <div class="grid-stats" style="gap: 12px; margin-bottom: 16px;">
                     <div class="stat-card" style="padding: 16px; background: var(--error-soft); border-color: #fca5a5;">
                         <span class="stat-label" style="font-size: 9px;">ACTIVE EMERGENCIES</span>
                         <div class="stat-value" id="grv-panel-emergency-count" style="font-size: 24px;">0</div>
-                    </div>
-                    <div class="stat-card" style="padding: 16px;">
-                        <span class="stat-label" style="font-size: 9px;">AVG RESOLUTION</span>
-                        <div class="stat-value" id="grv-panel-resolution-time" style="font-size: 24px;">0.0h</div>
                     </div>
                 </div>
                 <div class="table-container">
@@ -523,7 +516,7 @@
         let logs = [];
         let categoryChart = null;
         let activeLogData = null;
-        let currentBot = 'assistant';
+        let currentBot = 'grievance'; 
 
         function setBot(bot) {
             currentBot = bot;
@@ -534,40 +527,16 @@
 
             // Toggle Sidebar Visibility for Bot-Specific Tabs
             document.querySelectorAll('.nav-item').forEach(item => {
-                const onclickStr = item.getAttribute('onclick') || '';
-                const panelId = onclickStr.match(/'([^']+)'/)?.[1];
-
-                // Default to flex for all items, then hide specific ones
-                item.style.display = 'flex';
-
-                if (panelId === 'assistant') { // AI Oversight
-                    item.style.display = currentBot === 'assistant' ? 'flex' : 'none';
-                } else if (panelId === 'grievance' || panelId === 'tickets' || panelId === 'history') { // Emergency, Tickets, History
+                const id = item.id;
+                if (id === 'nav-tickets' || id === 'nav-grievance' || id === 'nav-history') {
                     item.style.display = currentBot === 'grievance' ? 'flex' : 'none';
                 }
             });
 
-            // If current active panel becomes hidden, switch to overview
-            const activePanel = document.querySelector('.panel.active');
-            if (activePanel) {
-                const activePanelId = activePanel.id.replace('panel-', '');
-                const navItemForActivePanel = document.querySelector(`.nav-item[onclick*="'${activePanelId}'"]`);
-                if (navItemForActivePanel && navItemForActivePanel.style.display === 'none') {
-                     showPanel('overview', { currentTarget: document.querySelector('.nav-item[onclick*="overview"]') });
-                }
-            }
-
-            // Toggle chart visibility in overview
-            const chartCont = document.getElementById('categoryChartContainer');
-            const gridCont = document.getElementById('overviewGridCharts');
-            if (chartCont && gridCont) {
-                if (currentBot === 'assistant') {
-                    chartCont.style.display = 'none';
-                    gridCont.style.gridTemplateColumns = '1fr';
-                } else {
-                    chartCont.style.display = 'block';
-                    gridCont.style.gridTemplateColumns = '1fr 1.5fr';
-                }
+            // Hide operational tickets container in Overview when in assistant mode
+            const ticketContainer = document.getElementById('overview-tickets-container');
+            if (ticketContainer) {
+                ticketContainer.style.display = currentBot === 'grievance' ? 'block' : 'none';
             }
 
             renderAll();
@@ -610,6 +579,7 @@
             } finally {
                 document.getElementById('loader').style.display = 'none';
                 document.body.classList.remove('loading');
+                lucide.createIcons(); // Ensure icons are refreshed even on error
             }
         }
 
@@ -622,15 +592,16 @@
 
             const titles = {
                 overview: 'Overview Dashboard',
-                tickets: 'Operational Tickets Management',
+                tickets: 'Operational Tickets',
                 assistant: 'Academic Assistant Operations',
                 grievance: 'Institutional Grievance Portal',
-                history: 'Grievance Archive & History',
-                users: 'User Directory & Management',
-                analytics: 'System-Wide Analytics',
+                history: 'Grievance Archive',
+                users: 'User Directory',
+                analytics: 'System Analytics',
                 settings: 'Global Settings'
             };
             document.getElementById('currentPanelTitle').innerText = titles[id];
+            lucide.createIcons(); // Re-trigger for new contents
         }
 
         const CATEGORY_MAP = {
@@ -651,25 +622,21 @@
             // Context specific stats
             if (activeLogData && activeLogData.metrics) {
                 const m = activeLogData.metrics[currentBot] || {};
-                document.getElementById('stat-complaints-today').innerText = m.total_requests || 0;
-                document.getElementById('stat-emergency-today').innerText = m.total_errors || 0;
                 
-                // Switch between Latency and Resolution
-                if (currentBot === 'assistant') {
-                    document.getElementById('stat-avg-resolution').innerText = (m.avg_latency || 0).toFixed(0);
-                    document.getElementById('stat-unit').innerText = 'ms';
-                    document.getElementById('stat-target').style.display = 'none';
-                } else {
-                    document.getElementById('stat-avg-resolution').innerText = stats.complaints.avg_resolution || '0.0';
-                    document.getElementById('stat-unit').innerText = 'h';
-                    document.getElementById('stat-target').style.display = 'flex';
-                }
+                // Reverting to authentic grievance counts for institutional overview
+                document.getElementById('stat-complaints-today').innerText = stats.complaints.total || 0;
+                document.getElementById('stat-emergency-today').innerText = stats.complaints.emergency || 0;
                 
-                // Labels update
+                const avg = stats.complaints.avg_resolution || '0.0';
+                document.getElementById('stat-avg-resolution').innerText = avg;
+                document.getElementById('stat-unit').innerText = 'h';
+                document.getElementById('stat-target').style.display = 'flex';
+                
+                // Labels update (Fixed for clarity)
                 document.querySelectorAll('.stat-label').forEach((el, idx) => {
-                    if (idx === 1) el.innerText = currentBot === 'assistant' ? 'Requests Today' : 'Tickets Today';
-                    if (idx === 2) el.innerText = currentBot === 'assistant' ? 'System Errors' : 'Emergencies';
-                    if (idx === 3) el.innerText = currentBot === 'assistant' ? 'Avg Latency' : 'Resolution Time';
+                    if (idx === 1) el.innerText = 'Tickets Today';
+                    if (idx === 2) el.innerText = 'Emergencies';
+                    if (idx === 3) el.innerText = 'Resolution Time';
                 });
             }
 
@@ -727,8 +694,10 @@
             let pendingCount = 0;
 
             complaints.forEach((c, index) => {
-                if (c.status !== 'resolved') pendingCount++;
-                if (c.is_emergency && c.status !== 'resolved') criticalCount++;
+                const isCompleted = c.status === 'resolved' || c.status === 'rejected';
+
+                if (!isCompleted) pendingCount++;
+                if (c.is_emergency && !isCompleted) criticalCount++;
 
                 const statusClass = c.status === 'resolved' ? 'badge-green' : (c.status === 'submitted' ? 'badge-blue' : 'badge-yellow');
                 const timeStr = new Date(c.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -748,20 +717,22 @@
                     </td>
                 `;
 
-                // Add to main management table
-                const row = document.createElement('tr');
-                row.innerHTML = rowHtml;
-                tbody.appendChild(row);
+                // Add to LIVE tickets table (Only unresolved non-emergencies or all unresolved)
+                if (!isCompleted && !c.is_emergency) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = rowHtml;
+                    tbody.appendChild(row);
+                }
 
-                // Top 5 to overview
+                // Overview still shows recent activity
                 if (index < 5 && tbodyOverview) {
                     const rowO = document.createElement('tr');
                     rowO.innerHTML = rowHtml;
                     tbodyOverview.appendChild(rowO);
                 }
 
-                // Push to Emergency Section
-                if (c.is_emergency && c.status !== 'resolved' && emergencyContainer) {
+                // Push to Emergency Section (ONLY ACTIVE EMERGENCIES)
+                if (c.is_emergency && !isCompleted && emergencyContainer) {
                     const eCard = document.createElement('div');
                     eCard.className = 'emergency-card pulse-alert';
                     
@@ -815,13 +786,13 @@
                 }
             }
             
-            // Render History Table
+            // Render History Table (ONLY COMPLETED)
             const hbody = document.querySelector('#historyTable tbody');
             if (hbody) {
                 hbody.innerHTML = '';
-                complaints.forEach(c => {
+                complaints.filter(c => c.status === 'resolved' || c.status === 'rejected').forEach(c => {
                     const tr = document.createElement('tr');
-                    const statusClass = c.status === 'resolved' ? 'badge-green' : (c.status === 'rejected' ? 'badge-red' : 'badge-yellow');
+                    const statusClass = c.status === 'resolved' ? 'badge-green' : 'badge-red';
                     tr.innerHTML = `
                         <td style="font-weight:700">${c.complaint_id}</td>
                         <td>${c.category}</td>
@@ -939,6 +910,7 @@
 
         setInterval(fetchData, 10000);
         fetchData();
+        lucide.createIcons(); // Initialize symbols immediately
     </script>
 </body>
 </html>

@@ -165,11 +165,11 @@
             <div class="nav-item active" onclick="showPanel('overview', event)">
                 <i data-lucide="layout-dashboard"></i> Overview
             </div>
-            <div class="nav-item" onclick="showPanel('tickets', event)">
+            <div class="nav-item" id="nav-tickets" onclick="showPanel('tickets', event)">
                 <i data-lucide="ticket"></i> Operational Tickets
             </div>
             <div class="nav-item" id="nav-grievance" onclick="showPanel('grievance', event)">
-                <i data-lucide="alert-triangle"><span class="nav-badge" id="emergency-dot"></span></i> Emergency Alerts
+                <i data-lucide="shield-check"><span class="nav-badge" id="emergency-dot"></span></i> Command Center
             </div>
             <div class="nav-item" id="nav-history" onclick="showPanel('history', event)">
                 <i data-lucide="history"></i> Grievance History
@@ -196,8 +196,11 @@
         <header>
             <div class="header-title" id="currentPanelTitle">Overview Dashboard</div>
             
-            <div class="bot-switch" style="display:none">
-                <button class="switch-btn active grievance" onclick="setBot('grievance')">
+            <div class="bot-switch">
+                <button class="switch-btn active assistant" onclick="setBot('assistant')">
+                    <i data-lucide="bot" style="width:14px"></i> ASSISTANT
+                </button>
+                <button class="switch-btn grievance" onclick="setBot('grievance')">
                     <i data-lucide="shield-check" style="width:14px"></i> GRIEVANCE
                 </button>
             </div>
@@ -271,7 +274,7 @@
                 </div>
 
                 <!-- BOTTOM: Snapshot Table -->
-                <div class="table-container">
+                <div class="table-container" id="overview-tickets-container">
                     <div style="padding: 24px; font-weight: 800; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
                         <span style="letter-spacing:-0.01em">RECENT OPERATIONAL TICKETS</span>
                         <button onclick="showPanel('tickets')" style="border:1px solid #e2e8f0; background:white; color:var(--text-main); font-weight:700; font-size:11px; padding:6px 12px; border-radius:6px; cursor:pointer; display:flex; align-items:center; gap:6px">
@@ -324,10 +327,32 @@
                 </div>
             </div>
 
-            <!-- ASSISTANT PANEL REMOVED -->
+            <!-- ASSISTANT PANEL -->
+            <div id="panel-assistant" class="panel">
+                <div class="grid-stats">
+                    <div class="stat-card">
+                        <span class="stat-label">Assistant Latency</span>
+                        <div class="stat-value" id="ast-latency-assistant">0ms</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Grievance Latency</span>
+                        <div class="stat-value" id="ast-latency-grievance">0ms</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Total Volume</span>
+                        <div class="stat-value" id="ast-total-hits">0</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">System Request Activity</div>
+                    <div class="activity-feed" id="fullLogFeed" style="max-height: 400px; overflow-y: auto;">
+                        <!-- Full logs here -->
+                    </div>
+                </div>
+            </div>
 
-            <!-- EMERGENCY ALERTS PANEL -->
-            <div id="panel(grievance)" class="panel">
+            <!-- GRIEVANCE PANEL -->
+            <div id="panel-grievance" class="panel">
                 <div class="grid-stats" style="gap: 12px; margin-bottom: 16px;">
                     <div class="stat-card" style="padding: 16px; background: var(--error-soft); border-color: #fca5a5;">
                         <span class="stat-label" style="font-size: 9px;">ACTIVE EMERGENCIES</span>
@@ -336,8 +361,8 @@
                 </div>
                 <div class="table-container">
                     <div style="padding: 12px 16px; font-weight: 700; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #fff1f2;">
-                        <span style="font-size: 13px; color: #991b1b;">🚨 LIVE EMERGENCY ALERTS</span>
-                        <span style="font-size: 10px; color: #ef4444; font-weight: 800;" class="pulse-alert">ACTION REQUIRED</span>
+                        <span style="font-size: 13px; color: #991b1b;">⚠️ LIVE EMERGENCY QUEUE</span>
+                        <span style="font-size: 10px; color: #ef4444; font-weight: 800;" class="pulse-alert">LIVE UPDATING</span>
                     </div>
                     <div style="padding: 16px;" id="emergencyContainer" class="emergency-grid">
                         <!-- Emergency cards here -->
@@ -491,11 +516,29 @@
         let logs = [];
         let categoryChart = null;
         let activeLogData = null;
-        let currentBot = 'grievance'; // Always grievance focus now
+        let currentBot = 'grievance'; 
 
         function setBot(bot) {
             currentBot = bot;
-            // Bot switching UI logic removed since it is fixed to grievance now
+            document.querySelectorAll('.switch-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.classList.contains(bot)) btn.classList.add('active');
+            });
+
+            // Toggle Sidebar Visibility for Bot-Specific Tabs
+            document.querySelectorAll('.nav-item').forEach(item => {
+                const id = item.id;
+                if (id === 'nav-tickets' || id === 'nav-grievance' || id === 'nav-history') {
+                    item.style.display = currentBot === 'grievance' ? 'flex' : 'none';
+                }
+            });
+
+            // Hide operational tickets container in Overview when in assistant mode
+            const ticketContainer = document.getElementById('overview-tickets-container');
+            if (ticketContainer) {
+                ticketContainer.style.display = currentBot === 'grievance' ? 'block' : 'none';
+            }
+
             renderAll();
         }
 
@@ -536,6 +579,7 @@
             } finally {
                 document.getElementById('loader').style.display = 'none';
                 document.body.classList.remove('loading');
+                lucide.createIcons(); // Ensure icons are refreshed even on error
             }
         }
 
@@ -548,14 +592,16 @@
 
             const titles = {
                 overview: 'Overview Dashboard',
-                tickets: 'Live Operational Tickets',
-                grievance: 'Emergency Alert Center',
-                history: 'Grievance Archive & History',
-                users: 'User Directory & Management',
-                analytics: 'System-Wide Analytics',
+                tickets: 'Operational Tickets',
+                assistant: 'Academic Assistant Operations',
+                grievance: 'Institutional Grievance Portal',
+                history: 'Grievance Archive',
+                users: 'User Directory',
+                analytics: 'System Analytics',
                 settings: 'Global Settings'
             };
             document.getElementById('currentPanelTitle').innerText = titles[id];
+            lucide.createIcons(); // Re-trigger for new contents
         }
 
         const CATEGORY_MAP = {
@@ -576,14 +622,17 @@
             // Context specific stats
             if (activeLogData && activeLogData.metrics) {
                 const m = activeLogData.metrics[currentBot] || {};
-                document.getElementById('stat-complaints-today').innerText = m.total_requests || 0;
-                document.getElementById('stat-emergency-today').innerText = m.total_errors || 0;
                 
-                document.getElementById('stat-avg-resolution').innerText = stats.complaints.avg_resolution || '0.0';
+                // Reverting to authentic grievance counts for institutional overview
+                document.getElementById('stat-complaints-today').innerText = stats.complaints.total || 0;
+                document.getElementById('stat-emergency-today').innerText = stats.complaints.emergency || 0;
+                
+                const avg = stats.complaints.avg_resolution || '0.0';
+                document.getElementById('stat-avg-resolution').innerText = avg;
                 document.getElementById('stat-unit').innerText = 'h';
                 document.getElementById('stat-target').style.display = 'flex';
                 
-                // Labels update
+                // Labels update (Fixed for clarity)
                 document.querySelectorAll('.stat-label').forEach((el, idx) => {
                     if (idx === 1) el.innerText = 'Tickets Today';
                     if (idx === 2) el.innerText = 'Emergencies';
@@ -861,6 +910,7 @@
 
         setInterval(fetchData, 10000);
         fetchData();
+        lucide.createIcons(); // Initialize symbols immediately
     </script>
 </body>
 </html>
