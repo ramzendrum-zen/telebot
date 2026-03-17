@@ -7,271 +7,454 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
             --bg: #ffffff;
-            --text-main: #111111;
-            --text-muted: #666666;
-            --border: #eeeeee;
-            --accent: #000000;
+            --sidebar: #f9fafb;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --accent: #2563eb;
+            --accent-soft: #eff6ff;
             --success: #10b981;
+            --success-soft: #ecfdf5;
             --error: #ef4444;
-            --surface: #fafafa;
+            --error-soft: #fef2f2;
+            --warning: #f59e0b;
+            --warning-soft: #fffbeb;
+            --surface: #ffffff;
+            --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--text-main); font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; display: flex; height: 100vh; overflow: hidden; }
 
-        body {
-            background: var(--bg);
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            overflow: hidden;
-        }
+        /* Sidebar Styling */
+        aside { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+        .sidebar-header { padding: 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); }
+        .logo-box { background: var(--accent); color: white; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; }
+        .sidebar-title { font-weight: 700; font-size: 14px; letter-spacing: -0.01em; color: var(--text-main); }
+        .nav-links { padding: 16px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.2s; cursor: pointer; }
+        .nav-item:hover { background: var(--accent-soft); color: var(--accent); }
+        .nav-item.active { background: var(--accent-soft); color: var(--accent); }
+        .nav-item i { width: 18px; height: 18px; }
 
-        header {
-            height: 64px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            padding: 0 40px;
-            justify-content: space-between;
-        }
+        /* Sidebar Footer */
+        .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+        .status-badge { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); }
 
-        .logo {
-            font-weight: 700;
-            font-size: 14px;
-            letter-spacing: -0.01em;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        /* Main Content */
+        main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        header { height: 64px; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 24px; justify-content: space-between; background: white; }
+        .header-title { font-weight: 600; font-size: 16px; color: var(--text-main); }
+        .header-actions { display: flex; align-items: center; gap: 16px; }
 
-        .bot-toggle {
-            display: flex;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 2px;
-            border-radius: 8px;
-        }
+        .content-area { flex: 1; padding: 24px; overflow-y: auto; background: #fdfdfd; }
+        .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: white; border: 1px solid var(--border); padding: 20px; border-radius: 12px; box-shadow: var(--card-shadow); }
+        .stat-label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block; }
+        .stat-value { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+        .stat-trend { font-size: 12px; margin-top: 4px; font-weight: 500; }
+        .trend-up { color: var(--success); }
 
-        .bot-toggle button {
-            padding: 8px 16px;
-            border: none;
-            background: none;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-muted);
-            cursor: pointer;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
+        /* Panels */
+        .panel { display: none; flex-direction: column; gap: 24px; animation: fadeIn 0.3s ease-out; }
+        .panel.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-        .bot-toggle button.active {
-            background: var(--bg);
-            color: var(--text-main);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
+        /* Charts Section */
+        .grid-charts { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+        .chart-container { background: white; border: 1px solid var(--border); padding: 24px; border-radius: 12px; box-shadow: var(--card-shadow); }
+        .chart-title { font-size: 14px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
 
-        main {
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            height: calc(100vh - 64px);
-        }
+        /* Table Styling */
+        .table-container { background: white; border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--card-shadow); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: left; }
+        th { background: var(--sidebar); padding: 14px 20px; font-weight: 600; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+        td { padding: 14px 20px; border-bottom: 1px solid var(--border); color: var(--text-main); }
+        tr:last-child td { border-bottom: none; }
+        .badge { padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .badge-blue { background: #dbeafe; color: #1e40af; }
+        .badge-yellow { background: #fef3c7; color: #92400e; }
+        .badge-green { background: #dcfce7; color: #166534; }
+        .badge-red { background: #fee2e2; color: #991b1b; }
 
-        aside {
-            border-right: 1px solid var(--border);
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            gap: 32px;
-        }
+        /* Emergency Cards */
+        .emergency-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+        .emergency-card { background: var(--error-soft); border: 1px solid #fecaca; padding: 16px; border-radius: 12px; position: relative; overflow: hidden; }
+        .emergency-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--error); }
+        .emergency-title { font-weight: 700; color: #991b1b; display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .emergency-meta { font-size: 13px; color: #b91c1c; display: flex; flex-direction: column; gap: 4px; }
 
-        .metric-card {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
+        /* Loading */
+        #loader { position: fixed; inset: 0; background: white; z-index: 1000; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
+        .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        .metric-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .metric-value {
-            font-size: 24px;
-            font-weight: 500;
-            letter-spacing: -0.02em;
-        }
-
-        .content {
-            padding: 40px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        .section-title {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .log-container {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            line-height: 1.6;
-        }
-
-        .log-entry {
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            gap: 20px;
-        }
-
-        .log-time {
-            color: var(--text-muted);
-            min-width: 80px;
-            flex-shrink: 0;
-        }
-
-        .log-msg {
-            color: var(--text-main);
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-        }
-
-        .status-online { background: var(--success); }
-
-        .loading-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 500;
-            z-index: 100;
-        }
-
-        @media (max-width: 900px) {
-            main { grid-template-columns: 1fr; }
-            aside { display: none; }
-        }
+        /* Activity Feed */
+        .activity-feed { display: flex; flex-direction: column; gap: 12px; }
+        .activity-item { display: flex; gap: 12px; font-size: 13px; line-height: 1.4; padding: 10px; border-radius: 8px; border-left: 2px solid var(--border); }
+        .activity-time { color: var(--text-muted); font-family: 'JetBrains Mono', monospace; font-size: 11px; width: 60px; flex-shrink: 0; }
+        .activity-content { font-weight: 500; }
     </style>
 </head>
 <body>
-    <div id="loader" class="loading-overlay">Initializing System...</div>
+    <div id="loader">
+        <div class="spinner"></div>
+        <div style="font-weight: 600; font-size: 14px; color: var(--text-muted)">Initializing MSAJCE Terminal...</div>
+    </div>
 
-    <header>
-        <div class="logo">
-            <span class="status-dot status-online"></span>
-            MSAJCE BOT OPERATIONS
+    <aside>
+        <div class="sidebar-header">
+            <div class="logo-box">M</div>
+            <div class="sidebar-title">MSAJCE TERMINAL</div>
         </div>
-        <div class="bot-toggle" id="botToggle">
-            <button class="active" onclick="switchBot('assistant')">Academic Assistant</button>
-            <button onclick="switchBot('grievance')">Grievance Portal</button>
+        <div class="nav-links">
+            <div class="nav-item active" onclick="showPanel('overview')">
+                <i data-lucide="layout-dashboard"></i> Overview
+            </div>
+            <div class="nav-item" onclick="showPanel('assistant')">
+                <i data-lucide="bot"></i> Academic Assistant
+            </div>
+            <div class="nav-item" onclick="showPanel('grievance')">
+                <i data-lucide="shield-check"></i> Grievance Portal
+            </div>
+            <div class="nav-item" onclick="showPanel('users')">
+                <i data-lucide="users"></i> User Management
+            </div>
+            <div class="nav-item" onclick="showPanel('analytics')">
+                <i data-lucide="bar-chart-3"></i> System Analytics
+            </div>
+            <div class="nav-item" onclick="showPanel('settings')">
+                <i data-lucide="settings"></i> Settings
+            </div>
         </div>
-        <div style="font-size: 12px; color: var(--text-muted); font-weight: 500;" id="lastSync">SYNCED JUST NOW</div>
-    </header>
+        <div class="sidebar-footer">
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                ORACLE ONLINE
+            </div>
+        </div>
+    </aside>
 
     <main>
-        <aside>
-            <div class="metric-card">
-                <span class="metric-label">Total Volume</span>
-                <span class="metric-value" id="mTotal">0</span>
-            </div>
-            <div class="metric-card">
-                <span class="metric-label">Avg P95 Latency</span>
-                <span class="metric-value" id="mLatency">0ms</span>
-            </div>
-            <div class="metric-card">
-                <span class="metric-label">Integration Uptime</span>
-                <span class="metric-value">99.9%</span>
-            </div>
-        </aside>
-
-        <section class="content">
-            <div style="flex: 1;">
-                <h3 class="section-title">Operational Logs</h3>
-                <div class="log-container" id="logContainer">
-                    <div class="log-entry"><span class="log-msg">Tail streaming initialized...</span></div>
+        <header>
+            <div class="header-title" id="currentPanelTitle">Overview Dashboard</div>
+            <div class="header-actions">
+                <div id="lastSync" style="font-size: 12px; color: var(--text-muted); font-weight: 500;">SYNCING...</div>
+                <div style="width: 32px; height: 32px; background: #f3f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i data-lucide="user" style="width: 16px; color: #4b5563;"></i>
                 </div>
             </div>
-        </section>
+        </header>
+
+        <div class="content-area">
+            <!-- OVERVIEW PANEL -->
+            <div id="panel-overview" class="panel active">
+                <div class="grid-stats">
+                    <div class="stat-card">
+                        <span class="stat-label">Total Users</span>
+                        <div class="stat-value" id="stat-total-users">0</div>
+                        <div class="stat-trend trend-up">↑ 12% from last week</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Complaints (Today)</span>
+                        <div class="stat-value" id="stat-complaints-today">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Emergency Alerts</span>
+                        <div class="stat-value" id="stat-emergency-today">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Resolution Rate</span>
+                        <div class="stat-value">94.2%</div>
+                    </div>
+                </div>
+
+                <div class="grid-charts">
+                    <div class="chart-container">
+                        <div class="chart-title">Complaint Distribution (by Category)</div>
+                        <canvas id="categoryChart" height="200"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-title">Recent Activity Log</div>
+                        <div class="activity-feed" id="activityFeed">
+                            <!-- Logs injected here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div style="padding: 20px; font-weight: 700; border-bottom: 1px solid var(--border)">Recent Active Grievance Tickets</div>
+                    <table id="complaintTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Category</th>
+                                <th>User</th>
+                                <th>Status</th>
+                                <th>Dept</th>
+                                <th>Time</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ASSISTANT PANEL -->
+            <div id="panel-assistant" class="panel">
+                <div class="grid-stats">
+                    <div class="stat-card">
+                        <span class="stat-label">Avg Latency (P95)</span>
+                        <div class="stat-value" id="ast-latency">0ms</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Total Tokens (Est)</span>
+                        <div class="stat-value">1.4M</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Cache Hit Rate</span>
+                        <div class="stat-value">78.4%</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Assistant Request Volume</div>
+                    <canvas id="assistantChart" height="300"></canvas>
+                </div>
+            </div>
+
+            <!-- GRIEVANCE PANEL -->
+            <div id="panel-grievance" class="panel">
+                <div class="grid-stats">
+                    <div class="stat-card" style="background: var(--error-soft); border-color: #fca5a5;">
+                        <span class="stat-label" style="color: #991b1b;">Emergency Alerts Active</span>
+                        <div class="stat-value" id="grv-emergency-count" style="color: #991b1b;">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Avg Resolution Time</span>
+                        <div class="stat-value">8.4 hrs</div>
+                    </div>
+                </div>
+                <div class="grid-charts">
+                     <div class="table-container" style="grid-column: span 2;">
+                        <div style="padding: 20px; font-weight: 700; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;">
+                            <span>Active Emergency Incidents</span>
+                            <span style="color: var(--error); font-size: 11px;">LIVE UPDATING</span>
+                        </div>
+                        <div style="padding: 24px;" id="emergencyContainer" class="emergency-grid">
+                            <!-- Emergency cards here -->
+                        </div>
+                     </div>
+                </div>
+            </div>
+
+            <!-- USERS PANEL -->
+            <div id="panel-users" class="panel">
+                <div class="table-container">
+                    <table id="userTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Dept</th>
+                                <th>ID</th>
+                                <th>Reg Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Users injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ANALYTICS PANEL -->
+            <div id="panel-analytics" class="panel">
+                <div class="grid-charts">
+                    <div class="chart-container">
+                        <canvas id="analyticsLineChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="analyticsRadarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+             <!-- SETTINGS PANEL -->
+             <div id="panel-settings" class="panel">
+                <div class="chart-container">
+                    <h3 style="margin-bottom: 16px;">System Configuration</h3>
+                    <p style="color: var(--text-muted); font-size: 14px;">Institutional parameters and API endpoints.</p>
+                </div>
+            </div>
+        </div>
     </main>
 
     <script>
-        let currentBot = 'assistant';
-        let allData = { logs: [], metrics: { assistant: {}, grievance: {} } };
+        lucide.createIcons();
+
+        let stats = {};
+        let complaints = [];
+        let users = [];
+        let logs = [];
+        let categoryChart, assistantChart;
 
         async function fetchData() {
             try {
-                const res = await fetch('/api/monitor');
-                allData = await res.json();
-                render();
+                const [statsRes, complaintsRes, usersRes, logsRes] = await Promise.all([
+                    fetch('/api/admin/stats'),
+                    fetch('/api/admin/complaints'),
+                    fetch('/api/admin/users'),
+                    fetch('/api/monitor')
+                ]);
+
+                stats = await statsRes.json();
+                complaints = await complaintsRes.json();
+                users = await usersRes.json();
+                const logData = await logsRes.json();
+                logs = logData.logs;
+
+                renderOverview();
+                renderComplaints();
+                renderUsers();
+                renderLogs();
+                
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('lastSync').innerText = 'SYNCED ' + new Date().toLocaleTimeString();
             } catch (e) {
-                console.error("Fetch error", e);
+                console.error("Dashboard Fetch Fail", e);
             }
         }
 
-        function switchBot(bot) {
-            currentBot = bot;
-            const buttons = document.querySelectorAll('#botToggle button');
-            buttons.forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
-            render();
-        }
-
-        function render() {
-            const metrics = allData.metrics[currentBot] || { total_requests: 0, avg_latency: 0 };
-            document.getElementById('mTotal').innerText = metrics.total_requests || 0;
-            document.getElementById('mLatency').innerText = Math.round(metrics.avg_latency || 0) + 'ms';
-
-            const container = document.getElementById('logContainer');
-            container.innerHTML = '';
-
-            const filteredLogs = allData.logs.filter(l => l.bot === currentBot);
+        function showPanel(id) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('panel-' + id).classList.add('active');
             
-            if (filteredLogs.length === 0) {
-                container.innerHTML = '<div class="log-entry"><span class="log-msg" style="color:#999">No metrics recorded for this session yet.</span></div>';
-                return;
-            }
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            event.currentTarget.classList.add('active');
 
-            filteredLogs.forEach(log => {
-                const div = document.createElement('div');
-                div.className = 'log-entry';
-                const time = new Date(log.timestamp).toLocaleTimeString([], { hour12: false });
-                
-                div.innerHTML = `
-                    <span class="log-time">${time}</span>
-                    <span class="log-msg">${log.message}</span>
-                `;
-                container.appendChild(div);
+            const titles = {
+                overview: 'Overview Dashboard',
+                assistant: 'Academic Assistant Operations',
+                grievance: 'Institutional Grievance Portal',
+                users: 'User Directory & Management',
+                analytics: 'System-Wide Analytics',
+                settings: 'Global Settings'
+            };
+            document.getElementById('currentPanelTitle').innerText = titles[id];
+        }
+
+        function renderOverview() {
+            document.getElementById('stat-total-users').innerText = stats.users.total;
+            document.getElementById('stat-complaints-today').innerText = stats.complaints.today;
+            document.getElementById('stat-emergency-today').innerText = stats.complaints.alerts_today;
+            document.getElementById('grv-emergency-count').innerText = stats.complaints.alerts_today;
+
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            const data = stats.byCategory.map(c => c.count);
+            const labels = stats.byCategory.map(c => c._id);
+
+            if (categoryChart) categoryChart.destroy();
+            categoryChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#7c3aed', '#db2777'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'right' } },
+                    cutout: '70%'
+                }
             });
         }
 
-        setInterval(fetchData, 4000);
+        function renderComplaints() {
+            const tbody = document.querySelector('#complaintTable tbody');
+            tbody.innerHTML = '';
+            
+            const emergencyContainer = document.getElementById('emergencyContainer');
+            if (emergencyContainer) emergencyContainer.innerHTML = '';
+
+            complaints.slice(0, 10).forEach(c => {
+                const tr = document.createElement('tr');
+                const statusClass = c.status === 'resolved' ? 'badge-green' : (c.status === 'submitted' ? 'badge-blue' : 'badge-yellow');
+                const time = new Date(c.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                tr.innerHTML = `
+                    <td style="font-weight:700; color:var(--accent)">${c.complaint_id}</td>
+                    <td>${c.category}</td>
+                    <td>${c.is_anonymous ? '🎭 Anonymous' : (c.student_id?.name || 'User')}</td>
+                    <td><span class="badge ${statusClass}">${c.status}</span></td>
+                    <td>${c.department_assigned || 'Unassigned'}</td>
+                    <td style="color:var(--text-muted)">${time}</td>
+                    <td><button style="border:none; background:none; color:var(--accent); font-weight:600; cursor:pointer">Manage</button></td>
+                `;
+                tbody.appendChild(tr);
+
+                if (c.is_emergency && c.status !== 'resolved') {
+                    const card = document.createElement('div');
+                    card.className = 'emergency-card';
+                    card.innerHTML = `
+                        <div class="emergency-title">🚨 ${c.incident_type || 'Alert'}</div>
+                        <div class="emergency-meta">
+                            <span><b>Location:</b> ${c.location || 'Unknown'}</span>
+                            <span><b>Time:</b> ${time}</span>
+                            <span><b>Reported By:</b> ${c.student_id?.name || 'Anonymous'}</span>
+                        </div>
+                        <button style="margin-top:12px; width:100%; padding:8px; border-radius:6px; background:#991b1b; color:white; border:none; font-weight:700; font-size:12px">MARK RESOLVED</button>
+                    `;
+                    if (emergencyContainer) emergencyContainer.appendChild(card);
+                }
+            });
+        }
+
+        function renderUsers() {
+            const tbody = document.querySelector('#userTable tbody');
+            tbody.innerHTML = '';
+            users.slice(0, 20).forEach(u => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight:600">${u.salutation || ''} ${u.name}</td>
+                    <td>${u.role}</td>
+                    <td>${u.department}</td>
+                    <td>${u.register_number || u.employee_id}</td>
+                    <td style="color:var(--text-muted)">${new Date(u.created_at).toLocaleDateString()}</td>
+                    <td><span class="badge badge-green">Verified</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderLogs() {
+            const feed = document.getElementById('activityFeed');
+            feed.innerHTML = '';
+            logs.slice(0, 6).forEach(l => {
+                const item = document.createElement('div');
+                item.className = 'activity-item';
+                const time = new Date(l.timestamp).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit' });
+                item.innerHTML = `
+                    <div class="activity-time">${time}</div>
+                    <div class="activity-content">${l.message}</div>
+                `;
+                feed.appendChild(item);
+            });
+        }
+
+        setInterval(fetchData, 10000);
         fetchData();
     </script>
 </body>

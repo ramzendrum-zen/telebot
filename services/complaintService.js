@@ -512,8 +512,20 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
     };
   }
 
+  const CATEGORY_MAPPING = {
+    '🏠 Hostel': 'Hostel Issues',
+    '🚌 Transport': 'Transport / Bus',
+    '🍱 Mess': 'Mess / Food',
+    '📚 Academic Affairs': 'Faculty Issues',
+    '🛠 Infrastructure': 'Infrastructure',
+    '👨‍🏫 Faculty': 'Faculty Issues',
+    '🛡 Security': 'Administration',
+    '⚠ Harassment': 'Harassment / Misconduct',
+    '📌 Other': 'Other'
+  };
+
   if (state.step === 'asking_category') {
-    nextState.category = text;
+    nextState.category = CATEGORY_MAPPING[text] || text.replace(/[^a-zA-Z /]/g, '').trim();
     nextState.step = 'asking_desc';
     await setCache(stateKey, nextState);
     return { 

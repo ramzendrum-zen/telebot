@@ -18,33 +18,75 @@ router.get('/complaints', async (req, res) => {
   }
 });
 
-// 2. Update Complaint Status
+// 2. Get All Users
+router.get('/users', async (req, res) => {
+  try {
+    await connectDB();
+    const users = await User.find().sort({ created_at: -1 });
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 3. Update Complaint
 router.patch('/complaints/:id', async (req, res) => {
   try {
-    const { status, admin_response } = req.body;
+    const { status, admin_response, priority, department_assigned } = req.body;
     await connectDB();
+    const updateData = { updated_at: new Date() };
+    if (status) updateData.status = status;
+    if (admin_response) updateData.admin_response = admin_response;
+    if (priority) updateData.priority = priority;
+    if (department_assigned) updateData.department_assigned = department_assigned;
+
     const updated = await Complaint.findOneAndUpdate(
       { complaint_id: req.params.id },
-      { status, admin_response, updated_at: new Date() },
+      updateData,
       { new: true }
     );
-    
-    // In a real app, send a Telegram notification to the student here!
-    
     res.json(updated);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// 3. Analytics
+// 4. Detailed Analytics
 router.get('/stats', async (req, res) => {
     try {
         await connectDB();
-        const stats = await Complaint.aggregate([
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const totalUsers = await User.countDocuments();
+        const activeToday = await User.countDocuments({ updated_at: { $gte: startOfDay } });
+        
+        const totalComplaints = await Complaint.countDocuments();
+        const openComplaints = await Complaint.countDocuments({ status: { $ne: 'resolved' } });
+        const resolvedComplaints = await Complaint.countDocuments({ status: 'resolved' });
+        const alertsToday = await Complaint.countDocuments({ is_emergency: true, created_at: { $gte: startOfDay } });
+        const complaintsToday = await Complaint.countDocuments({ created_at: { $gte: startOfDay } });
+
+        constByCategory = await Complaint.aggregate([
+            { $group: { _id: "$category", count: { $sum: 1 } } }
+        ]);
+
+        constByStatus = await Complaint.aggregate([
             { $group: { _id: "$status", count: { $sum: 1 } } }
         ]);
-        res.json(stats);
+
+        res.json({
+            users: { total: totalUsers, active_today: activeToday },
+            complaints: {
+                total: totalComplaints,
+                open: openComplaints,
+                resolved: resolvedComplaints,
+                alerts_today: alertsToday,
+                today: complaintsToday
+            },
+            byCategory: constByCategory,
+            byStatus: constByStatus
+        });
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
