@@ -155,43 +155,43 @@
         <div class="content-area">
             <!-- OVERVIEW PANEL -->
             <div id="panel-overview" class="panel active">
-                <!-- Visual Layer: Stats & Charts -->
-                <div style="display: grid; grid-template-columns: 1fr 2fr 1.5fr; gap: 20px; align-items: stretch; margin-bottom: 24px;">
+                <!-- Sticky Visual Layer: Stats & Charts -->
+                <div style="display: grid; grid-template-columns: 1fr 2fr 1.5fr; gap: 20px; align-items: stretch; position: sticky; top: -24px; background: #fdfdfd; z-index: 100; padding: 10px 0 24px 0; border-bottom: 1px solid var(--border); margin-bottom: 24px;">
                     
                     <!-- Analytics: Round Circle Stats -->
-                    <div class="chart-container" style="display: flex; flex-direction: column; min-height: 380px;">
+                    <div class="chart-container" style="display: flex; flex-direction: column; min-height: 320px; background: white;">
                         <div class="chart-title">Complaint Distribution</div>
-                        <div style="flex: 1; position: relative; min-height: 250px;">
+                        <div style="flex: 1; position: relative; height: 220px;">
                             <canvas id="categoryChart"></canvas>
                         </div>
                     </div>
 
                     <!-- Operational Density: Key Metrics -->
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
-                        <div class="stat-card">
+                        <div class="stat-card" style="height: 152px;">
                             <span class="stat-label">Total Users</span>
                             <div class="stat-value" id="stat-total-users">0</div>
                             <div class="stat-trend trend-up">↑ 12% Active</div>
                         </div>
-                        <div class="stat-card">
+                        <div class="stat-card" style="height: 152px;">
                             <span class="stat-label">Tickets (Today)</span>
                             <div class="stat-value" id="stat-complaints-today">0</div>
                             <div class="stat-trend trend-up" style="color:var(--accent)">Live Tracking</div>
                         </div>
-                        <div class="stat-card" style="background: var(--error-soft); border-color: #fecaca;">
+                        <div class="stat-card" style="background: var(--error-soft); border-color: #fecaca; height: 152px;">
                             <span class="stat-label" style="color:#991b1b">Emergencies</span>
                             <div class="stat-value" id="stat-emergency-today" style="color:#991b1b">0</div>
                         </div>
-                        <div class="stat-card">
+                        <div class="stat-card" style="height: 152px;">
                             <span class="stat-label">Avg. Resolution</span>
                             <div class="stat-value">8.4<span style="font-size:14px; color:var(--text-muted)">h</span></div>
                         </div>
                     </div>
 
                     <!-- Live Pulse: Activity Feed -->
-                    <div class="chart-container" style="min-height: 380px;">
+                    <div class="chart-container" style="min-height: 320px; background: white; overflow: hidden; display: flex; flex-direction: column;">
                         <div class="chart-title">System Pulse (Live)</div>
-                        <div class="activity-feed" id="activityFeed">
+                        <div class="activity-feed" id="activityFeed" style="flex: 1; overflow: hidden;">
                             <!-- Logs injected here -->
                         </div>
                     </div>
