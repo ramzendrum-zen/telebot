@@ -19,6 +19,7 @@ const transporter = nodemailer.createTransport({
 
 const COMPLAINT_STATE_PREFIX = 'grv_state:';
 const VERIFY_STATE_PREFIX = 'verify_state:';
+const EMERGENCY_STATE_PREFIX = 'emg_state:';
 
 const DEPT_ROUTING = {
   'Hostel Issues': 'Hostel Warden',
@@ -41,16 +42,31 @@ const DEPT_ROUTING = {
 };
 
 export const MAIN_MENU = {
-  text: "🏫 *MSAJCE Grievance Portal*\n\nWelcome! How can we help you today?",
+  text: "🛡️ *MSAJCE Grievance Redressal Portal*\n\nEfficiently resolving your concerns through professional automation.\n\n_Select an option from the dashboard below:_ ",
   keyboard: {
     keyboard: [
       ['📝 Register Complaint', '🔍 Track Complaint'],
-      ['📋 My Complaints', '🚨 Emergency Complaint'],
-      ['💡 FAQ / Help', '📞 Contact Administration']
+      ['🚨 Emergency Complaint', '📋 My History'],
+      ['👤 My Profile', '💡 FAQ & Help']
     ],
     resize_keyboard: true,
     one_time_keyboard: false
   }
+};
+
+const HELP_MESSAGE = {
+  text: "📖 *MSAJCE Bot Help Guide*\n\n" +
+        "• *Register Complaint*: Formal submission for any college issue.\n" +
+        "• *Emergency*: High-priority safety/medical alerts.\n" +
+        "• *Track*: Check status using your GRV-ID.\n" +
+        "• *Profile*: Manage your registered academic details.\n\n" +
+        "*Commands:*\n" +
+        "/start - Reset to Main Menu\n" +
+        "/cancel - Stop current process\n" +
+        "/profile - View your details\n" +
+        "/track - Alias for Tracking\n\n" +
+        "For technical issues, contact @ramzendrum_zen",
+  keyboard: MAIN_MENU.keyboard
 };
 
 const generateComplaintId = async () => {
@@ -63,6 +79,92 @@ const generateUserId = async () => {
   return `USR-${(count + 1001).toString()}`;
 };
 
+/**
+ * REDESIGNED PROFESSIONAL EMAIL TEMPLATE
+ */
+const getProfessionalEmailTemplate = (grvId, user, state, dept, isEmergency = false) => {
+    const accentColor = isEmergency ? '#ef4444' : '#3b82f6';
+    const urgencyLabel = isEmergency ? 'CRITICAL EMERGENCY' : 'NORMAL COMPLAINT';
+    const emergencyHeader = isEmergency ? `
+        <div style="background-color: #ef4444; color: #ffffff; padding: 12px; text-align: center; font-weight: 900; font-size: 14px; letter-spacing: 3px; border-radius: 12px 12px 0 0;">
+            🚨 PRIORITY: ${urgencyLabel}
+        </div>
+    ` : '';
+
+    return `
+    <div style="background-color: #f8fafc; color: #1e293b; font-family: 'Inter', -apple-system, sans-serif; padding: 40px 20px;">
+        <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #e2e8f0;">
+            ${emergencyHeader}
+            
+            <div style="padding: 32px;">
+                <div style="display: flex; align-items: center; margin-bottom: 24px;">
+                    <div style="background: ${accentColor}; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; margin-right: 12px;">M</div>
+                    <div style="font-weight: 800; font-size: 20px; letter-spacing: -0.5px; color: #0f172a;">MSAJCE <span style="color: ${accentColor};">ADMIN</span></div>
+                </div>
+
+                <div style="border-bottom: 1px solid #f1f5f9; padding-bottom: 20px; margin-bottom: 24px;">
+                    <div style="font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px;">Ticket ID</div>
+                    <div style="font-size: 20px; font-weight: 800; color: ${accentColor}; font-family: 'JetBrains Mono', monospace;">${grvId}</div>
+                </div>
+
+                <div style="margin-bottom: 32px;">
+                    <h2 style="font-size: 24px; font-weight: 800; color: #0f172a; margin: 0 0 8px 0;">${isEmergency ? state.incident_type : state.category}</h2>
+                    <p style="font-size: 14px; color: #64748b; margin: 0;">Routed to: <strong style="color: #475569;">${dept}</strong></p>
+                </div>
+
+                <div style="background: #f8fafc; border-radius: 12px; padding: 20px; margin-bottom: 32px; border: 1px solid #f1f5f9;">
+                    <h3 style="font-size: 11px; font-weight: 700; color: ${accentColor}; margin: 0 0 12px 0; text-transform: uppercase;">Issue Description</h3>
+                    <div style="font-size: 15px; line-height: 1.6; color: #334155;">${state.description}</div>
+                    ${isEmergency && state.location ? `
+                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px dotted #cbd5e1;">
+                         <div style="font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 4px;">LOCATION</div>
+                         <div style="font-size: 14px; color: #0f172a; font-weight: 600;">📍 ${state.location}</div>
+                    </div>` : ''}
+                </div>
+
+                <div style="margin-bottom: 32px;">
+                    <h3 style="font-size: 11px; font-weight: 700; color: #94a3b8; margin: 0 0 16px 0; text-transform: uppercase; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">Initiator Metadata</h3>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 8px 0; font-size: 13px; color: #64748b; font-weight: 500;">Name</td>
+                            <td style="padding: 8px 0; font-size: 13px; color: #0f172a; font-weight: 700; text-align: right;">${user.name}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; font-size: 13px; color: #64748b; font-weight: 500;">College ID</td>
+                            <td style="padding: 8px 0; font-size: 13px; color: #0f172a; font-weight: 700; text-align: right;">${user.register_number || user.employee_id}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; font-size: 13px; color: #64748b; font-weight: 500;">Department</td>
+                            <td style="padding: 8px 0; font-size: 13px; color: #0f172a; font-weight: 700; text-align: right;">${user.department}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; font-size: 13px; color: #64748b; font-weight: 500;">Role</td>
+                            <td style="padding: 8px 0; font-size: 13px; color: #0f172a; font-weight: 700; text-align: right;">${user.role.toUpperCase()}</td>
+                        </tr>
+                        ${user.phone ? `
+                        <tr>
+                            <td style="padding: 8px 0; font-size: 13px; color: #64748b; font-weight: 500;">Emergency Phone</td>
+                            <td style="padding: 8px 0; font-size: 13px; color: #ef4444; font-weight: 800; text-align: right;">${user.phone}</td>
+                        </tr>` : ''}
+                    </table>
+                </div>
+
+                <div style="text-align: center;">
+                    <a href="https://telebot-ram.vercel.app/admin" style="display: inline-block; background: #0f172a; color: white; padding: 14px 28px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">Proceed to Review Ticket</a>
+                </div>
+            </div>
+
+            <div style="background: #f8fafc; padding: 20px; text-align: center; border-top: 1px solid #f1f5f9;">
+                <p style="font-size: 12px; color: #94a3b8; margin: 0; font-weight: 500;">Sent via MSAJCE Automated Grievance Oracle. Confidential.</p>
+            </div>
+        </div>
+    </div>
+    `;
+};
+
+/**
+ * Handle Verification Flow for new users
+ */
 export const handleVerificationFlow = async (chatId, text, message) => {
   const stateKey = `${VERIFY_STATE_PREFIX}${chatId}`;
   const state = await getCache(stateKey);
@@ -70,141 +172,117 @@ export const handleVerificationFlow = async (chatId, text, message) => {
   if (!state) {
     await setCache(stateKey, { step: 'asking_role' });
     return { 
-      text: "👋 *Welcome to MSAJCE Grievance Bot*\n\nTo ensure a secure and authenticated environment, please verify your identity.\n\nAre you a:",
-      keyboard: { keyboard: [['Student', 'Staff'], ['❌ Cancel']], resize_keyboard: true }
+      text: "👋 *Account Registration Needed*\n\nTo ensure privacy and accountability, please register your profile.\n\nChoose your role:",
+      keyboard: { keyboard: [['Student', 'Staff'], ['❌ Cancel Registration']], resize_keyboard: true }
     };
   }
 
-  if (text === '❌ Cancel' || text === '🏫 Back to Menu') {
+  if (text === '❌ Cancel Registration' || text === '/cancel') {
     await setCache(stateKey, null);
-    return MAIN_MENU;
+    return { text: "❌ Registration cancelled.", keyboard: MAIN_MENU.keyboard };
   }
 
   let nextState = { ...state };
 
-  // 1. Role Selection
   if (state.step === 'asking_role') {
-    if (!['Student', 'Staff'].includes(text)) return { text: "⚠️ Please select from the menu.", keyboard: { keyboard: [['Student', 'Staff'], ['❌ Cancel']], resize_keyboard: true } };
+    if (!['Student', 'Staff'].includes(text)) return { text: "⚠️ Please use the buttons to select your role." };
     nextState.role = text.toLowerCase();
     nextState.step = nextState.role === 'student' ? 'asking_reg' : 'asking_emp_id';
     await setCache(stateKey, nextState);
     return { 
-      text: nextState.role === 'student' ? "🆔 Please enter your *Register Number* (e.g., 22IT045):" : "🆔 Please enter your *Employee ID* (e.g., EMP102):",
-      keyboard: { keyboard: [['❌ Cancel']], resize_keyboard: true } 
+      text: nextState.role === 'student' ? "🆔 Please enter your *University Register Number*:" : "🆔 Please enter your *Staff ID Number*:",
+      keyboard: { keyboard: [['❌ Cancel Registration']], resize_keyboard: true } 
     };
   }
 
-  // 2. ID Collection (Reg Num or Emp ID)
   if (state.step === 'asking_reg' || state.step === 'asking_emp_id') {
-    if (state.role === 'student') {
-        const existing = await User.findOne({ register_number: text.trim().toUpperCase() });
-        if (existing) return { text: "⚠️ This Register Number is already linked to another account." };
-        nextState.register_number = text.trim().toUpperCase();
-    } else {
-        const existing = await User.findOne({ employee_id: text.trim().toUpperCase() });
-        if (existing) return { text: "⚠️ This Employee ID is already linked to another account." };
-        nextState.employee_id = text.trim().toUpperCase();
-    }
+    const idVal = text.trim().toUpperCase();
+    const query = state.role === 'student' ? { register_number: idVal } : { employee_id: idVal };
+    const existing = await User.findOne(query);
+    if (existing) return { text: "⚠️ This ID is already registered from another account." };
+    
+    if (state.role === 'student') nextState.register_number = idVal;
+    else nextState.employee_id = idVal;
+    
     nextState.step = 'asking_name';
     await setCache(stateKey, nextState);
-    return { text: "👤 Enter your *Full Name*:", keyboard: { keyboard: [['❌ Cancel']], resize_keyboard: true } };
+    return { text: "👤 Please enter your *Full Name* (as per college records):" };
   }
 
-  // 3. Name Collection
   if (state.step === 'asking_name') {
     nextState.name = text;
     nextState.step = 'asking_dept';
     await setCache(stateKey, nextState);
     return { 
-      text: "🏢 Enter your *Department*:", 
-      keyboard: { keyboard: [['CSE', 'ECE'], ['EEE', 'Mech'], ['IT', 'Civil'], ['Artificial Intelligence', 'Cyber Security'], ['❌ Cancel']], resize_keyboard: true } 
+      text: "🏢 Select your *Department*:", 
+      keyboard: { keyboard: [['CSE', 'ECE'], ['EEE', 'Mech'], ['IT', 'Civil'], ['Artificial Intelligence', 'Cyber Security'], ['❌ Cancel Registration']], resize_keyboard: true } 
     };
   }
 
-  // 4. Dept Collection -> Student (Year) / Staff (Designation)
   if (state.step === 'asking_dept') {
     nextState.department = text;
     if (state.role === 'student') {
         nextState.step = 'asking_year';
         await setCache(stateKey, nextState);
         return { 
-          text: "📅 Enter your *Year of Study*:", 
-          keyboard: { keyboard: [['1', '2'], ['3', '4'], ['❌ Cancel']], resize_keyboard: true } 
+          text: "📅 Which *Year* of study are you in?", 
+          keyboard: { keyboard: [['1', '2'], ['3', '4'], ['❌ Cancel Registration']], resize_keyboard: true } 
         };
     } else {
         nextState.step = 'asking_designation';
         await setCache(stateKey, nextState);
-        return { text: "💼 Enter your *Designation* (e.g., Assistant Professor):" };
+        return { text: "💼 Enter your *Designation* (e.g. Professor, HOD):" };
     }
   }
 
-  // 5a. Student Year -> Residence Type
   if (state.step === 'asking_year') {
     nextState.year = parseInt(text);
-    if (isNaN(nextState.year)) return { text: "⚠️ Please use the buttons for Year." };
     nextState.step = 'asking_residence';
     await setCache(stateKey, nextState);
     return { 
-        text: "🏠 Are you a:", 
-        keyboard: { keyboard: [['Hostel', 'Day Scholar'], ['❌ Cancel']], resize_keyboard: true } 
+        text: "🏠 Are you a *Hosteller* or *Day Scholar*?", 
+        keyboard: { keyboard: [['Hostel', 'Day Scholar'], ['❌ Cancel Registration']], resize_keyboard: true } 
     };
   }
 
-  // 5b. Staff Designation -> Phone
   if (state.step === 'asking_designation') {
     nextState.designation = text;
     nextState.step = 'asking_phone';
     await setCache(stateKey, nextState);
-    return { text: "📞 Finally, enter your *Phone Number* (Optional, type Skip):", keyboard: { keyboard: [['Skip'], ['❌ Cancel']], resize_keyboard: true } };
+    return { text: "📞 Enter your *Mobile Number* for urgent contact:" };
   }
 
-  // 6a. Residence Type -> Room No or Phone
   if (state.step === 'asking_residence') {
     nextState.residence_type = text;
     if (text === 'Hostel') {
         nextState.step = 'asking_room';
         await setCache(stateKey, nextState);
-        return { text: "🔑 Enter your *Room Number* (e.g., H2-104):" };
+        return { text: "🔑 Enter your *Room Number* (e.g., H2-302):" };
     } else {
         nextState.step = 'asking_phone';
         await setCache(stateKey, nextState);
-        return { text: "📞 Enter your *Phone Number* (Optional, type Skip):", keyboard: { keyboard: [['Skip'], ['❌ Cancel']], resize_keyboard: true } };
+        return { text: "📞 Enter your *Mobile Number* for contact:" };
     }
   }
 
-  // 6b. Room No -> Phone
   if (state.step === 'asking_room') {
     nextState.room_number = text;
     nextState.step = 'asking_phone';
     await setCache(stateKey, nextState);
-    return { text: "📞 Enter your *Phone Number* (Optional, type Skip):", keyboard: { keyboard: [['Skip'], ['❌ Cancel']], resize_keyboard: true } };
+    return { text: "📞 Finally, enter your *Mobile Number*:" };
   }
 
-  // Final Step: Phone & Verification
   if (state.step === 'asking_phone') {
-    if (text.toLowerCase() !== 'skip') nextState.phone = text;
-    
+    nextState.phone = text;
     const usrId = await generateUserId();
-    const finalData = {
-        user_id: usrId,
-        role: nextState.role,
-        register_number: nextState.register_number,
-        employee_id: nextState.employee_id,
-        name: nextState.name,
-        department: nextState.department,
-        year: nextState.year,
-        residence_type: nextState.residence_type,
-        room_number: nextState.room_number,
-        designation: nextState.designation,
-        phone: nextState.phone,
-        verified: true
-    };
+    const finalData = { ...nextState, user_id: usrId, verified: true };
+    delete finalData.step;
 
     await verifyUser(chatId, finalData);
     await setCache(stateKey, null);
 
     return { 
-      text: `🎉 *Registration Successful!*\n\n*Name:* ${nextState.name}\n*Role:* ${nextState.role.toUpperCase()}\n*User ID:* \`${usrId}\`\n\nYou can now register complaints.`,
+      text: `✅ *Registration Complete!*\n\n*User ID:* \`${usrId}\`\n*Profile:* ${nextState.name}\n\nYou can now use all portal features.`,
       keyboard: MAIN_MENU.keyboard 
     };
   }
@@ -212,49 +290,141 @@ export const handleVerificationFlow = async (chatId, text, message) => {
   return MAIN_MENU;
 };
 
-export const listUserComplaints = async (chatId) => {
-  const complaints = await Complaint.find({ telegram_id: chatId }).sort({ created_at: -1 }).limit(5);
-  if (complaints.length === 0) return { text: "📋 No complaints yet.", keyboard: MAIN_MENU.keyboard };
-  let text = "📋 *Your Recent Complaints*\n\n";
-  complaints.forEach((c, i) => {
-    const icon = c.status === 'resolved' ? '✅' : '⏳';
-    text += `${i + 1}. *${c.complaint_id}* ${icon}\n   • Cat: ${c.category}\n\n`;
-  });
-  return { text, keyboard: MAIN_MENU.keyboard };
+/**
+ * EMERGENCY COMPLAINT FLOW
+ */
+export const handleEmergencyFlow = async (chatId, text, message) => {
+    const stateKey = `${EMERGENCY_STATE_PREFIX}${chatId}`;
+    const state = await getCache(stateKey);
+
+    if (text === '❌ Cancel' || text === '/cancel') {
+        await setCache(stateKey, null);
+        return { text: "🚨 Emergency flow cancelled.", keyboard: MAIN_MENU.keyboard };
+    }
+
+    if (!state) {
+        await setCache(stateKey, { step: 'asking_type' });
+        return {
+            text: "🚨 *EMERGENCY ALERT SYSTEM*\n\nThis will trigger an immediate high-priority notification to the principal and security team.\n\n*Select Incident Type:*",
+            keyboard: { 
+                keyboard: [['Medical Emergency', 'Harassment'], ['Theft / Fight', 'Fire / Safety'], ['❌ Cancel']], 
+                resize_keyboard: true 
+            }
+        };
+    }
+
+    let nextState = { ...state };
+
+    if (state.step === 'asking_type') {
+        if (text === '❌ Cancel') { await setCache(stateKey, null); return MAIN_MENU; }
+        nextState.incident_type = text;
+        nextState.step = 'asking_loc';
+        await setCache(stateKey, nextState);
+        return { text: "📍 Please specify the *Location* (e.g., C-Block 2nd Floor, Main Mess):" };
+    }
+
+    if (state.step === 'asking_loc') {
+        nextState.location = text;
+        nextState.step = 'asking_desc';
+        await setCache(stateKey, nextState);
+        return { text: "ℹ️ Summarize the *Incident* (Keep it brief but clear):" };
+    }
+
+    if (state.step === 'asking_desc') {
+        const user = await User.findOne({ telegram_id: chatId });
+        const grvId = await generateComplaintId();
+        
+        const newComplaint = new Complaint({
+            complaint_id: grvId,
+            student_id: user._id,
+            telegram_id: chatId,
+            category: 'Harassment / Misconduct',
+            incident_type: state.incident_type,
+            location: state.location,
+            description: text,
+            is_emergency: true,
+            status: 'submitted',
+            department_assigned: 'Principal / Security Team'
+        });
+        await newComplaint.save();
+
+        // Send High Priority Email
+        try {
+            await transporter.sendMail({
+                from: '"🚨 MSAJCE EMERGENCY" <eventbooking.otp@gmail.com>',
+                to: 'cookwithcomali5@gmail.com',
+                subject: `⛔ [EMERGENCY] ${state.incident_type} at ${state.location}`,
+                html: getProfessionalEmailTemplate(grvId, user, { ...state, description: text }, 'Principal / Security Team', true)
+            });
+        } catch (e) { logger.error(`Emergency Email Fail: ${e.message}`); }
+
+        await setCache(stateKey, null);
+        return {
+            text: `🚨 *EMERGENCY NOTIFIED*\n\nYour alert has been broadcasted to the top administration with ID: \`${grvId}\`.\n\n*Stay Calm.* Help is being dispatched.`,
+            keyboard: MAIN_MENU.keyboard
+        };
+    }
 };
 
+/**
+ * MAIN ENTRY POINT FOR GRIEVANCE BOT
+ */
 export const handleGrievanceFlow = async (chatId, text, message) => {
-  if (text === '/start' || text === '🏫 Back to Menu') return MAIN_MENU;
-  if (text === '💡 FAQ / Help') return { text: "💡 *Help Center*\n\nContact admin for deep issues.", keyboard: MAIN_MENU.keyboard };
-  if (text === '📞 Contact Administration') return { text: "📞 Office: +91 99400 04500", keyboard: MAIN_MENU.keyboard };
-  
-  const user = await getOrCreateUser(chatId, message);
-  if (!user) return { text: "⚠️ Error accessing profile.", keyboard: MAIN_MENU.keyboard };
-  if (!user.verified) return await handleVerificationFlow(chatId, text, message);
-
-  if (text === '📋 My Complaints') return await listUserComplaints(chatId);
-  if (text === '🔍 Track Complaint') {
-    await setCache(`track_state:${chatId}`, true);
-    return { text: "🔍 Enter Complaint ID:", keyboard: { keyboard: [['🏫 Back to Menu']], resize_keyboard: true } };
+  // Command Routing
+  if (text === '/start' || text === '🏠 Back to Menu' || text === '🏫 Back to Menu') return MAIN_MENU;
+  if (text === '/help' || text === '💡 FAQ & Help') return HELP_MESSAGE;
+  if (text === '/cancel' || text === '❌ Cancel') {
+      await setCache(`${COMPLAINT_STATE_PREFIX}${chatId}`, null);
+      await setCache(`${EMERGENCY_STATE_PREFIX}${chatId}`, null);
+      await setCache(`${VERIFY_STATE_PREFIX}${chatId}`, null);
+      return { text: "🏁 Process terminated. Returning to menu.", keyboard: MAIN_MENU.keyboard };
   }
 
+  const user = await getOrCreateUser(chatId, message);
+  if (!user) return { text: "⚠️ Database connection error." };
+
+  if (text === '/profile' || text === '👤 My Profile') {
+      const p = user;
+      let profileText = `👤 *Your Profile*\n\n` +
+          `*Name:* ${p.name}\n` +
+          `*Role:* ${p.role.toUpperCase()}\n` +
+          `*Dept:* ${p.department}\n` +
+          `*ID:* ${p.register_number || p.employee_id}\n` +
+          `*Contact:* ${p.phone || 'N/A'}\n` +
+          `*Verification:* ${p.verified ? '✅ Verified' : '❌ Pending'}`;
+      return { text: profileText, keyboard: MAIN_MENU.keyboard };
+  }
+
+  if (text === '/history' || text === '📋 My History') {
+      const history = await Complaint.find({ telegram_id: chatId }).sort({ created_at: -1 }).limit(5);
+      if (history.length === 0) return { text: "📜 You haven't registered any complaints yet." };
+      let logs = "📜 *Recent Complaints history:*\n\n";
+      history.forEach(c => logs += `• \`${c.complaint_id}\` - ${c.status}\n  (${c.category})\n\n`);
+      return { text: logs, keyboard: MAIN_MENU.keyboard };
+  }
+
+  // Check Registration Requirement
+  if (!user.verified) return await handleVerificationFlow(chatId, text, message);
+
+  // Check Emergency Requirement
+  const emgState = await getCache(`${EMERGENCY_STATE_PREFIX}${chatId}`);
+  if (text === '🚨 Emergency Complaint' || emgState) return await handleEmergencyFlow(chatId, text, message);
+
+  // Normal Grievance Flow
   const stateKey = `${COMPLAINT_STATE_PREFIX}${chatId}`;
   const state = await getCache(stateKey);
 
   if (text === '📝 Register Complaint') {
     await setCache(stateKey, { step: 'asking_category' });
     return {
-      text: "📝 *Select Category*:",
+      text: "📂 *Select Concern Category:*\n\nChoose the area that best describes your issue.",
       keyboard: {
         keyboard: [
           ['Hostel Issues', 'Transport / Bus'],
           ['Mess / Food', 'Faculty Issues'],
           ['WiFi / IT Issues', 'Infrastructure'],
-          ['Library Issues', 'Sports / Gym'],
-          ['Placement / Training', 'Fee / Scholarship'],
-          ['Certificate / Document', 'Cleanliness / Hygiene'],
-          ['Lab Equipment', 'Marks / Attendance'],
-          ['Harassment / Misconduct', 'Other'],
+          ['Fee / Scholarship', 'Academic Marks'],
+          ['Cleanliness', 'Other Issues'],
           ['❌ Cancel']
         ],
         resize_keyboard: true
@@ -263,7 +433,6 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
   }
 
   if (!state) return MAIN_MENU;
-  if (text === '❌ Cancel') { await setCache(stateKey, null); return { text: "❌ Cancelled.", keyboard: MAIN_MENU.keyboard }; }
 
   let nextState = { ...state };
 
@@ -271,7 +440,10 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
     nextState.category = text;
     nextState.step = 'asking_desc';
     await setCache(stateKey, nextState);
-    return { text: `📂 *${text}*\n\nDescribe your issue:`, keyboard: { keyboard: [['❌ Cancel']], resize_keyboard: true } };
+    return { 
+        text: `📝 *${text}*\n\nPlease provide a detailed description of the issue. Be specific to help the admin resolve it faster.`, 
+        keyboard: { keyboard: [['❌ Cancel']], resize_keyboard: true } 
+    };
   }
 
   if (state.step === 'asking_desc') {
@@ -279,13 +451,13 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
     nextState.step = 'asking_evidence';
     await setCache(stateKey, nextState);
     return {
-      text: "📎 Attach *Evidence* (Photo) or tap Skip:",
-      keyboard: { keyboard: [['⏭️ Skip Evidence'], ['❌ Cancel']], resize_keyboard: true }
+      text: "📎 *Proof / Evidence*\n\nWould you like to attach a photo as evidence? Recommended for faster verification.",
+      keyboard: { keyboard: [['⏭️ Skip Proof'], ['❌ Cancel']], resize_keyboard: true }
     };
   }
 
   if (state.step === 'asking_evidence') {
-    const isSkip = text === '⏭️ Skip Evidence';
+    const isSkip = text === '⏭️ Skip Proof';
     const grvId = await generateComplaintId();
     const dept = DEPT_ROUTING[state.category] || 'General Admin';
 
@@ -307,17 +479,12 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
                 content: Buffer.from(fileResponse.data)
             });
 
-            // Cloudinary Fallback
             if (config.cloudinary.cloudName) {
                 const res = await uploadTelegramMedia(token, media.file_id);
-                evidenceUrl = res?.url || `tg_file:${media.file_id}`;
-            } else {
-                evidenceUrl = `tg_file:${media.file_id}`;
+                evidenceUrl = res?.url;
             }
         }
-      } catch (e) {
-        logger.error(`Media processing failed: ${e.message}`);
-      }
+      } catch (e) { logger.error(`Media Error: ${e.message}`); }
     }
 
     const newComplaint = new Complaint({
@@ -327,80 +494,24 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
       category: state.category,
       description: state.description,
       evidence_url: evidenceUrl,
-      department_assigned: dept,
-      is_emergency: state.category === 'Harassment / Misconduct'
+      department_assigned: dept
     });
     await newComplaint.save();
 
+    // Send Professional Email
     try {
       await transporter.sendMail({
-        from: '"MSAJCE Grievance Automation" <eventbooking.otp@gmail.com>',
+        from: '"MSAJCE Grievance Oracle" <eventbooking.otp@gmail.com>',
         to: 'cookwithcomali5@gmail.com',
-        subject: `🚨 [${state.category.toUpperCase()}] New Grievance: ${grvId}`,
-        html: `
-            <div style="background-color: #0a0a0a; color: #ffffff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; border-radius: 24px; max-width: 600px; margin: auto; border: 1px solid #1f1f1f;">
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 30px;">
-                    <div style="background: linear-gradient(135deg, #3b82f6, #6366f1); padding: 12px; border-radius: 12px; font-size: 20px;">🏫</div>
-                    <h1 style="margin: 0; font-size: 22px; font-weight: 900; letter-spacing: -0.5px; color: #ffffff;">MSAJCE <span style="color: #3b82f6;">ADMIN</span></h1>
-                </div>
-
-                <div style="background: #141414; padding: 25px; border-radius: 20px; border: 1px solid #262626; margin-bottom: 25px;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
-                        <div>
-                            <span style="font-size: 10px; font-weight: 900; color: #737373; letter-spacing: 2px; text-transform: uppercase; display: block; margin-bottom: 5px;">TICKET ID</span>
-                            <span style="font-size: 18px; font-weight: 900; color: #3b82f6; font-family: monospace;">${grvId}</span>
-                        </div>
-                        <div style="text-align: right;">
-                            <span style="font-size: 10px; font-weight: 900; color: #737373; letter-spacing: 2px; text-transform: uppercase; display: block; margin-bottom: 5px;">STATUS</span>
-                            <span style="font-size: 10px; font-weight: 900; color: #fbbf24; background: rgba(251, 191, 36, 0.1); padding: 4px 10px; border-radius: 100px; border: 1px solid rgba(251, 191, 36, 0.2);">UNRESOLVED</span>
-                        </div>
-                    </div>
-                    
-                    <h2 style="margin: 0 0 10px 0; font-size: 24px; font-weight: 900; color: #ffffff;">${state.category}</h2>
-                    <p style="margin: 0; font-size: 14px; color: #a3a3a3; font-weight: 500;">Assigned to: <b style="color: #3b82f6;">${dept}</b></p>
-                </div>
-
-                <div style="margin-bottom: 30px;">
-                    <h3 style="font-size: 12px; font-weight: 900; color: #525252; letter-spacing: 2px; text-transform: uppercase; border-bottom: 1px solid #1f1f1f; padding-bottom: 10px; margin-bottom: 15px;">User Information</h3>
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <tr>
-                            <td style="padding: 8px 0; color: #737373; font-size: 13px; font-weight: 500;">Full Name</td>
-                            <td style="padding: 8px 0; color: #ffffff; font-size: 13px; font-weight: 700; text-align: right;">${user.name}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px 0; color: #737373; font-size: 13px; font-weight: 500;">Role / Dept</td>
-                            <td style="padding: 8px 0; color: #ffffff; font-size: 13px; font-weight: 700; text-align: right;">${user.role.toUpperCase()} • ${user.department}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px 0; color: #737373; font-size: 13px; font-weight: 500;">ID Number</td>
-                            <td style="padding: 8px 0; color: #3b82f6; font-size: 13px; font-weight: 900; text-align: right; font-family: monospace;">${user.register_number || user.employee_id}</td>
-                        </tr>
-                        ${user.phone ? `
-                        <tr>
-                            <td style="padding: 8px 0; color: #737373; font-size: 13px; font-weight: 500;">Phone</td>
-                            <td style="padding: 8px 0; color: #ffffff; font-size: 13px; font-weight: 700; text-align: right;">${user.phone}</td>
-                        </tr>` : ''}
-                    </table>
-                </div>
-
-                <div style="background: #000000; padding: 25px; border-radius: 20px; border: 1px solid #1f1f1f; margin-bottom: 30px;">
-                    <h3 style="font-size: 12px; font-weight: 900; color: #3b82f6; letter-spacing: 2px; text-transform: uppercase; margin-top: 0; margin-bottom: 15px;">Issue Description</h3>
-                    <p style="margin: 0; font-size: 15px; color: #d4d4d4; line-height: 1.6; font-weight: 500;">${state.description}</p>
-                </div>
-
-                <div style="text-align: center; border-top: 1px solid #1f1f1f; padding-top: 30px; margin-top: 10px;">
-                    <p style="font-size: 11px; color: #525252; margin-bottom: 20px; font-weight: 500;">This is an automated notification from the MSAJCE Grievance Portal. Manage this ticket in your dashboard.</p>
-                    <a href="https://telebot-ram.vercel.app/admin" style="background: #3b82f6; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 12px; font-size: 13px; font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);">OPEN DASHBOARD</a>
-                </div>
-            </div>
-        `,
+        subject: `[TICKET] ${grvId} - ${state.category}`,
+        html: getProfessionalEmailTemplate(grvId, user, state, dept, false),
         attachments: attachments
       });
     } catch (e) { logger.error(`Email Error: ${e.message}`); }
 
     await setCache(stateKey, null);
     return { 
-      text: `✅ *Grievance Submitted!* \n\nID: \`${grvId}\` \n\nThe administration (assigned to *${dept}*) has been notified with your evidence via email.`,
+      text: `🚀 *Submission Secured!*\n\nYour grievance has been logged as ID: \`${grvId}\`.\n\n*Next Steps:* The ${dept} has been notified. You will receive an update once it is reviewed.`,
       keyboard: MAIN_MENU.keyboard 
     };
   }
@@ -410,6 +521,15 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
 
 export const trackComplaint = async (id) => {
   const grv = await Complaint.findOne({ complaint_id: id.toUpperCase().trim() });
-  if (!grv) return { text: "❌ Not found.", keyboard: MAIN_MENU.keyboard };
-  return { text: `🔍 *ID:* ${grv.complaint_id}\n*Status:* ${grv.status.toUpperCase()}\n*Dept:* ${grv.department_assigned}`, keyboard: MAIN_MENU.keyboard };
+  if (!grv) return { text: "❌ *Invalid Ticket ID.*\n\nPlease check the ID and try again." };
+  
+  let statusText = `🔍 *Status Review: ${grv.complaint_id}*\n\n` +
+      `📅 *Filed:* ${new Date(grv.created_at).toLocaleDateString()}\n` +
+      `📁 *Category:* ${grv.category}\n` +
+      `📊 *Current Status:* ${grv.status.replace('_', ' ').toUpperCase()}\n` +
+      `🏢 *Assigned To:* ${grv.department_assigned}\n\n`;
+  
+  if (grv.admin_response) statusText += `💬 *Admin Note:* ${grv.admin_response}`;
+  
+  return { text: statusText, keyboard: MAIN_MENU.keyboard };
 };

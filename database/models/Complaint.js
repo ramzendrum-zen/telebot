@@ -27,6 +27,8 @@ const complaintSchema = new mongoose.Schema({
   admin_response: { type: String },
   resolution_notes: { type: String },
   feedback: { type: String, enum: ['Yes', 'No'] },
+  location: { type: String },
+  incident_type: { type: String },
   is_emergency: { type: Boolean, default: false },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now }

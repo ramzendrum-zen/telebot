@@ -21,17 +21,21 @@ export default async function handler(req, res) {
   try {
     await connectDB();
 
-    // 1. Root Commands for Grievance Bot
-    if (rawText === '/start' || rawText === '🏠 Back to Menu' || rawText === '🏫 Back to Menu') {
+    // 1. Root & Utility Commands
+    const triggerReset = ['/start', '🏠 Back to Menu', '🏫 Back to Menu'].includes(rawText);
+    const triggerHelp = ['/help', '💡 FAQ & Help'].includes(rawText);
+    
+    if (triggerReset) {
+      await setCache(`track_state:${chatId}`, null);
       await sendReply(chatId, MAIN_MENU);
       return res.status(200).send('ok');
     }
 
-    // 2. Tracking Mode
-    if (rawText === '🔍 Track Complaint') {
+    // 2. Tracking Mode (Direct trigger)
+    if (rawText === '🔍 Track Complaint' || rawText === '/track') {
       await setCache(`track_state:${chatId}`, true);
       await sendReply(chatId, {
-        text: "🔍 *Track Your Complaint*\n\nEnter your Complaint ID (e.g., *GRV-2043*):",
+        text: "🔍 *Grievance Status Tracking*\n\nPlease enter your *Complaint ID* (e.g., GRV-2045):",
         keyboard: { keyboard: [['🏫 Back to Menu']], resize_keyboard: true }
       });
       return res.status(200).send('ok');
