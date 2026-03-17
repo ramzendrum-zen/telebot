@@ -21,7 +21,8 @@ app.use('/api/admin', adminRouter);
 app.get('/api/health', (req, res) => res.json({ status: 'ok', uptime: process.uptime() }));
 
 // Dashboard Frontend Paths
-const publicPath = path.resolve(__dirname, 'public');
+const publicPath = path.resolve(process.cwd(), 'public');
+console.log(`[System] Static Assets Root: ${publicPath}`);
 
 // Serve static files from public
 app.use(express.static(publicPath));
