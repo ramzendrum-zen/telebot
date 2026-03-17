@@ -1,13 +1,719 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MSAJCE Admin Dashboard</title>
-    <script type="module" crossorigin src="/assets/index-qYYA2Ugf.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-Bq82dlxY.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSAJCE Bot Terminal | Administrative Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg: #f9fafb;
+            --sidebar: #ffffff;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --border: #e2e8f0;
+            --accent: #2563eb;
+            --accent-soft: #f0f7ff;
+            --success: #10b981;
+            --success-soft: #f0fdf4;
+            --error: #ef4444;
+            --error-soft: #fff1f2;
+            --warning: #f59e0b;
+            --warning-soft: #fffbeb;
+            --surface: #ffffff;
+            --card-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--text-main); font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; display: flex; min-height: 100vh; overflow-y: auto; }
+
+        /* Sidebar Styling */
+        aside { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 200; }
+        .sidebar-header { padding: 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); }
+        .logo-box { background: var(--accent); color: white; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; }
+        .sidebar-title { font-weight: 700; font-size: 14px; letter-spacing: -0.01em; color: var(--text-main); }
+        .nav-links { padding: 16px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.2s; cursor: pointer; }
+        .nav-item:hover { background: var(--accent-soft); color: var(--accent); }
+        .nav-item.active { background: var(--accent-soft); color: var(--accent); }
+        .nav-item i { width: 18px; height: 18px; }
+
+        .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+        .status-badge { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--success); }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success); }
+
+        /* Main Content */
+        main { flex: 1; margin-left: 260px; display: flex; flex-direction: column; min-height: 100vh; }
+        header { height: 64px; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 32px; justify-content: space-between; background: white; }
+        .header-title { font-weight: 700; font-size: 18px; color: var(--text-main); letter-spacing: -0.02em; }
+        .header-actions { display: flex; align-items: center; gap: 20px; }
+
+        .content-area { padding: 32px; background: var(--bg); height: auto; overflow: visible; }
+        
+        .grid-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 24px; }
+        .stat-card { background: white; border: 1px solid var(--border); padding: 24px; border-radius: 12px; box-shadow: var(--card-shadow); height: auto; }
+        .stat-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; display: block; }
+        .stat-value { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+        .stat-trend { font-size: 12px; margin-top: 8px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+        .trend-up { color: var(--success); }
+
+        /* Panels */
+        .panel { display: none; flex-direction: column; gap: 24px; height: auto; overflow: visible; }
+        .panel.active { display: flex; }
+
+        /* Charts Section */
+        .grid-charts { display: grid; grid-template-columns: 1fr 1.5fr; gap: 24px; margin-bottom: 24px; }
+        .chart-container { background: white; border: 1px solid var(--border); padding: 24px; border-radius: 12px; box-shadow: var(--card-shadow); height: auto; overflow: visible; }
+        .chart-title { font-size: 14px; font-weight: 700; margin-bottom: 24px; color: var(--text-main); border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; }
+
+        /* Table Styling */
+        .table-container { background: white; border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--card-shadow); overflow: visible; height: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: left; }
+        th { background: #f8fafc; padding: 16px 24px; font-weight: 700; color: var(--text-muted); border-bottom: 1px solid var(--border); text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; }
+        td { padding: 16px 24px; border-bottom: 1px solid var(--border); color: var(--text-main); vertical-align: middle; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f8fafc; }
+
+        .badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .badge-blue { background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; }
+        .badge-yellow { background: #fffbeb; color: #d97706; border: 1px solid #fef3c7; }
+        .badge-green { background: #f0fdf4; color: #16a34a; border: 1px solid #dcfce7; }
+        .badge-red { background: #fff1f2; color: #dc2626; border: 1px solid #fee2e2; }
+
+        /* Emergency Cards */
+        .emergency-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .emergency-card { background: white; border: 1px solid #fee2e2; padding: 20px; border-radius: 12px; position: relative; border-left: 4px solid var(--error); box-shadow: 0 4px 6px -1px rgb(220 38 38 / 0.1); }
+        .emergency-title { font-weight: 800; color: #991b1b; font-size: 15px; display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+        .emergency-meta { font-size: 13px; color: #4b5563; display: flex; flex-direction: column; gap: 6px; }
+
+        /* Activity Feed */
+        .activity-feed { display: flex; flex-direction: column; gap: 16px; height: auto; }
+        .activity-item { display: flex; gap: 16px; font-size: 13px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9; }
+        .activity-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .activity-time { color: var(--text-muted); font-family: 'JetBrains Mono', monospace; font-size: 11px; width: 50px; flex-shrink: 0; padding-top: 2px; }
+        .activity-content { font-weight: 500; color: #374151; flex: 1; word-break: break-word; line-height: 1.5; }
+
+        /* Bot Switch */
+        .bot-switch { background: #f1f5f9; padding: 4px; border-radius: 99px; display: flex; gap: 4px; border: 1px solid var(--border); }
+        .switch-btn { padding: 6px 16px; border-radius: 99px; border: none; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; color: var(--text-muted); background: transparent; display: flex; align-items: center; gap: 6px; }
+        .switch-btn.active { color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .switch-btn.active.assistant { background: var(--accent); }
+        .switch-btn.active.grievance { background: var(--warning); }
+    </style>
+</head>
+<body>
+    <div id="loader">
+        <div class="spinner"></div>
+        <div style="font-weight: 600; font-size: 14px; color: var(--text-muted)">Initializing MSAJCE Terminal...</div>
+    </div>
+
+    <aside>
+        <div class="sidebar-header">
+            <div class="logo-box">M</div>
+            <div class="sidebar-title">MSAJCE TERMINAL</div>
+        </div>
+        <div class="nav-links">
+            <div class="nav-item active" onclick="showPanel('overview', event)">
+                <i data-lucide="layout-dashboard"></i> Overview
+            </div>
+            <div class="nav-item" onclick="showPanel('tickets', event)">
+                <i data-lucide="ticket"></i> Operational Tickets
+            </div>
+            <div class="nav-item" onclick="showPanel('assistant', event)">
+                <i data-lucide="bot"></i> Academic Assistant
+            </div>
+            <div class="nav-item" onclick="showPanel('grievance', event)">
+                <i data-lucide="shield-check"></i> Grievance Portal
+            </div>
+            <div class="nav-item" onclick="showPanel('users', event)">
+                <i data-lucide="users"></i> User Management
+            </div>
+            <div class="nav-item" onclick="showPanel('analytics', event)">
+                <i data-lucide="bar-chart-3"></i> System Analytics
+            </div>
+            <div class="nav-item" onclick="showPanel('settings', event)">
+                <i data-lucide="settings"></i> Settings
+            </div>
+        </div>
+        <div class="sidebar-footer">
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                ORACLE ONLINE
+            </div>
+        </div>
+    </aside>
+
+    <main>
+        <header>
+            <div class="header-title" id="currentPanelTitle">Overview Dashboard</div>
+            
+            <!-- Bot Switch Center -->
+            <div class="bot-switch">
+                <button class="switch-btn active assistant" onclick="setBot('assistant')">
+                    <i data-lucide="bot" style="width:14px"></i> ASSISTANT
+                </button>
+                <button class="switch-btn grievance" onclick="setBot('grievance')">
+                    <i data-lucide="shield-check" style="width:14px"></i> GRIEVANCE
+                </button>
+            </div>
+
+            <div class="header-actions">
+                <div id="lastSync" style="font-size: 12px; color: var(--text-muted); font-weight: 500;">SYNCING...</div>
+                <div style="width: 32px; height: 32px; background: #f3f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i data-lucide="user" style="width: 16px; color: #4b5563;"></i>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-area">
+            <!-- OVERVIEW PANEL -->
+            <div id="panel-overview" class="panel active">
+                
+                <!-- TOP: Operational Metrics -->
+                <div class="grid-stats">
+                    <div class="stat-card">
+                        <span class="stat-label">Total Users</span>
+                        <div class="stat-value" id="stat-total-users">0</div>
+                        <div class="stat-trend trend-up"><i data-lucide="users" style="width:14px"></i> Institutional Base</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Tickets (Today)</span>
+                        <div class="stat-value" id="stat-complaints-today">0</div>
+                        <div class="stat-trend trend-up" style="color:var(--accent)"><i data-lucide="activity" style="width:14px"></i> Active Session</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Emergencies</span>
+                        <div class="stat-value" id="stat-emergency-today">0</div>
+                        <div class="stat-trend" style="color:var(--error)"><i data-lucide="alert-triangle" style="width:14px"></i> Needs Review</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Resolution Time</span>
+                        <div class="stat-value"><span id="stat-avg-resolution">0.0</span><span style="font-size:14px; color:var(--text-muted)">h</span></div>
+                        <div class="stat-trend" style="color:var(--success)"><i data-lucide="clock" style="width:14px"></i> Target: < 12h</div>
+                    </div>
+                </div>
+
+                <!-- MIDDLE: Charts & Feed -->
+                <div class="grid-charts">
+                    <!-- Distribution Chart -->
+                    <div class="chart-container">
+                        <div class="chart-title">Complaint Distribution (by Category)</div>
+                        <div style="position: relative; height: 280px;">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- System Pulse -->
+                    <div class="chart-container">
+                        <div class="chart-title">System Pulse (Live Activity)</div>
+                        <div class="activity-feed" id="activityFeed">
+                            <!-- Logs injected here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOTTOM: Snapshot Table -->
+                <div class="table-container">
+                    <div style="padding: 24px; font-weight: 800; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                        <span style="letter-spacing:-0.01em">RECENT OPERATIONAL TICKETS</span>
+                        <button onclick="showPanel('tickets')" style="border:1px solid #e2e8f0; background:white; color:var(--text-main); font-weight:700; font-size:11px; padding:6px 12px; border-radius:6px; cursor:pointer; display:flex; align-items:center; gap:6px">
+                            VIEW MODULE <i data-lucide="arrow-right" style="width:12px"></i>
+                        </button>
+                    </div>
+                    <table id="complaintTableOverview">
+                        <thead>
+                            <tr>
+                                <th>Ticket ID</th>
+                                <th>Category</th>
+                                <th>Initiator</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TICKETS PANEL -->
+            <div id="panel-tickets" class="panel">
+                <div class="table-container">
+                    <div style="padding: 16px 20px; font-weight: 700; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                        <span>All Active Operational Tickets</span>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" placeholder="Search Ticket ID..." style="padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;">
+                            <span class="badge badge-blue">ALL DEPARTMENTS</span>
+                        </div>
+                    </div>
+                    <table id="complaintTable">
+                        <thead>
+                            <tr>
+                                <th>Ticket ID</th>
+                                <th>Category</th>
+                                <th>Initiator</th>
+                                <th>Status</th>
+                                <th>Dept</th>
+                                <th>Time</th>
+                                <th style="text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ASSISTANT PANEL -->
+            <div id="panel-assistant" class="panel">
+                <div class="grid-stats">
+                    <div class="stat-card">
+                        <span class="stat-label">Assistant Latency</span>
+                        <div class="stat-value" id="ast-latency-assistant">0ms</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Grievance Latency</span>
+                        <div class="stat-value" id="ast-latency-grievance">0ms</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Total Volume</span>
+                        <div class="stat-value" id="ast-total-hits">0</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">System Request Activity</div>
+                    <div class="activity-feed" id="fullLogFeed" style="max-height: 400px; overflow-y: auto;">
+                        <!-- Full logs here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRIEVANCE PANEL -->
+            <div id="panel-grievance" class="panel">
+                <div class="grid-stats">
+                    <div class="stat-card" style="background: var(--error-soft); border-color: #fca5a5;">
+                        <span class="stat-label" style="color: #991b1b;">Emergency Alerts Active</span>
+                        <div class="stat-value" id="grv-emergency-count" style="color: #991b1b;">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Avg Resolution Time</span>
+                        <div class="stat-value">8.4 hrs</div>
+                    </div>
+                </div>
+                <div class="grid-charts">
+                     <div class="table-container" style="grid-column: span 2;">
+                        <div style="padding: 20px; font-weight: 700; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;">
+                            <span>Active Emergency Incidents</span>
+                            <span style="color: var(--error); font-size: 11px;">LIVE UPDATING</span>
+                        </div>
+                        <div style="padding: 24px;" id="emergencyContainer" class="emergency-grid">
+                            <!-- Emergency cards here -->
+                        </div>
+                     </div>
+                </div>
+            </div>
+
+            <!-- USERS PANEL -->
+            <div id="panel-users" class="panel">
+                <div class="table-container">
+                    <table id="userTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Dept</th>
+                                <th>ID</th>
+                                <th>Reg Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Users injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ANALYTICS PANEL -->
+            <div id="panel-analytics" class="panel">
+                <div class="grid-stats">
+                    <div class="stat-card" style="border-left: 4px solid var(--accent)">
+                        <span class="stat-label">Assistant Traffic</span>
+                        <div class="stat-value" id="an-ast-hits">0</div>
+                        <div class="stat-trend" style="color:var(--text-muted)">Err: <span id="an-ast-err">0</span> | Lat: <span id="an-ast-lat">0</span>ms</div>
+                    </div>
+                    <div class="stat-card" style="border-left: 4px solid var(--warning)">
+                        <span class="stat-label">Grievance Traffic</span>
+                        <div class="stat-value" id="an-grv-hits">0</div>
+                        <div class="stat-trend" style="color:var(--text-muted)">Err: <span id="an-grv-err">0</span> | Lat: <span id="an-grv-lat">0</span>ms</div>
+                    </div>
+                    <div class="stat-card" style="border-left: 4px solid var(--error)">
+                        <span class="stat-label">Total System Errors</span>
+                        <div class="stat-value" id="an-total-errors" style="color: var(--error)">0</div>
+                        <div class="stat-trend">Aggregated Failures</div>
+                    </div>
+                    <div class="stat-card" style="border-left: 4px solid var(--success)">
+                        <span class="stat-label">System Success Rate</span>
+                        <div class="stat-value" id="an-success-rate">100%</div>
+                        <div class="stat-trend" style="color: var(--success)">Operational Status</div>
+                    </div>
+                </div>
+
+                <div class="grid-charts">
+                    <div class="chart-container">
+                        <div class="chart-title">Fleet Load Comparison</div>
+                        <div style="height: 250px;">
+                            <canvas id="analyticsLineChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-title">Fleet Activity Monitor (AST & GRV)</div>
+                        <div class="activity-feed" id="analyticsLogFeed" style="max-height: 400px; overflow-y: auto;">
+                            <!-- Analytics logs here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <!-- SETTINGS PANEL -->
+             <div id="panel-settings" class="panel">
+                <div class="chart-container">
+                    <h3 style="margin-bottom: 16px;">System Configuration</h3>
+                    <p style="color: var(--text-muted); font-size: 14px;">Institutional parameters and API endpoints.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        let activeLogData = null;
+        let currentBot = 'assistant';
+
+        function setBot(bot) {
+            currentBot = bot;
+            document.querySelectorAll('.switch-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.classList.contains(bot)) btn.classList.add('active');
+            });
+
+            // Toggle Sidebar Visibility for Bot-Specific Tabs
+            document.querySelectorAll('.nav-item').forEach(item => {
+                const onclickStr = item.getAttribute('onclick') || '';
+                if (onclickStr.includes("'assistant'")) {
+                    item.style.display = currentBot === 'assistant' ? 'flex' : 'none';
+                }
+                if (onclickStr.includes("'grievance'") || onclickStr.includes("'tickets'")) {
+                    item.style.display = currentBot === 'grievance' ? 'flex' : 'none';
+                }
+            });
+
+            // If current active panel becomes hidden, switch to overview
+            const activePanel = document.querySelector('.panel.active');
+            if (activePanel && activePanel.id !== 'panel-overview' && activePanel.id !== 'panel-users' && activePanel.id !== 'panel-analytics' && activePanel.id !== 'panel-settings') {
+                const targetBotPanel = 'panel-' + currentBot;
+                if (activePanel.id !== targetBotPanel) {
+                     showPanel('overview', { currentTarget: document.querySelector('.nav-item') });
+                }
+            }
+
+            renderAll();
+        }
+
+        function renderAll() {
+            renderOverview();
+            renderComplaints();
+            renderUsers();
+            renderLogs();
+            renderAnalytics();
+            lucide.createIcons();
+        }
+
+        async function fetchData() {
+            try {
+                const [statsRes, complaintsRes, usersRes, logsRes] = await Promise.all([
+                    fetch('/api/admin/stats'),
+                    fetch('/api/admin/complaints'),
+                    fetch('/api/admin/users'),
+                    fetch('/api/monitor')
+                ]);
+
+                stats = await statsRes.json();
+                complaints = await complaintsRes.json();
+                users = await usersRes.json();
+                activeLogData = await logsRes.json();
+                logs = activeLogData.logs;
+
+                renderAll();
+                
+                document.getElementById('lastSync').innerText = 'SYNCED ' + new Date().toLocaleTimeString();
+            } catch (e) {
+                console.error("Dashboard Fetch Fail", e);
+                document.getElementById('lastSync').innerText = 'CONNECTION ERROR';
+            } finally {
+                document.getElementById('loader').style.display = 'none';
+            }
+        }
+
+        function showPanel(id, e) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('panel-' + id).classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            if (e && e.currentTarget) e.currentTarget.classList.add('active');
+
+            const titles = {
+                overview: 'Overview Dashboard',
+                tickets: 'Operational Tickets Management',
+                assistant: 'Academic Assistant Operations',
+                grievance: 'Institutional Grievance Portal',
+                users: 'User Directory & Management',
+                analytics: 'System-Wide Analytics',
+                settings: 'Global Settings'
+            };
+            document.getElementById('currentPanelTitle').innerText = titles[id];
+        }
+
+        const CATEGORY_MAP = {
+            'Harassment / Misconduct': { color: '#ef4444', label: 'Harassment' },
+            'WiFi / IT Issues': { color: '#2563eb', label: 'IT / WiFi' },
+            'Hostel Issues': { color: '#10b981', label: 'Hostel' },
+            'Medical Emergency': { color: '#f59e0b', label: 'Medical' },
+            'Other': { color: '#7c3aed', label: 'Other' }
+        };
+
+        let lastChartData = '';
+
+        function renderOverview() {
+            if (!stats || !stats.users || !stats.complaints) return;
+            
+            document.getElementById('stat-total-users').innerText = stats.users.total;
+            
+            // Context specific stats
+            if (activeLogData && activeLogData.metrics) {
+                const m = activeLogData.metrics[currentBot] || {};
+                document.getElementById('stat-complaints-today').innerText = m.total_requests || 0;
+                document.getElementById('stat-emergency-today').innerText = m.total_errors || 0;
+                document.getElementById('stat-avg-resolution').innerText = (m.avg_latency || 0).toFixed(0);
+                
+                // Labels update
+                document.querySelectorAll('.stat-label').forEach((el, idx) => {
+                    if (idx === 1) el.innerText = currentBot === 'assistant' ? 'Requests Today' : 'Tickets Today';
+                    if (idx === 2) el.innerText = currentBot === 'assistant' ? 'System Errors' : 'Emergencies';
+                    if (idx === 3) el.innerText = currentBot === 'assistant' ? 'Avg Latency (ms)' : 'Resolution Time';
+                });
+            }
+
+            // Normalize Category Data (Fixed order and counts)
+            const normalizedData = Object.keys(CATEGORY_MAP).map(cat => {
+                const found = (stats.byCategory || []).find(c => c._id === cat);
+                return {
+                    label: CATEGORY_MAP[cat].label,
+                    count: found ? found.count : 0,
+                    color: CATEGORY_MAP[cat].color
+                };
+            });
+
+            const currentDataString = JSON.stringify(normalizedData.map(d => d.count));
+            if (currentDataString === lastChartData) return; // Skip if no change
+            lastChartData = currentDataString;
+
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            if (categoryChart) categoryChart.destroy();
+
+            categoryChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: normalizedData.map(d => d.label),
+                    datasets: [{
+                        data: normalizedData.map(d => d.count),
+                        backgroundColor: normalizedData.map(d => d.color),
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    animation: { duration: 500 },
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: { backgroundColor: '#1e293b', padding: 12, titleFont: { size: 13 }, bodyFont: { size: 13 } }
+                    },
+                    cutout: '75%'
+                }
+            });
+        }
+
+        function renderComplaints() {
+            const tbody = document.querySelector('#complaintTable tbody');
+            const tbodyOverview = document.querySelector('#complaintTableOverview tbody');
+            tbody.innerHTML = '';
+            if (tbodyOverview) tbodyOverview.innerHTML = '';
+            
+            const emergencyContainer = document.getElementById('emergencyContainer');
+            if (emergencyContainer) emergencyContainer.innerHTML = '';
+
+            complaints.forEach((c, index) => {
+                const statusClass = c.status === 'resolved' ? 'badge-green' : (c.status === 'submitted' ? 'badge-blue' : 'badge-yellow');
+                const time = new Date(c.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                const rowHtml = `
+                    <td style="font-weight:700; color:var(--accent)">${c.complaint_id}</td>
+                    <td>${c.category}</td>
+                    <td>${c.is_anonymous ? '🎭 Anonymous' : (c.student_id?.name || 'User')}</td>
+                    <td><span class="badge ${statusClass}">${c.status}</span></td>
+                    <td>${c.department_assigned || 'Unassigned'}</td>
+                    <td style="color:var(--text-muted)">${time}</td>
+                    <td style="text-align:right">
+                        <button style="border:1px solid var(--border); background:white; padding:4px 12px; border-radius:6px; font-weight:600; font-size:12px; cursor:pointer" onclick="alert('Manage ${c.complaint_id}')">MANAGE</button>
+                    </td>
+                `;
+
+                // Add to main management table
+                const tr = document.createElement('tr');
+                tr.innerHTML = rowHtml;
+                tbody.appendChild(tr);
+
+                // Add to overview snapshot (first 5 only)
+                if (tbodyOverview && index < 5) {
+                    const trSimple = document.createElement('tr');
+                    trSimple.innerHTML = `
+                        <td style="font-weight:700; color:var(--accent)">${c.complaint_id}</td>
+                        <td>${c.category}</td>
+                        <td>${c.is_anonymous ? '🎭 Anonymous' : (c.student_id?.name || 'User')}</td>
+                        <td><span class="badge ${statusClass}">${c.status}</span></td>
+                        <td style="text-align:right">
+                            <button style="border:1px solid var(--border); background:white; padding:4px 12px; border-radius:6px; font-weight:700; font-size:11px; color:var(--accent); cursor:pointer" onclick="showPanel('tickets')">OPEN</button>
+                        </td>
+                    `;
+                    tbodyOverview.appendChild(trSimple);
+                }
+
+                if (c.is_emergency && c.status !== 'resolved') {
+                    const card = document.createElement('div');
+                    card.className = 'emergency-card';
+                    card.innerHTML = `
+                        <div class="emergency-title">🚨 ${c.incident_type || 'Alert'}</div>
+                        <div class="emergency-meta">
+                            <span><b>Location:</b> ${c.location || 'Unknown'}</span>
+                            <span><b>Time:</b> ${time}</span>
+                            <span><b>Reported By:</b> ${c.student_id?.name || 'Anonymous'}</span>
+                        </div>
+                        <button style="margin-top:12px; width:100%; padding:8px; border-radius:6px; background:#991b1b; color:white; border:none; font-weight:700; font-size:12px">MARK RESOLVED</button>
+                    `;
+                    if (emergencyContainer) emergencyContainer.appendChild(card);
+                }
+            });
+        }
+
+        let analyticsLineChart;
+        function renderAnalytics() {
+            try {
+                if (!activeLogData || !activeLogData.metrics) return;
+                const m = activeLogData.metrics[currentBot] || {};
+                
+                // Update Numeric Stats for Active Bot
+                const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.innerText = val; };
+                setVal('an-ast-hits', m.total_requests || 0);
+                setVal('an-ast-err', m.total_errors || 0);
+                setVal('an-ast-lat', (m.avg_latency || 0).toFixed(0));
+                
+                // Labels for Analytics Stat Cards
+                document.querySelectorAll('#panel-analytics .stat-label').forEach((el, idx) => {
+                    if (idx === 0) el.innerText = currentBot.toUpperCase() + ' TRAFFIC';
+                    if (idx === 1) el.innerText = currentBot.toUpperCase() + ' PERFORMANCE';
+                });
+
+                const totalErr = m.total_errors || 0;
+                const totalReq = m.total_requests || 0;
+                setVal('an-total-errors', totalErr);
+                
+                const rate = totalReq > 0 ? (((totalReq - totalErr) / totalReq) * 100).toFixed(1) : '100.0';
+                setVal('an-success-rate', rate + '%');
+
+                // Chart
+                const ctx = document.getElementById('analyticsLineChart').getContext('2d');
+                if (analyticsLineChart) analyticsLineChart.destroy();
+                analyticsLineChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: [currentBot === 'assistant' ? 'Assistant' : 'Grievance'],
+                        datasets: [
+                            { label: 'Success', data: [m.total_success || 0], backgroundColor: '#10b981', borderRadius: 4 },
+                            { label: 'Errors', data: [m.total_errors || 0], backgroundColor: '#ef4444', borderRadius: 4 }
+                        ]
+                    },
+                    options: { maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }, plugins: { legend: { display: true } } }
+                });
+            } catch (err) { console.error("Analytics Render Fail", err); }
+        }
+
+        function renderUsers() {
+            const tbody = document.querySelector('#userTable tbody');
+            tbody.innerHTML = '';
+            users.slice(0, 20).forEach(u => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight:600">${u.salutation || ''} ${u.name}</td>
+                    <td>${u.role}</td>
+                    <td>${u.department}</td>
+                    <td>${u.register_number || u.employee_id}</td>
+                    <td style="color:var(--text-muted)">${new Date(u.created_at).toLocaleDateString()}</td>
+                    <td><span class="badge badge-green">Verified</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderLogs() {
+            const feed = document.getElementById('activityFeed');
+            const fullFeed = document.getElementById('fullLogFeed');
+            const analyticsFeed = document.getElementById('analyticsLogFeed');
+            
+            if (feed) feed.innerHTML = '';
+            if (fullFeed) fullFeed.innerHTML = '';
+            if (analyticsFeed) analyticsFeed.innerHTML = '';
+
+            const filteredLogs = logs.filter(l => l.bot === currentBot);
+
+            filteredLogs.forEach((l, index) => {
+                const item = document.createElement('div');
+                item.className = 'activity-item';
+                const time = new Date(l.timestamp).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit' });
+                const botColor = l.bot === 'assistant' ? '#2563eb' : '#f59e0b';
+                const botLabel = l.bot === 'assistant' ? 'AST' : 'GRV';
+                
+                const contentHtml = `
+                    <div class="activity-time">${time}</div>
+                    <div class="activity-content">
+                        <span style="font-weight:800; color:${botColor}; font-size:9px; margin-right:8px">[${botLabel}]</span>
+                        ${l.message}
+                    </div>
+                `;
+                item.innerHTML = contentHtml;
+
+                if (index < 6 && feed) feed.appendChild(item);
+                if (fullFeed) {
+                    const fullItem = item.cloneNode(true);
+                    fullFeed.appendChild(fullItem);
+                }
+                if (analyticsFeed) {
+                    const anItem = item.cloneNode(true);
+                    analyticsFeed.appendChild(anItem);
+                }
+            });
+        }
+
+        setInterval(fetchData, 10000);
+        fetchData();
+    </script>
+</body>
 </html>
