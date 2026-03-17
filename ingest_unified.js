@@ -104,6 +104,25 @@ const transportDetailed = [
   }
 ];
 
+/**
+ * Backup Logic: Saves structured knowledge to a text file
+ */
+function appendToKnowledgeBackup(doc) {
+    const entry = `--- DOCUMENT_ID: ${doc.document_id} ---
+TIMESTAMP: ${new Date().toISOString()}
+TITLE: ${doc.title}
+CATEGORY: ${doc.category}
+SOURCE: ${doc.source}
+CONTENT: ${doc.content}
+KEYWORDS: ${Array.isArray(doc.keywords) ? doc.keywords.join(', ') : (doc.keywords || '')}
+ENTITIES: ${Array.isArray(doc.entities) ? doc.entities.join(', ') : (doc.entities || '')}
+QUERY_VARIATIONS:
+${Array.isArray(doc.query_variations) ? doc.query_variations.map(v => ` - ${v}`).join('\n') : ''}
+
+`;
+    fs.appendFileSync('knowledge_structured.txt', entry);
+}
+
 async function ingestVerifiedKnowledge(col) {
   // Combine Transport and Trust
   const verified = [
@@ -126,7 +145,7 @@ async function ingestVerifiedKnowledge(col) {
     const finalContent = rich ? rich.semantic_content : item.content;
     const embedding = await generateEmbedding(finalContent);
     
-    await col.insertOne({
+    const doc = {
       document_id: new mongoose.Types.ObjectId().toString(),
       source: item.source,
       category: item.category,
@@ -141,7 +160,10 @@ async function ingestVerifiedKnowledge(col) {
           ...item.metadata,
           created_at: new Date().toISOString() 
       }
-    });
+    };
+    
+    await col.insertOne(doc);
+    appendToKnowledgeBackup(doc);
   }
 }
 
@@ -165,7 +187,7 @@ async function run() {
         const finalContent = rich ? rich.semantic_content : chunk.content;
         const embedding = await generateEmbedding(finalContent);
         
-        await col.insertOne({
+        const doc = {
            document_id: new mongoose.Types.ObjectId().toString(),
            title: chunk.title,
            content: finalContent,
@@ -180,7 +202,10 @@ async function run() {
                created_at: new Date().toISOString(), 
                url: page.url
            }
-        });
+        };
+
+        await col.insertOne(doc);
+        appendToKnowledgeBackup(doc);
       }
       console.log(`\n ✅ Finished ${page.url}`);
     }

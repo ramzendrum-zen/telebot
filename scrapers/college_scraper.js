@@ -60,7 +60,15 @@ async function scrape() {
 
   await browser.close();
   fs.writeFileSync('scraped_data.json', JSON.stringify(results, null, 2));
-  console.log('Scraping complete. Results saved to scraped_data.json');
+
+  // ALSO SAVE AS STRUCTURED RAW TEXT
+  let rawText = '';
+  results.forEach(p => {
+    rawText += `--- SOURCE: ${p.url} ---\nTITLE: ${p.title}\nCONTENT: ${p.content}\n\n`;
+  });
+  fs.writeFileSync('knowledge_raw.txt', rawText);
+
+  console.log('Scraping complete. Results saved to scraped_data.json and knowledge_raw.txt');
 }
 
 scrape();
