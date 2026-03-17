@@ -773,8 +773,12 @@
             if (hCrit) hCrit.innerText = criticalCount;
             if (hPend) hPend.innerText = pendingCount;
 
-            if (grvCrit) grvCrit.innerText = criticalCount;
-            if (grvRes && stats && stats.complaints) grvRes.innerText = (stats.complaints.avg_resolution || '0.0') + 'h';
+            // Update Grievance Panel Stats safely
+            const grvCritEl = document.getElementById('grv-panel-emergency-count');
+            if (grvCritEl) grvCritEl.innerText = criticalCount;
+            
+            const avgResEl = document.getElementById('stat-avg-resolution');
+            if (avgResEl && stats && stats.complaints) avgResEl.innerText = stats.complaints.avg_resolution || '0.0';
             
             // Toggle Sidebar Alert Badge
             const dot = document.getElementById('emergency-dot');
