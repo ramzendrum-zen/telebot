@@ -516,7 +516,7 @@
         let logs = [];
         let categoryChart = null;
         let activeLogData = null;
-        let currentBot = 'grievance'; 
+        let currentBot = 'assistant'; 
 
         function setBot(bot) {
             currentBot = bot;
@@ -705,7 +705,7 @@
                 const rowHtml = `
                     <td style="font-weight:700; color:var(--accent)">${c.complaint_id}</td>
                     <td>${c.category}</td>
-                    <td>${c.is_anonymous ? '🎭 Anonymous' : (c.student_id?.name || 'User')}</td>
+                    <td>${c.is_anonymous ? '🎭 Anonymous' : (c.student_id?.name || c.name || 'User')}</td>
                     <td><span class="badge ${statusClass}">${c.status}</span></td>
                     <td>${c.department_assigned || 'Unassigned'}</td>
                     <td style="color:var(--text-muted)">${timeStr}</td>
@@ -858,10 +858,10 @@
             users.slice(0, 20).forEach(u => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td style="font-weight:600">${u.salutation || ''} ${u.name}</td>
+                    <td style="font-weight:600">${u.salutation || ''} ${u.name || (u.telegram_first_name + ' ' + (u.telegram_last_name || ''))}</td>
                     <td>${u.role}</td>
-                    <td>${u.department}</td>
-                    <td>${u.register_number || u.employee_id}</td>
+                    <td>${u.department || 'N/A'}</td>
+                    <td>${u.register_number || u.employee_id || u.user_id || ('TG-' + u.telegram_id)}</td>
                     <td style="color:var(--text-muted)">${new Date(u.created_at).toLocaleDateString()}</td>
                     <td><span class="badge badge-green">Verified</span></td>
                 `;
@@ -908,8 +908,9 @@
             });
         }
 
-        setInterval(fetchData, 10000);
+        setBot(currentBot);
         fetchData();
+        setInterval(fetchData, 10000);
         lucide.createIcons(); // Initialize symbols immediately
     </script>
 </body>
