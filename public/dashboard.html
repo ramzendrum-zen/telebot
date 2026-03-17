@@ -155,51 +155,66 @@
         <div class="content-area">
             <!-- OVERVIEW PANEL -->
             <div id="panel-overview" class="panel active">
-                <div class="grid-stats">
-                    <div class="stat-card">
-                        <span class="stat-label">Total Users</span>
-                        <div class="stat-value" id="stat-total-users">0</div>
-                        <div class="stat-trend trend-up">↑ 12% from last week</div>
+                <!-- Visual Layer: Stats & Charts -->
+                <div style="display: grid; grid-template-columns: 1fr 2fr 1.5fr; gap: 20px; align-items: stretch; margin-bottom: 24px;">
+                    
+                    <!-- Analytics: Round Circle Stats -->
+                    <div class="chart-container" style="display: flex; flex-direction: column; min-height: 380px;">
+                        <div class="chart-title">Complaint Distribution</div>
+                        <div style="flex: 1; position: relative; min-height: 250px;">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <span class="stat-label">Complaints (Today)</span>
-                        <div class="stat-value" id="stat-complaints-today">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-label">Emergency Alerts</span>
-                        <div class="stat-value" id="stat-emergency-today">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-label">Resolution Rate</span>
-                        <div class="stat-value">94.2%</div>
-                    </div>
-                </div>
 
-                <div class="grid-charts">
-                    <div class="chart-container">
-                        <div class="chart-title">Complaint Distribution (by Category)</div>
-                        <canvas id="categoryChart" height="200"></canvas>
+                    <!-- Operational Density: Key Metrics -->
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                        <div class="stat-card">
+                            <span class="stat-label">Total Users</span>
+                            <div class="stat-value" id="stat-total-users">0</div>
+                            <div class="stat-trend trend-up">↑ 12% Active</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Tickets (Today)</span>
+                            <div class="stat-value" id="stat-complaints-today">0</div>
+                            <div class="stat-trend trend-up" style="color:var(--accent)">Live Tracking</div>
+                        </div>
+                        <div class="stat-card" style="background: var(--error-soft); border-color: #fecaca;">
+                            <span class="stat-label" style="color:#991b1b">Emergencies</span>
+                            <div class="stat-value" id="stat-emergency-today" style="color:#991b1b">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Avg. Resolution</span>
+                            <div class="stat-value">8.4<span style="font-size:14px; color:var(--text-muted)">h</span></div>
+                        </div>
                     </div>
-                    <div class="chart-container">
-                        <div class="chart-title">Recent Activity Log</div>
+
+                    <!-- Live Pulse: Activity Feed -->
+                    <div class="chart-container" style="min-height: 380px;">
+                        <div class="chart-title">System Pulse (Live)</div>
                         <div class="activity-feed" id="activityFeed">
                             <!-- Logs injected here -->
                         </div>
                     </div>
                 </div>
 
+                <!-- Data Layer: Active Tickets -->
                 <div class="table-container">
-                    <div style="padding: 20px; font-weight: 700; border-bottom: 1px solid var(--border)">Recent Active Grievance Tickets</div>
+                    <div style="padding: 16px 20px; font-weight: 700; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                        <span>Active Operational Tickets</span>
+                        <div style="display: flex; gap: 8px;">
+                            <span class="badge badge-blue">ALL DEPARTMENTS</span>
+                        </div>
+                    </div>
                     <table id="complaintTable">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>Ticket ID</th>
                                 <th>Category</th>
-                                <th>User</th>
+                                <th>Initiator</th>
                                 <th>Status</th>
                                 <th>Dept</th>
                                 <th>Time</th>
-                                <th>Actions</th>
+                                <th style="text-align: right;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -382,13 +397,17 @@
                     datasets: [{
                         data: data,
                         backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#7c3aed', '#db2777'],
-                        borderWidth: 0
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
                     }]
                 },
                 options: {
                     maintainAspectRatio: false,
-                    plugins: { legend: { position: 'right' } },
-                    cutout: '70%'
+                    responsive: true,
+                    plugins: { 
+                        legend: { display: false }
+                    },
+                    cutout: '75%'
                 }
             });
         }
@@ -412,7 +431,9 @@
                     <td><span class="badge ${statusClass}">${c.status}</span></td>
                     <td>${c.department_assigned || 'Unassigned'}</td>
                     <td style="color:var(--text-muted)">${time}</td>
-                    <td><button style="border:none; background:none; color:var(--accent); font-weight:600; cursor:pointer">Manage</button></td>
+                    <td style="text-align:right">
+                        <button style="border:1px solid var(--border); background:white; padding:4px 12px; border-radius:6px; font-weight:600; font-size:12px; cursor:pointer" onclick="alert('Manage ${c.complaint_id}')">MANAGE</button>
+                    </td>
                 `;
                 tbody.appendChild(tr);
 

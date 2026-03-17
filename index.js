@@ -1,31 +1,39 @@
 import express from 'express';
-import handler from './api/telegram-webhook.js';
-import monitorHandler from './api/monitor.js';
-import config from './config/config.js';
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import handler from './api/telegram-webhook.js';
+import monitorHandler from './api/monitor.js';
+import adminRouter from './api/admin.js';
+import config from './config/config.js';
+import logger from './utils/logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-import adminRouter from './api/admin.js';
-
 const app = express();
 app.use(express.json());
 
-// Main webhook route
+// API Routes
 app.post('/api/telegram-webhook', handler);
-
-// Monitor API
 app.get('/api/monitor', monitorHandler);
-
-// Admin API
 app.use('/api/admin', adminRouter);
+app.get('/api/health', (req, res) => res.json({ status: 'ok', uptime: process.uptime() }));
 
-// Dashboard Frontend (Modern Minimalist)
-app.use('/dashboard', express.static(path.join(__dirname, 'public')));
+// Dashboard Frontend Paths
+const publicPath = path.resolve(__dirname, 'public');
+
+// Serve static files from public
+app.use(express.static(publicPath));
+
 app.get('/dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
+  const filePath = path.join(publicPath, 'dashboard.html');
+  if (fs.existsSync(filePath)) {
+      // Use root option for reliable absolute path sending in Express
+      res.sendFile('dashboard.html', { root: publicPath });
+  } else {
+      res.status(404).send(`Dashboard file missing at: ${filePath}`);
+  }
 });
 
 // Root Redirect
@@ -35,16 +43,21 @@ app.get('/', (req, res) => {
         <div style="text-align:center">
             <h1 style="font-weight:600; font-size:18px; letter-spacing:-0.02em">MSAJCE TERMINAL</h1>
             <p style="color:#666; font-size:14px">Academic & Grievance Systems are Active.</p>
-            <a href="/dashboard" style="color:#000; font-weight:600; text-decoration:none; border-bottom:1px solid #000; padding-bottom:2px">Access Fleet Dashboard</a>
+            <a href="/dashboard" style="color:#2563eb; font-weight:600; text-decoration:none; border-bottom:1px solid #2563eb; padding-bottom:2px">Access Fleet Dashboard</a>
         </div>
     </body>
   `);
 });
 
-// Start server (for local testing/Vercel)
-const PORT = config.port || 3000;
-app.listen(PORT, () => {
-  console.log(`Server launched on port ${PORT}`);
+// Global Error Handler
+app.use((err, req, res, next) => {
+  logger.error(`Unhandled Error: ${err.message}`);
+  res.status(500).send('Internal Server Error');
+});
+
+const PORT = config.port || 8080;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server launched on http://localhost:${PORT}`);
 });
 
 export default app;

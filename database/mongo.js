@@ -8,8 +8,10 @@ const connectDB = async () => {
   if (isConnected) return;
 
   try {
+    logger.info(`Connecting to MongoDB...`);
     const conn = await mongoose.connect(config.mongodb.uri, {
-      dbName: config.mongodb.dbName
+      dbName: config.mongodb.dbName,
+      serverSelectionTimeoutMS: 5000 // 5 seconds timeout
     });
     isConnected = true;
     logger.info(`MongoDB Connected: ${conn.connection.host}`);
