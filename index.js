@@ -20,11 +20,11 @@ app.get('/api/monitor', monitorHandler);
 app.use('/api/admin', adminRouter);
 app.get('/api/health', (req, res) => res.json({ status: 'ok', uptime: process.uptime() }));
 
-// Dashboard Frontend Paths (React Build)
-const publicPath = path.resolve(process.cwd(), 'dashboard', 'dist');
-console.log(`[System] Serving React Dashboard from: ${publicPath}`);
+// Dashboard Frontend Paths (Pre-built React Assets)
+const publicPath = path.resolve(process.cwd(), 'public');
+console.log(`[System] Static Assets Root: ${publicPath}`);
 
-// Serve static files from dashboard/dist
+// Serve static files from public
 app.use(express.static(publicPath));
 
 app.get('/dashboard', (req, res) => {
@@ -32,7 +32,7 @@ app.get('/dashboard', (req, res) => {
   if (fs.existsSync(filePath)) {
       res.sendFile('index.html', { root: publicPath });
   } else {
-      res.status(404).send(`Dashboard build mission. Run 'npm run build' in /dashboard.`);
+      res.status(404).send(`Dashboard assets missing in /public`);
   }
 });
 
