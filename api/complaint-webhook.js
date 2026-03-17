@@ -39,6 +39,10 @@ export default async function handler(req, res) {
 
   } catch (error) {
     logger.error(`Complaint Webhook CRASH: ${error.stack}`);
+    const latency = Date.now() - startTime;
+    await pushLog('grievance', 'error', `Crash: ${error.message.slice(0, 50)}`, { latency });
+    await updateMetrics('grievance', latency, false);
+
     await sendReply(chatId, { 
       text: "⚠️ *System Timeout or Error*\n\nWe encountered a temporary issue processing your request. Please try again in a few moments.",
       keyboard: MAIN_MENU.keyboard

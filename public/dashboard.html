@@ -96,6 +96,13 @@
         .activity-item:last-child { border-bottom: none; padding-bottom: 0; }
         .activity-time { color: var(--text-muted); font-family: 'JetBrains Mono', monospace; font-size: 11px; width: 50px; flex-shrink: 0; padding-top: 2px; }
         .activity-content { font-weight: 500; color: #374151; flex: 1; word-break: break-word; line-height: 1.5; }
+
+        /* Bot Switch */
+        .bot-switch { background: #f1f5f9; padding: 4px; border-radius: 99px; display: flex; gap: 4px; border: 1px solid var(--border); }
+        .switch-btn { padding: 6px 16px; border-radius: 99px; border: none; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; color: var(--text-muted); background: transparent; display: flex; align-items: center; gap: 6px; }
+        .switch-btn.active { color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .switch-btn.active.assistant { background: var(--accent); }
+        .switch-btn.active.grievance { background: var(--warning); }
     </style>
 </head>
 <body>
@@ -110,25 +117,25 @@
             <div class="sidebar-title">MSAJCE TERMINAL</div>
         </div>
         <div class="nav-links">
-            <div class="nav-item active" onclick="showPanel('overview')">
+            <div class="nav-item active" onclick="showPanel('overview', event)">
                 <i data-lucide="layout-dashboard"></i> Overview
             </div>
-            <div class="nav-item" onclick="showPanel('tickets')">
+            <div class="nav-item" onclick="showPanel('tickets', event)">
                 <i data-lucide="ticket"></i> Operational Tickets
             </div>
-            <div class="nav-item" onclick="showPanel('assistant')">
+            <div class="nav-item" onclick="showPanel('assistant', event)">
                 <i data-lucide="bot"></i> Academic Assistant
             </div>
-            <div class="nav-item" onclick="showPanel('grievance')">
+            <div class="nav-item" onclick="showPanel('grievance', event)">
                 <i data-lucide="shield-check"></i> Grievance Portal
             </div>
-            <div class="nav-item" onclick="showPanel('users')">
+            <div class="nav-item" onclick="showPanel('users', event)">
                 <i data-lucide="users"></i> User Management
             </div>
-            <div class="nav-item" onclick="showPanel('analytics')">
+            <div class="nav-item" onclick="showPanel('analytics', event)">
                 <i data-lucide="bar-chart-3"></i> System Analytics
             </div>
-            <div class="nav-item" onclick="showPanel('settings')">
+            <div class="nav-item" onclick="showPanel('settings', event)">
                 <i data-lucide="settings"></i> Settings
             </div>
         </div>
@@ -143,6 +150,17 @@
     <main>
         <header>
             <div class="header-title" id="currentPanelTitle">Overview Dashboard</div>
+            
+            <!-- Bot Switch Center -->
+            <div class="bot-switch">
+                <button class="switch-btn active assistant" onclick="setBot('assistant')">
+                    <i data-lucide="bot" style="width:14px"></i> ASSISTANT
+                </button>
+                <button class="switch-btn grievance" onclick="setBot('grievance')">
+                    <i data-lucide="shield-check" style="width:14px"></i> GRIEVANCE
+                </button>
+            </div>
+
             <div class="header-actions">
                 <div id="lastSync" style="font-size: 12px; color: var(--text-muted); font-weight: 500;">SYNCING...</div>
                 <div style="width: 32px; height: 32px; background: #f3f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
@@ -324,12 +342,41 @@
 
             <!-- ANALYTICS PANEL -->
             <div id="panel-analytics" class="panel">
+                <div class="grid-stats">
+                    <div class="stat-card" style="border-left: 4px solid var(--accent)">
+                        <span class="stat-label">Assistant Traffic</span>
+                        <div class="stat-value" id="an-ast-hits">0</div>
+                        <div class="stat-trend" style="color:var(--text-muted)">Err: <span id="an-ast-err">0</span> | Lat: <span id="an-ast-lat">0</span>ms</div>
+                    </div>
+                    <div class="stat-card" style="border-left: 4px solid var(--warning)">
+                        <span class="stat-label">Grievance Traffic</span>
+                        <div class="stat-value" id="an-grv-hits">0</div>
+                        <div class="stat-trend" style="color:var(--text-muted)">Err: <span id="an-grv-err">0</span> | Lat: <span id="an-grv-lat">0</span>ms</div>
+                    </div>
+                    <div class="stat-card" style="border-left: 4px solid var(--error)">
+                        <span class="stat-label">Total System Errors</span>
+                        <div class="stat-value" id="an-total-errors" style="color: var(--error)">0</div>
+                        <div class="stat-trend">Aggregated Failures</div>
+                    </div>
+                    <div class="stat-card" style="border-left: 4px solid var(--success)">
+                        <span class="stat-label">System Success Rate</span>
+                        <div class="stat-value" id="an-success-rate">100%</div>
+                        <div class="stat-trend" style="color: var(--success)">Operational Status</div>
+                    </div>
+                </div>
+
                 <div class="grid-charts">
                     <div class="chart-container">
-                        <canvas id="analyticsLineChart"></canvas>
+                        <div class="chart-title">Fleet Load Comparison</div>
+                        <div style="height: 250px;">
+                            <canvas id="analyticsLineChart"></canvas>
+                        </div>
                     </div>
                     <div class="chart-container">
-                        <canvas id="analyticsRadarChart"></canvas>
+                        <div class="chart-title">Fleet Activity Monitor (AST & GRV)</div>
+                        <div class="activity-feed" id="analyticsLogFeed" style="max-height: 400px; overflow-y: auto;">
+                            <!-- Analytics logs here -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -348,6 +395,46 @@
         lucide.createIcons();
 
         let activeLogData = null;
+        let currentBot = 'assistant';
+
+        function setBot(bot) {
+            currentBot = bot;
+            document.querySelectorAll('.switch-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.classList.contains(bot)) btn.classList.add('active');
+            });
+
+            // Toggle Sidebar Visibility for Bot-Specific Tabs
+            document.querySelectorAll('.nav-item').forEach(item => {
+                const onclickStr = item.getAttribute('onclick') || '';
+                if (onclickStr.includes("'assistant'")) {
+                    item.style.display = currentBot === 'assistant' ? 'flex' : 'none';
+                }
+                if (onclickStr.includes("'grievance'") || onclickStr.includes("'tickets'")) {
+                    item.style.display = currentBot === 'grievance' ? 'flex' : 'none';
+                }
+            });
+
+            // If current active panel becomes hidden, switch to overview
+            const activePanel = document.querySelector('.panel.active');
+            if (activePanel && activePanel.id !== 'panel-overview' && activePanel.id !== 'panel-users' && activePanel.id !== 'panel-analytics' && activePanel.id !== 'panel-settings') {
+                const targetBotPanel = 'panel-' + currentBot;
+                if (activePanel.id !== targetBotPanel) {
+                     showPanel('overview', { currentTarget: document.querySelector('.nav-item') });
+                }
+            }
+
+            renderAll();
+        }
+
+        function renderAll() {
+            renderOverview();
+            renderComplaints();
+            renderUsers();
+            renderLogs();
+            renderAnalytics();
+            lucide.createIcons();
+        }
 
         async function fetchData() {
             try {
@@ -364,10 +451,7 @@
                 activeLogData = await logsRes.json();
                 logs = activeLogData.logs;
 
-                renderOverview();
-                renderComplaints();
-                renderUsers();
-                renderLogs();
+                renderAll();
                 
                 document.getElementById('lastSync').innerText = 'SYNCED ' + new Date().toLocaleTimeString();
             } catch (e) {
@@ -378,12 +462,12 @@
             }
         }
 
-        function showPanel(id) {
+        function showPanel(id, e) {
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
             document.getElementById('panel-' + id).classList.add('active');
             
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            if (e && e.currentTarget) e.currentTarget.classList.add('active');
 
             const titles = {
                 overview: 'Overview Dashboard',
@@ -411,17 +495,20 @@
             if (!stats || !stats.users || !stats.complaints) return;
             
             document.getElementById('stat-total-users').innerText = stats.users.total;
-            document.getElementById('stat-complaints-today').innerText = stats.complaints.today;
-            document.getElementById('stat-emergency-today').innerText = stats.complaints.alerts_today;
-            document.getElementById('grv-emergency-count').innerText = stats.complaints.alerts_today;
-            document.getElementById('stat-avg-resolution').innerText = stats.complaints.avg_resolution || '0.0';
-
-            // Bot Metrics Update
+            
+            // Context specific stats
             if (activeLogData && activeLogData.metrics) {
-                const m = activeLogData.metrics;
-                document.getElementById('ast-latency-assistant').innerText = (m.assistant?.avg_latency || 0).toFixed(0) + 'ms';
-                document.getElementById('ast-latency-grievance').innerText = (m.grievance?.avg_latency || 0).toFixed(0) + 'ms';
-                document.getElementById('ast-total-hits').innerText = (m.assistant?.total_requests || 0) + (m.grievance?.total_requests || 0);
+                const m = activeLogData.metrics[currentBot] || {};
+                document.getElementById('stat-complaints-today').innerText = m.total_requests || 0;
+                document.getElementById('stat-emergency-today').innerText = m.total_errors || 0;
+                document.getElementById('stat-avg-resolution').innerText = (m.avg_latency || 0).toFixed(0);
+                
+                // Labels update
+                document.querySelectorAll('.stat-label').forEach((el, idx) => {
+                    if (idx === 1) el.innerText = currentBot === 'assistant' ? 'Requests Today' : 'Tickets Today';
+                    if (idx === 2) el.innerText = currentBot === 'assistant' ? 'System Errors' : 'Emergencies';
+                    if (idx === 3) el.innerText = currentBot === 'assistant' ? 'Avg Latency (ms)' : 'Resolution Time';
+                });
             }
 
             // Normalize Category Data (Fixed order and counts)
@@ -527,6 +614,48 @@
             });
         }
 
+        let analyticsLineChart;
+        function renderAnalytics() {
+            try {
+                if (!activeLogData || !activeLogData.metrics) return;
+                const m = activeLogData.metrics[currentBot] || {};
+                
+                // Update Numeric Stats for Active Bot
+                const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.innerText = val; };
+                setVal('an-ast-hits', m.total_requests || 0);
+                setVal('an-ast-err', m.total_errors || 0);
+                setVal('an-ast-lat', (m.avg_latency || 0).toFixed(0));
+                
+                // Labels for Analytics Stat Cards
+                document.querySelectorAll('#panel-analytics .stat-label').forEach((el, idx) => {
+                    if (idx === 0) el.innerText = currentBot.toUpperCase() + ' TRAFFIC';
+                    if (idx === 1) el.innerText = currentBot.toUpperCase() + ' PERFORMANCE';
+                });
+
+                const totalErr = m.total_errors || 0;
+                const totalReq = m.total_requests || 0;
+                setVal('an-total-errors', totalErr);
+                
+                const rate = totalReq > 0 ? (((totalReq - totalErr) / totalReq) * 100).toFixed(1) : '100.0';
+                setVal('an-success-rate', rate + '%');
+
+                // Chart
+                const ctx = document.getElementById('analyticsLineChart').getContext('2d');
+                if (analyticsLineChart) analyticsLineChart.destroy();
+                analyticsLineChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: [currentBot === 'assistant' ? 'Assistant' : 'Grievance'],
+                        datasets: [
+                            { label: 'Success', data: [m.total_success || 0], backgroundColor: '#10b981', borderRadius: 4 },
+                            { label: 'Errors', data: [m.total_errors || 0], backgroundColor: '#ef4444', borderRadius: 4 }
+                        ]
+                    },
+                    options: { maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }, plugins: { legend: { display: true } } }
+                });
+            } catch (err) { console.error("Analytics Render Fail", err); }
+        }
+
         function renderUsers() {
             const tbody = document.querySelector('#userTable tbody');
             tbody.innerHTML = '';
@@ -547,10 +676,15 @@
         function renderLogs() {
             const feed = document.getElementById('activityFeed');
             const fullFeed = document.getElementById('fullLogFeed');
-            feed.innerHTML = '';
+            const analyticsFeed = document.getElementById('analyticsLogFeed');
+            
+            if (feed) feed.innerHTML = '';
             if (fullFeed) fullFeed.innerHTML = '';
+            if (analyticsFeed) analyticsFeed.innerHTML = '';
 
-            logs.forEach((l, index) => {
+            const filteredLogs = logs.filter(l => l.bot === currentBot);
+
+            filteredLogs.forEach((l, index) => {
                 const item = document.createElement('div');
                 item.className = 'activity-item';
                 const time = new Date(l.timestamp).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit' });
@@ -566,10 +700,14 @@
                 `;
                 item.innerHTML = contentHtml;
 
-                if (index < 6) feed.appendChild(item);
+                if (index < 6 && feed) feed.appendChild(item);
                 if (fullFeed) {
                     const fullItem = item.cloneNode(true);
                     fullFeed.appendChild(fullItem);
+                }
+                if (analyticsFeed) {
+                    const anItem = item.cloneNode(true);
+                    analyticsFeed.appendChild(anItem);
                 }
             });
         }

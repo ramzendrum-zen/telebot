@@ -53,6 +53,10 @@ export default async function handler(req, res) {
     return res.status(200).json({ status: 'success' });
   } catch (error) {
     logger.error(`Assistant Webhook Error: ${error.message}`);
+    const latency = Date.now() - startTime;
+    await pushLog('assistant', 'error', `Failure: ${error.message.slice(0, 50)}`, { latency });
+    await updateMetrics('assistant', latency, false);
+    
     await sendTelegramMessage(chatId, "I'm having trouble connecting right now. Please try again later.");
     return res.status(200).send('ok');
   }
