@@ -31,7 +31,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: var(--bg); color: var(--text-main); font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; display: flex; min-height: 100vh; overflow-y: auto; }
 
-        /* Sidebar Styling */
+        /* Classic Sidebar */
         aside { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 200; }
         .sidebar-header { padding: 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); }
         .logo-box { background: var(--accent); color: white; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; }
@@ -40,7 +40,10 @@
         .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.2s; cursor: pointer; }
         .nav-item:hover { background: var(--accent-soft); color: var(--accent); }
         .nav-item.active { background: var(--accent-soft); color: var(--accent); }
-        .nav-item i { width: 18px; height: 18px; }
+        .nav-item i { width: 18px; height: 18px; position: relative; }
+        .nav-badge { position: absolute; top: -4px; right: -4px; width: 10px; height: 10px; background: var(--error); border-radius: 50%; border: 2px solid var(--sidebar); display: none; }
+        .nav-badge.active { display: block; animation: pulseAlertDot 1.5s infinite; }
+        @keyframes pulseAlertDot { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
 
         .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
         .status-badge { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--success); }
@@ -84,28 +87,70 @@
         .badge-green { background: #f0fdf4; color: #16a34a; border: 1px solid #dcfce7; }
         .badge-red { background: #fff1f2; color: #dc2626; border: 1px solid #fee2e2; }
 
-        /* Emergency Cards */
-        .emergency-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-        .emergency-card { background: white; border: 1px solid #fee2e2; padding: 20px; border-radius: 12px; position: relative; border-left: 4px solid var(--error); box-shadow: 0 4px 6px -1px rgb(220 38 38 / 0.1); }
-        .emergency-title { font-weight: 800; color: #991b1b; font-size: 15px; display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-        .emergency-meta { font-size: 13px; color: #4b5563; display: flex; flex-direction: column; gap: 6px; }
+        /* Emergency Cards (Compact Look) */
+        .emergency-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        .emergency-card { background: white; border-radius: 12px; border-left: 4px solid var(--error); padding: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        .emergency-main { display: flex; flex-direction: column; gap: 8px; }
+        .emergency-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+        .emergency-title { font-size: 15px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; }
+        .severity-badge { padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 800; background: #fee2e2; color: #991b1b; }
+        .emergency-details { display: flex; gap: 16px; background: #f8fafc; padding: 10px; border-radius: 8px; flex-wrap: wrap; }
+        .detail-item { display: flex; align-items: center; gap: 6px; }
+        .detail-label { font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+        .detail-value { font-size: 12px; font-weight: 600; color: #334155; }
+        .emergency-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .action-btn { flex: 1; padding: 8px; border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer; border: 1px solid transparent; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn-primary { background: #991b1b; color: white; }
+        .btn-outline { background: white; border-color: var(--border); color: #475569; }
+        
+        /* Pulse Animation (Only for REAL Emergencies) */
+        .pulse-alert { animation: pulseRed 2s infinite; }
+        @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+
+        /* Skeleton UI & Loader */
+        .skeleton { position: relative; overflow: hidden; background-color: #f3f4f6; border-radius: 4px; }
+        .skeleton::after { content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; transform: translateX(-100%); background-image: linear-gradient(90deg, rgba(255,255,255,0) 0, rgba(255,255,255,0.2) 20%, rgba(255,255,255,0.5) 60%, rgba(255,255,255,0)); animation: shimmer 2s infinite; }
+        @keyframes shimmer { 100% { transform: translateX(100%); } }
+        .loading .stat-value, .loading .activity-item, .loading .chart-container canvas { visibility: hidden; }
+        .loading-placeholder { position: absolute; inset: 0; display: none; padding: 24px; }
+        .loading .loading-placeholder { display: block; }
+        .sk-text { height: 32px; width: 60%; background: #e5e7eb; border-radius: 8px; margin-bottom: 8px; }
+        .sk-circle { width: 200px; height: 200px; border-radius: 50%; border: 20px solid #e5e7eb; margin: 0 auto; }
+        .sk-row { display: flex; gap: 12px; margin-bottom: 12px; }
+        .sk-row .line { height: 12px; background: #e5e7eb; border-radius: 4px; flex: 1; }
+        .sk-row .dot { width: 12px; height: 12px; background: #e5e7eb; border-radius: 50%; }
+
+        /* Bot Switcher */
+        .bot-switch { display: flex; background: #f1f5f9; padding: 4px; border-radius: 10px; gap: 4px; border: 1px solid var(--border); }
+        .switch-btn { padding: 8px 16px; border-radius: 8px; border: none; background: transparent; color: var(--text-muted); font-size: 11px; font-weight: 800; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
+        .switch-btn.active { background: white; color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .switch-btn:hover:not(.active) { background: rgba(0,0,0,0.02); }
 
         /* Activity Feed */
-        .activity-feed { display: flex; flex-direction: column; gap: 16px; height: auto; }
-        .activity-item { display: flex; gap: 16px; font-size: 13px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9; }
-        .activity-item:last-child { border-bottom: none; padding-bottom: 0; }
-        .activity-time { color: var(--text-muted); font-family: 'JetBrains Mono', monospace; font-size: 11px; width: 50px; flex-shrink: 0; padding-top: 2px; }
-        .activity-content { font-weight: 500; color: #374151; flex: 1; word-break: break-word; line-height: 1.5; }
+        .activity-feed { display: flex; flex-direction: column; gap: 12px; }
+        .activity-item { display: flex; gap: 16px; padding: 10px; border-radius: 8px; background: #f8fafc; border: 1px solid transparent; transition: 0.2s; align-items: flex-start; }
+        .activity-item:hover { border-color: var(--border); background: white; }
+        .activity-time { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--text-muted); min-width: 45px; margin-top: 2px; }
+        .activity-content { font-size: 13px; font-weight: 500; color: var(--text-main); flex: 1; line-height: 1.4; }
+        .bot-badge { padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; margin-right: 8px; vertical-align: middle; }
+        .badge-ast { background: #dbeafe; color: #1e40af; }
+        .badge-grv { background: #fef3c7; color: #92400e; }
 
-        /* Bot Switch */
-        .bot-switch { background: #f1f5f9; padding: 4px; border-radius: 99px; display: flex; gap: 4px; border: 1px solid var(--border); }
-        .switch-btn { padding: 6px 16px; border-radius: 99px; border: none; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; color: var(--text-muted); background: transparent; display: flex; align-items: center; gap: 6px; }
-        .switch-btn.active { color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .switch-btn.active.assistant { background: var(--accent); }
-        .switch-btn.active.grievance { background: var(--warning); }
+        #loader { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; transition: opacity 0.4s; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f3f4f6; border-top: 4px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Toast Notifications */
+        #toast-container { position: fixed; top: 24px; right: 24px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: white; padding: 12px 20px; border-radius: 10px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; min-width: 250px; transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); border-left: 4px solid var(--accent); }
+        .toast.show { transform: translateX(0); }
+        .toast.error { border-left-color: var(--error); }
+        .toast.success { border-left-color: var(--success); }
+        .toast i { width: 18px; height: 18px; }
     </style>
 </head>
 <body>
+    <div id="toast-container"></div>
     <div id="loader">
         <div class="spinner"></div>
         <div style="font-weight: 600; font-size: 14px; color: var(--text-muted)">Initializing MSAJCE Terminal...</div>
@@ -123,11 +168,11 @@
             <div class="nav-item" onclick="showPanel('tickets', event)">
                 <i data-lucide="ticket"></i> Operational Tickets
             </div>
-            <div class="nav-item" onclick="showPanel('assistant', event)">
-                <i data-lucide="bot"></i> Academic Assistant
+            <div class="nav-item" id="nav-grievance" onclick="showPanel('grievance', event)">
+                <i data-lucide="alert-triangle"><span class="nav-badge" id="emergency-dot"></span></i> Emergency Alerts
             </div>
-            <div class="nav-item" onclick="showPanel('grievance', event)">
-                <i data-lucide="shield-check"></i> Grievance Portal
+            <div class="nav-item" id="nav-history" onclick="showPanel('history', event)">
+                <i data-lucide="history"></i> Grievance History
             </div>
             <div class="nav-item" onclick="showPanel('users', event)">
                 <i data-lucide="users"></i> User Management
@@ -140,9 +185,9 @@
             </div>
         </div>
         <div class="sidebar-footer">
-            <div class="status-badge">
-                <div class="status-dot"></div>
-                ORACLE ONLINE
+            <div class="status-badge" style="color: #10b981;">
+                <div class="status-dot" style="background: #10b981;"></div>
+                SYSTEM ONLINE
             </div>
         </div>
     </aside>
@@ -151,21 +196,15 @@
         <header>
             <div class="header-title" id="currentPanelTitle">Overview Dashboard</div>
             
-            <!-- Bot Switch Center -->
-            <div class="bot-switch">
-                <button class="switch-btn active assistant" onclick="setBot('assistant')">
-                    <i data-lucide="bot" style="width:14px"></i> ASSISTANT
-                </button>
-                <button class="switch-btn grievance" onclick="setBot('grievance')">
+            <div class="bot-switch" style="display:none">
+                <button class="switch-btn active grievance" onclick="setBot('grievance')">
                     <i data-lucide="shield-check" style="width:14px"></i> GRIEVANCE
                 </button>
             </div>
 
             <div class="header-actions">
-                <div id="lastSync" style="font-size: 12px; color: var(--text-muted); font-weight: 500;">SYNCING...</div>
-                <div style="width: 32px; height: 32px; background: #f3f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                    <i data-lucide="user" style="width: 16px; color: #4b5563;"></i>
-                </div>
+                <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); padding-right: 12px; border-right: 1px solid var(--border)" id="lastSync">SYNCING...</div>
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #64748b; font-weight: 700;">A</div>
             </div>
         </header>
 
@@ -175,43 +214,58 @@
                 
                 <!-- TOP: Operational Metrics -->
                 <div class="grid-stats">
-                    <div class="stat-card">
+                    <div class="stat-card" style="position:relative">
                         <span class="stat-label">Total Users</span>
                         <div class="stat-value" id="stat-total-users">0</div>
+                        <div class="loading-placeholder"><div class="sk-text skeleton"></div></div>
                         <div class="stat-trend trend-up"><i data-lucide="users" style="width:14px"></i> Institutional Base</div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card" style="position:relative">
                         <span class="stat-label">Tickets (Today)</span>
                         <div class="stat-value" id="stat-complaints-today">0</div>
+                        <div class="loading-placeholder"><div class="sk-text skeleton"></div></div>
                         <div class="stat-trend trend-up" style="color:var(--accent)"><i data-lucide="activity" style="width:14px"></i> Active Session</div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card" style="position:relative">
                         <span class="stat-label">Emergencies</span>
                         <div class="stat-value" id="stat-emergency-today">0</div>
+                        <div class="loading-placeholder"><div class="sk-text skeleton"></div></div>
                         <div class="stat-trend" style="color:var(--error)"><i data-lucide="alert-triangle" style="width:14px"></i> Needs Review</div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card" style="position:relative">
                         <span class="stat-label">Resolution Time</span>
-                        <div class="stat-value"><span id="stat-avg-resolution">0.0</span><span style="font-size:14px; color:var(--text-muted)">h</span></div>
-                        <div class="stat-trend" style="color:var(--success)"><i data-lucide="clock" style="width:14px"></i> Target: < 12h</div>
+                        <div class="stat-value"><span id="stat-avg-resolution">0.0</span><span id="stat-unit" style="font-size:14px; color:var(--text-muted); margin-left:4px">h</span></div>
+                        <div class="loading-placeholder"><div class="sk-text skeleton"></div></div>
+                        <div class="stat-trend" style="color:var(--success)" id="stat-target">
+                            <i data-lucide="check-circle" style="width:12px"></i> Target: < 12h
+                        </div>
                     </div>
                 </div>
 
                 <!-- MIDDLE: Charts & Feed -->
-                <div class="grid-charts">
+                <div class="grid-charts" id="overviewGridCharts">
                     <!-- Distribution Chart -->
-                    <div class="chart-container">
+                    <div class="chart-container" id="categoryChartContainer" style="position:relative">
                         <div class="chart-title">Complaint Distribution (by Category)</div>
                         <div style="position: relative; height: 280px;">
                             <canvas id="categoryChart"></canvas>
                         </div>
+                        <div class="loading-placeholder" style="top:60px">
+                            <div class="sk-circle skeleton"></div>
+                        </div>
                     </div>
 
                     <!-- System Pulse -->
-                    <div class="chart-container">
+                    <div class="chart-container" style="position:relative">
                         <div class="chart-title">System Pulse (Live Activity)</div>
                         <div class="activity-feed" id="activityFeed">
                             <!-- Logs injected here -->
+                        </div>
+                        <div class="loading-placeholder" style="top:60px">
+                            <div class="sk-row"><div class="dot skeleton"></div><div class="line skeleton"></div></div>
+                            <div class="sk-row"><div class="dot skeleton"></div><div class="line skeleton"></div></div>
+                            <div class="sk-row"><div class="dot skeleton"></div><div class="line skeleton"></div></div>
+                            <div class="sk-row"><div class="dot skeleton"></div><div class="line skeleton"></div></div>
                         </div>
                     </div>
                 </div>
@@ -245,10 +299,10 @@
             <div id="panel-tickets" class="panel">
                 <div class="table-container">
                     <div style="padding: 16px 20px; font-weight: 700; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-                        <span>All Active Operational Tickets</span>
+                        <span>Live Operational Tickets (Pending)</span>
                         <div style="display: flex; gap: 8px;">
                             <input type="text" placeholder="Search Ticket ID..." style="padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;">
-                            <span class="badge badge-blue">ALL DEPARTMENTS</span>
+                            <span class="badge badge-blue">ACTIVE ONLY</span>
                         </div>
                     </div>
                     <table id="complaintTable">
@@ -270,52 +324,53 @@
                 </div>
             </div>
 
-            <!-- ASSISTANT PANEL -->
-            <div id="panel-assistant" class="panel">
-                <div class="grid-stats">
-                    <div class="stat-card">
-                        <span class="stat-label">Assistant Latency</span>
-                        <div class="stat-value" id="ast-latency-assistant">0ms</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-label">Grievance Latency</span>
-                        <div class="stat-value" id="ast-latency-grievance">0ms</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-label">Total Volume</span>
-                        <div class="stat-value" id="ast-total-hits">0</div>
+            <!-- ASSISTANT PANEL REMOVED -->
+
+            <!-- EMERGENCY ALERTS PANEL -->
+            <div id="panel(grievance)" class="panel">
+                <div class="grid-stats" style="gap: 12px; margin-bottom: 16px;">
+                    <div class="stat-card" style="padding: 16px; background: var(--error-soft); border-color: #fca5a5;">
+                        <span class="stat-label" style="font-size: 9px;">ACTIVE EMERGENCIES</span>
+                        <div class="stat-value" id="grv-panel-emergency-count" style="font-size: 24px;">0</div>
                     </div>
                 </div>
-                <div class="chart-container">
-                    <div class="chart-title">System Request Activity</div>
-                    <div class="activity-feed" id="fullLogFeed" style="max-height: 400px; overflow-y: auto;">
-                        <!-- Full logs here -->
+                <div class="table-container">
+                    <div style="padding: 12px 16px; font-weight: 700; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #fff1f2;">
+                        <span style="font-size: 13px; color: #991b1b;">🚨 LIVE EMERGENCY ALERTS</span>
+                        <span style="font-size: 10px; color: #ef4444; font-weight: 800;" class="pulse-alert">ACTION REQUIRED</span>
+                    </div>
+                    <div style="padding: 16px;" id="emergencyContainer" class="emergency-grid">
+                        <!-- Emergency cards here -->
                     </div>
                 </div>
             </div>
 
-            <!-- GRIEVANCE PANEL -->
-            <div id="panel-grievance" class="panel">
-                <div class="grid-stats">
-                    <div class="stat-card" style="background: var(--error-soft); border-color: #fca5a5;">
-                        <span class="stat-label" style="color: #991b1b;">Emergency Alerts Active</span>
-                        <div class="stat-value" id="grv-emergency-count" style="color: #991b1b;">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-label">Avg Resolution Time</span>
-                        <div class="stat-value">8.4 hrs</div>
-                    </div>
-                </div>
-                <div class="grid-charts">
-                     <div class="table-container" style="grid-column: span 2;">
-                        <div style="padding: 20px; font-weight: 700; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;">
-                            <span>Active Emergency Incidents</span>
-                            <span style="color: var(--error); font-size: 11px;">LIVE UPDATING</span>
+            <!-- GRIEVANCE HISTORY PANEL -->
+            <div id="panel-history" class="panel">
+                <div class="table-container">
+                    <div style="padding: 16px 20px; font-weight: 700; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                        <span>Institutional Grievance Archive</span>
+                        <div style="display: flex; gap: 8px;">
+                            <span class="badge badge-green">RESOLVED</span>
+                            <span class="badge badge-yellow">PENDING</span>
+                            <span class="badge badge-red">REJECTED</span>
                         </div>
-                        <div style="padding: 24px;" id="emergencyContainer" class="emergency-grid">
-                            <!-- Emergency cards here -->
-                        </div>
-                     </div>
+                    </div>
+                    <table id="historyTable">
+                        <thead>
+                            <tr>
+                                <th>Ticket</th>
+                                <th>Category</th>
+                                <th>Reporter</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th style="text-align: right;">Record</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- History logs here -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -392,38 +447,55 @@
     </main>
 
     <script>
-        lucide.createIcons();
+        function showToast(msg, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icon = type === 'success' ? 'check-circle' : (type === 'error' ? 'alert-circle' : 'info');
+            const color = type === 'success' ? '#10b981' : (type === 'error' ? '#ef4444' : '#2563eb');
+            
+            toast.innerHTML = `<i data-lucide="${icon}" style="color:${color}"></i> <span>${msg}</span>`;
+            container.appendChild(toast);
+            lucide.createIcons();
+            
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
 
+        async function handleComplaintAction(id, action) {
+            try {
+                const res = await fetch(`/api/admin/complaints/${id}/action`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action })
+                });
+                if (res.ok) {
+                    showToast(`Ticket ${id} successfully ${action}ed`, 'success');
+                    await fetchData(); // Refresh all stats & UI
+                } else {
+                    const err = await res.json();
+                    showToast(`Error: ${err.error}`, 'error');
+                }
+            } catch (e) {
+                console.error("Action fail", e);
+                showToast("Connection failed", "error");
+            }
+        }
+
+        let stats = null;
+        let complaints = [];
+        let users = [];
+        let logs = [];
+        let categoryChart = null;
         let activeLogData = null;
-        let currentBot = 'assistant';
+        let currentBot = 'grievance'; // Always grievance focus now
 
         function setBot(bot) {
             currentBot = bot;
-            document.querySelectorAll('.switch-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.classList.contains(bot)) btn.classList.add('active');
-            });
-
-            // Toggle Sidebar Visibility for Bot-Specific Tabs
-            document.querySelectorAll('.nav-item').forEach(item => {
-                const onclickStr = item.getAttribute('onclick') || '';
-                if (onclickStr.includes("'assistant'")) {
-                    item.style.display = currentBot === 'assistant' ? 'flex' : 'none';
-                }
-                if (onclickStr.includes("'grievance'") || onclickStr.includes("'tickets'")) {
-                    item.style.display = currentBot === 'grievance' ? 'flex' : 'none';
-                }
-            });
-
-            // If current active panel becomes hidden, switch to overview
-            const activePanel = document.querySelector('.panel.active');
-            if (activePanel && activePanel.id !== 'panel-overview' && activePanel.id !== 'panel-users' && activePanel.id !== 'panel-analytics' && activePanel.id !== 'panel-settings') {
-                const targetBotPanel = 'panel-' + currentBot;
-                if (activePanel.id !== targetBotPanel) {
-                     showPanel('overview', { currentTarget: document.querySelector('.nav-item') });
-                }
-            }
-
+            // Bot switching UI logic removed since it is fixed to grievance now
             renderAll();
         }
 
@@ -437,6 +509,9 @@
         }
 
         async function fetchData() {
+            const isInitialLoad = !stats;
+            if (isInitialLoad) document.body.classList.add('loading');
+            
             try {
                 const [statsRes, complaintsRes, usersRes, logsRes] = await Promise.all([
                     fetch('/api/admin/stats'),
@@ -452,13 +527,15 @@
                 logs = activeLogData.logs;
 
                 renderAll();
+                document.body.classList.remove('loading');
                 
-                document.getElementById('lastSync').innerText = 'SYNCED ' + new Date().toLocaleTimeString();
+                document.getElementById('lastSync').innerText = 'SYNCED ' + new Date().toLocaleTimeString([], { hour12: false });
             } catch (e) {
                 console.error("Dashboard Fetch Fail", e);
                 document.getElementById('lastSync').innerText = 'CONNECTION ERROR';
             } finally {
                 document.getElementById('loader').style.display = 'none';
+                document.body.classList.remove('loading');
             }
         }
 
@@ -471,9 +548,9 @@
 
             const titles = {
                 overview: 'Overview Dashboard',
-                tickets: 'Operational Tickets Management',
-                assistant: 'Academic Assistant Operations',
-                grievance: 'Institutional Grievance Portal',
+                tickets: 'Live Operational Tickets',
+                grievance: 'Emergency Alert Center',
+                history: 'Grievance Archive & History',
                 users: 'User Directory & Management',
                 analytics: 'System-Wide Analytics',
                 settings: 'Global Settings'
@@ -501,13 +578,16 @@
                 const m = activeLogData.metrics[currentBot] || {};
                 document.getElementById('stat-complaints-today').innerText = m.total_requests || 0;
                 document.getElementById('stat-emergency-today').innerText = m.total_errors || 0;
-                document.getElementById('stat-avg-resolution').innerText = (m.avg_latency || 0).toFixed(0);
+                
+                document.getElementById('stat-avg-resolution').innerText = stats.complaints.avg_resolution || '0.0';
+                document.getElementById('stat-unit').innerText = 'h';
+                document.getElementById('stat-target').style.display = 'flex';
                 
                 // Labels update
                 document.querySelectorAll('.stat-label').forEach((el, idx) => {
-                    if (idx === 1) el.innerText = currentBot === 'assistant' ? 'Requests Today' : 'Tickets Today';
-                    if (idx === 2) el.innerText = currentBot === 'assistant' ? 'System Errors' : 'Emergencies';
-                    if (idx === 3) el.innerText = currentBot === 'assistant' ? 'Avg Latency (ms)' : 'Resolution Time';
+                    if (idx === 1) el.innerText = 'Tickets Today';
+                    if (idx === 2) el.innerText = 'Emergencies';
+                    if (idx === 3) el.innerText = 'Resolution Time';
                 });
             }
 
@@ -561,9 +641,17 @@
             const emergencyContainer = document.getElementById('emergencyContainer');
             if (emergencyContainer) emergencyContainer.innerHTML = '';
 
+            let criticalCount = 0;
+            let pendingCount = 0;
+
             complaints.forEach((c, index) => {
+                const isCompleted = c.status === 'resolved' || c.status === 'rejected';
+
+                if (!isCompleted) pendingCount++;
+                if (c.is_emergency && !isCompleted) criticalCount++;
+
                 const statusClass = c.status === 'resolved' ? 'badge-green' : (c.status === 'submitted' ? 'badge-blue' : 'badge-yellow');
-                const time = new Date(c.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const timeStr = new Date(c.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 
                 const rowHtml = `
                     <td style="font-weight:700; color:var(--accent)">${c.complaint_id}</td>
@@ -571,47 +659,106 @@
                     <td>${c.is_anonymous ? '🎭 Anonymous' : (c.student_id?.name || 'User')}</td>
                     <td><span class="badge ${statusClass}">${c.status}</span></td>
                     <td>${c.department_assigned || 'Unassigned'}</td>
-                    <td style="color:var(--text-muted)">${time}</td>
+                    <td style="color:var(--text-muted)">${timeStr}</td>
                     <td style="text-align:right">
-                        <button style="border:1px solid var(--border); background:white; padding:4px 12px; border-radius:6px; font-weight:600; font-size:12px; cursor:pointer" onclick="alert('Manage ${c.complaint_id}')">MANAGE</button>
+                        <div style="display:flex; gap:6px; justify-content:flex-end">
+                            <button class="action-btn btn-outline" style="width:auto; padding:4px 8px; font-size:10px" onclick="handleComplaintAction('${c.complaint_id}', 'resolve')">RESOLVE</button>
+                            <button class="action-btn btn-outline" style="width:auto; padding:4px 8px; font-size:10px; color:var(--error)" onclick="handleComplaintAction('${c.complaint_id}', 'reject')">REJECT</button>
+                        </div>
                     </td>
                 `;
 
-                // Add to main management table
-                const tr = document.createElement('tr');
-                tr.innerHTML = rowHtml;
-                tbody.appendChild(tr);
-
-                // Add to overview snapshot (first 5 only)
-                if (tbodyOverview && index < 5) {
-                    const trSimple = document.createElement('tr');
-                    trSimple.innerHTML = `
-                        <td style="font-weight:700; color:var(--accent)">${c.complaint_id}</td>
-                        <td>${c.category}</td>
-                        <td>${c.is_anonymous ? '🎭 Anonymous' : (c.student_id?.name || 'User')}</td>
-                        <td><span class="badge ${statusClass}">${c.status}</span></td>
-                        <td style="text-align:right">
-                            <button style="border:1px solid var(--border); background:white; padding:4px 12px; border-radius:6px; font-weight:700; font-size:11px; color:var(--accent); cursor:pointer" onclick="showPanel('tickets')">OPEN</button>
-                        </td>
-                    `;
-                    tbodyOverview.appendChild(trSimple);
+                // Add to LIVE tickets table (Only unresolved non-emergencies or all unresolved)
+                if (!isCompleted && !c.is_emergency) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = rowHtml;
+                    tbody.appendChild(row);
                 }
 
-                if (c.is_emergency && c.status !== 'resolved') {
-                    const card = document.createElement('div');
-                    card.className = 'emergency-card';
-                    card.innerHTML = `
-                        <div class="emergency-title">🚨 ${c.incident_type || 'Alert'}</div>
-                        <div class="emergency-meta">
-                            <span><b>Location:</b> ${c.location || 'Unknown'}</span>
-                            <span><b>Time:</b> ${time}</span>
-                            <span><b>Reported By:</b> ${c.student_id?.name || 'Anonymous'}</span>
+                // Overview still shows recent activity
+                if (index < 5 && tbodyOverview) {
+                    const rowO = document.createElement('tr');
+                    rowO.innerHTML = rowHtml;
+                    tbodyOverview.appendChild(rowO);
+                }
+
+                // Push to Emergency Section (ONLY ACTIVE EMERGENCIES)
+                if (c.is_emergency && !isCompleted && emergencyContainer) {
+                    const eCard = document.createElement('div');
+                    eCard.className = 'emergency-card pulse-alert';
+                    
+                    eCard.innerHTML = `
+                        <div class="emergency-main">
+                            <div class="emergency-header">
+                                <span class="emergency-title">🚨 ${c.category}</span>
+                                <span class="severity-badge">CRITICAL</span>
+                            </div>
+                            <div class="emergency-details">
+                                <div class="detail-item"><span class="detail-label">Loc:</span> <span class="detail-value">${c.location || 'N/A'}</span></div>
+                                <div class="detail-item"><span class="detail-label">Time:</span> <span class="detail-value">${timeStr}</span></div>
+                                <div class="detail-item"><span class="detail-label">By:</span> <span class="detail-value">${c.is_anonymous ? 'Anon' : (c.student_id?.name || 'User')}</span></div>
+                            </div>
+                            <div style="font-size:11px; color:#64748b; margin-top:4px">
+                                <strong>Issues:</strong> ${c.description || 'No details.'}
+                            </div>
                         </div>
-                        <button style="margin-top:12px; width:100%; padding:8px; border-radius:6px; background:#991b1b; color:white; border:none; font-weight:700; font-size:12px">MARK RESOLVED</button>
+                        <div class="emergency-actions">
+                            <button class="action-btn btn-primary" onclick="handleComplaintAction('${c.complaint_id}', 'dispatch')">
+                                <i data-lucide="truck"></i> DISPATCH
+                            </button>
+                            <button class="action-btn btn-outline" style="border-color:#10b981; color:#10b981" onclick="handleComplaintAction('${c.complaint_id}', 'resolve')">
+                                <i data-lucide="check-circle"></i> RESOLVE
+                            </button>
+                            <button class="action-btn btn-outline" style="border-color:var(--error); color:var(--error)" onclick="handleComplaintAction('${c.complaint_id}', 'reject')">
+                                <i data-lucide="x-circle"></i> REJECT
+                            </button>
+                        </div>
                     `;
-                    if (emergencyContainer) emergencyContainer.appendChild(card);
+                    emergencyContainer.appendChild(eCard);
                 }
             });
+
+            // Update Header Stats safely
+            const hCrit = document.getElementById('h-critical-count');
+            const hPend = document.getElementById('h-pending-count');
+            if (hCrit) hCrit.innerText = criticalCount;
+            if (hPend) hPend.innerText = pendingCount;
+
+            if (grvCrit) grvCrit.innerText = criticalCount;
+            if (grvRes && stats && stats.complaints) grvRes.innerText = (stats.complaints.avg_resolution || '0.0') + 'h';
+            
+            // Toggle Sidebar Alert Badge
+            const dot = document.getElementById('emergency-dot');
+            if (dot) {
+                if (criticalCount > 0 && currentBot === 'grievance') {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            }
+            
+            // Render History Table (ONLY COMPLETED)
+            const hbody = document.querySelector('#historyTable tbody');
+            if (hbody) {
+                hbody.innerHTML = '';
+                complaints.filter(c => c.status === 'resolved' || c.status === 'rejected').forEach(c => {
+                    const tr = document.createElement('tr');
+                    const statusClass = c.status === 'resolved' ? 'badge-green' : 'badge-red';
+                    tr.innerHTML = `
+                        <td style="font-weight:700">${c.complaint_id}</td>
+                        <td>${c.category}</td>
+                        <td style="font-size:12px">${c.is_anonymous ? '🎭 Anon' : (c.student_id?.name || 'User')}</td>
+                        <td><span class="badge ${statusClass}">${c.status.toUpperCase()}</span></td>
+                        <td style="color:var(--text-muted); font-size:12px">${new Date(c.created_at).toLocaleDateString()}</td>
+                        <td style="text-align:right">
+                            <button class="action-btn btn-outline" style="width:auto; padding:4px 8px; font-size:10px" onclick="alert('Viewing Log for ${c.complaint_id}')">VIEW LOG</button>
+                        </td>
+                    `;
+                    hbody.appendChild(tr);
+                });
+            }
+
+            lucide.createIcons();
         }
 
         let analyticsLineChart;
@@ -688,13 +835,13 @@
                 const item = document.createElement('div');
                 item.className = 'activity-item';
                 const time = new Date(l.timestamp).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit' });
-                const botColor = l.bot === 'assistant' ? '#2563eb' : '#f59e0b';
+                const botBadgeClass = l.bot === 'assistant' ? 'badge-ast' : 'badge-grv';
                 const botLabel = l.bot === 'assistant' ? 'AST' : 'GRV';
                 
                 const contentHtml = `
                     <div class="activity-time">${time}</div>
                     <div class="activity-content">
-                        <span style="font-weight:800; color:${botColor}; font-size:9px; margin-right:8px">[${botLabel}]</span>
+                        <span class="bot-badge ${botBadgeClass}">${botLabel}</span>
                         ${l.message}
                     </div>
                 `;

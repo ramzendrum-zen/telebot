@@ -100,4 +100,71 @@ router.get('/stats', async (req, res) => {
     }
 });
 
+// 5. Functional Complaint Actions (Dispatch/Resolve/Reject)
+router.post('/complaints/:id/action', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { action } = req.body;
+    await connectDB();
+
+    const complaint = await Complaint.findOne({ complaint_id: id }).populate('student_id');
+    if (!complaint) return res.status(404).json({ error: 'Complaint not found' });
+
+    let status = '';
+    let message = '';
+    let emoji = '';
+
+    switch (action) {
+      case 'dispatch':
+        status = 'assigned';
+        message = `Your incident [${id}] has been *dispatched* to the relevant department. Help is on the way.`;
+        emoji = '🚨';
+        break;
+      case 'resolve':
+        status = 'resolved';
+        message = `Good news! Your grievance [${id}] has been *resolved* by the administration. Thank you for your patience.`;
+        emoji = '✅';
+        break;
+      case 'reject':
+        status = 'rejected';
+        message = `Your ticket [${id}] has been *closed* by the administration. If you believe this is an error, please visit the office.`;
+        emoji = '❌';
+        break;
+      default:
+        return res.status(400).json({ error: 'Invalid action' });
+    }
+
+    complaint.status = status;
+    complaint.updated_at = new Date();
+    await complaint.save();
+
+    // 1. Send Telegram Notification
+    try {
+      const telegramUrl = `https://api.telegram.org/bot${config.telegram.token}/sendMessage`;
+      await fetch(telegramUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: complaint.telegram_id,
+          text: `${emoji} *Status Update*\n\n${message}`,
+          parse_mode: 'Markdown'
+        })
+      });
+    } catch (err) {
+      logger.error(`Action Telegram Notification Fail: ${err.message}`);
+    }
+
+    // 2. Send Email (Only if not anonymous)
+    if (!complaint.is_anonymous && complaint.student_id?.email) {
+      // Logic for email service would go here (e.g., nodemailer or Resend)
+      // For now, logging the intent
+      logger.info(`Email notification queued for ${complaint.student_id.email} regarding ${id}`);
+    }
+
+    res.json({ success: true, status });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;
