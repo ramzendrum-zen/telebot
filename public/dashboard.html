@@ -218,25 +218,25 @@
                 <!-- TOP: Operational Metrics -->
                 <div class="grid-stats">
                     <div class="stat-card" style="position:relative">
-                        <span class="stat-label">Total Users</span>
+                        <span class="stat-label" id="stat-label-0">Total Users</span>
                         <div class="stat-value" id="stat-total-users">0</div>
                         <div class="loading-placeholder"><div class="sk-text skeleton"></div></div>
-                        <div class="stat-trend trend-up"><i data-lucide="users" style="width:14px"></i> Institutional Base</div>
+                        <div class="stat-trend trend-up" id="stat-trend-0"><i data-lucide="users" style="width:14px"></i> Institutional Base</div>
                     </div>
                     <div class="stat-card" style="position:relative">
-                        <span class="stat-label">Tickets (Today)</span>
+                        <span class="stat-label" id="stat-label-1">Tickets (Today)</span>
                         <div class="stat-value" id="stat-complaints-today">0</div>
                         <div class="loading-placeholder"><div class="sk-text skeleton"></div></div>
-                        <div class="stat-trend trend-up" style="color:var(--accent)"><i data-lucide="activity" style="width:14px"></i> Active Session</div>
+                        <div class="stat-trend trend-up" id="stat-trend-1" style="color:var(--accent)"><i data-lucide="activity" style="width:14px"></i> Active Session</div>
                     </div>
                     <div class="stat-card" style="position:relative">
-                        <span class="stat-label">Emergencies</span>
+                        <span class="stat-label" id="stat-label-2">Emergencies</span>
                         <div class="stat-value" id="stat-emergency-today">0</div>
                         <div class="loading-placeholder"><div class="sk-text skeleton"></div></div>
-                        <div class="stat-trend" style="color:var(--error)"><i data-lucide="alert-triangle" style="width:14px"></i> Needs Review</div>
+                        <div class="stat-trend" id="stat-trend-2" style="color:var(--error)"><i data-lucide="alert-triangle" style="width:14px"></i> Needs Review</div>
                     </div>
                     <div class="stat-card" style="position:relative">
-                        <span class="stat-label">Resolution Time</span>
+                        <span class="stat-label" id="stat-label-3">Resolution Time</span>
                         <div class="stat-value"><span id="stat-avg-resolution">0.0</span><span id="stat-unit" style="font-size:14px; color:var(--text-muted); margin-left:4px">h</span></div>
                         <div class="loading-placeholder"><div class="sk-text skeleton"></div></div>
                         <div class="stat-trend" style="color:var(--success)" id="stat-target">
@@ -617,28 +617,66 @@
         function renderOverview() {
             if (!stats || !stats.users || !stats.complaints) return;
             
-            document.getElementById('stat-total-users').innerText = stats.users.total;
-            
             // Context specific stats
             if (activeLogData && activeLogData.metrics) {
                 const m = activeLogData.metrics[currentBot] || {};
+                const isGrievance = currentBot === 'grievance';
                 
-                // Reverting to authentic grievance counts for institutional overview
-                document.getElementById('stat-complaints-today').innerText = stats.complaints.total || 0;
-                document.getElementById('stat-emergency-today').innerText = stats.complaints.emergency || 0;
-                
-                const avg = stats.complaints.avg_resolution || '0.0';
-                document.getElementById('stat-avg-resolution').innerText = avg;
-                document.getElementById('stat-unit').innerText = 'h';
-                document.getElementById('stat-target').style.display = 'flex';
-                
-                // Labels update (Fixed for clarity)
-                document.querySelectorAll('.stat-label').forEach((el, idx) => {
-                    if (idx === 1) el.innerText = 'Tickets Today';
-                    if (idx === 2) el.innerText = 'Emergencies';
-                    if (idx === 3) el.innerText = 'Resolution Time';
-                });
+                // Labels & Trends update
+                const setTrend = (id, icon, text) => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerHTML = `<i data-lucide="${icon}" style="width:14px"></i> ${text}`;
+                };
+
+                if (isGrievance) {
+                    document.getElementById('stat-label-0').innerText = 'Total Users';
+                    document.getElementById('stat-total-users').innerText = stats.users.total;
+                    setTrend('stat-trend-0', 'users', 'Institutional Base');
+
+                    document.getElementById('stat-label-1').innerText = 'Tickets Today';
+                    document.getElementById('stat-complaints-today').innerText = stats.complaints.total || 0;
+                    setTrend('stat-trend-1', 'activity', 'Active Session');
+
+                    document.getElementById('stat-label-2').innerText = 'Emergencies';
+                    document.getElementById('stat-emergency-today').innerText = stats.complaints.emergency || 0;
+                    setTrend('stat-trend-2', 'alert-triangle', 'Needs Review');
+
+                    document.getElementById('stat-label-3').innerText = 'Resolution Time';
+                    document.getElementById('stat-avg-resolution').innerText = stats.complaints.avg_resolution || '0.0';
+                    document.getElementById('stat-unit').innerText = 'h';
+                    document.getElementById('stat-target').style.display = 'flex';
+                } else {
+                    document.getElementById('stat-label-0').innerText = 'Total Queries';
+                    document.getElementById('stat-total-users').innerText = m.total_requests || 0;
+                    setTrend('stat-trend-0', 'message-square', 'AI interactions');
+
+                    document.getElementById('stat-label-1').innerText = 'Success Rate';
+                    document.getElementById('stat-complaints-today').innerText = m.success_rate + '%';
+                    setTrend('stat-trend-1', 'check-circle', 'Operational health');
+
+                    document.getElementById('stat-label-2').innerText = 'System Errors';
+                    document.getElementById('stat-emergency-today').innerText = m.total_errors || 0;
+                    setTrend('stat-trend-2', 'shield-alert', 'Requires lookup');
+
+                    document.getElementById('stat-label-3').innerText = 'Avg Latency';
+                    document.getElementById('stat-avg-resolution').innerText = (m.avg_latency || 0).toFixed(0);
+                    document.getElementById('stat-unit').innerText = 'ms';
+                    document.getElementById('stat-target').style.display = 'none';
+                }
             }
+
+            // Chart Visibility & Updates
+            const chartContainer = document.getElementById('categoryChartContainer');
+            if (currentBot === 'assistant') {
+                if (chartContainer) chartContainer.style.display = 'none';
+                const gridCharts = document.getElementById('overviewGridCharts');
+                if (gridCharts) gridCharts.style.gridTemplateColumns = '1fr';
+                return;
+            }
+
+            if (chartContainer) chartContainer.style.display = 'block';
+            const gridCharts = document.getElementById('overviewGridCharts');
+            if (gridCharts) gridCharts.style.gridTemplateColumns = '1fr 1.5fr';
 
             // Normalize Category Data (Fixed order and counts)
             const normalizedData = Object.keys(CATEGORY_MAP).map(cat => {
