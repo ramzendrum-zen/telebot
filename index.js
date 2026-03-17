@@ -22,14 +22,24 @@ app.get('/api/monitor', monitorHandler);
 // Admin API
 app.use('/api/admin', adminRouter);
 
-// Dashboard Frontend (React Build)
-app.use('/admin', express.static(path.join(__dirname, 'dashboard', 'dist')));
-app.use('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dashboard', 'dist', 'index.html'));
+// Dashboard Frontend (Modern Minimalist)
+app.use('/dashboard', express.static(path.join(__dirname, 'public')));
+app.get('/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
 });
 
-// Health check route
-app.get('/', (req, res) => res.send(`MSAJCE Bot is running. Visit /dashboard for logistics.`));
+// Root Redirect
+app.get('/', (req, res) => {
+  res.send(`
+    <body style="font-family:Inter,sans-serif; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; background:#fff">
+        <div style="text-align:center">
+            <h1 style="font-weight:600; font-size:18px; letter-spacing:-0.02em">MSAJCE TERMINAL</h1>
+            <p style="color:#666; font-size:14px">Academic & Grievance Systems are Active.</p>
+            <a href="/dashboard" style="color:#000; font-weight:600; text-decoration:none; border-bottom:1px solid #000; padding-bottom:2px">Access Fleet Dashboard</a>
+        </div>
+    </body>
+  `);
+});
 
 // Start server (for local testing/Vercel)
 const PORT = config.port || 3000;

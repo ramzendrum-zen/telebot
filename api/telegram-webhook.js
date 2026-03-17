@@ -6,7 +6,7 @@ import { getAIReponse } from '../services/aiService.js';
 import { normalizeText, buildPrompt } from '../utils/promptBuilder.js';
 import { getUserMemory, setUserMemory, rewriteQuery } from '../services/historyService.js';
 import { detectIntent, normalizeQuery } from '../services/intentService.js';
-import { pushLog } from '../services/monitorService.js';
+import { pushLog, updateMetrics } from '../services/monitorService.js';
 import logger from '../utils/logger.js';
 import config from '../config/config.js';
 
@@ -19,6 +19,7 @@ export default async function handler(req, res) {
 
   const chatId = message.chat.id;
   const rawText = (message.text || body?.callback_query?.data || '').trim();
+  const startTime = Date.now();
   if (!rawText) return res.status(200).send('ok');
 
   try {
@@ -72,7 +73,10 @@ export default async function handler(req, res) {
     await sendTelegramMessage(chatId, aiReply);
 
     if (intent !== 'general') await setUserMemory(chatId, normalizedQuery, intent);
-    await pushLog('info', `Assistant Answer: "${aiReply.slice(0, 50)}..."`);
+    
+    const latency = Date.now() - startTime;
+    await pushLog('assistant', 'info', `Assistant Answer: "${aiReply.slice(0, 50)}..."`, { latency });
+    await updateMetrics('assistant', latency, true);
 
     return res.status(200).json({ status: 'success' });
   } catch (error) {

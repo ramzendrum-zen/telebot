@@ -1,6 +1,7 @@
 import connectDB from '../database/mongo.js';
 import { handleGrievanceFlow, trackComplaint, MAIN_MENU } from '../services/complaintService.js';
 import { getCache, setCache } from '../services/cacheService.js';
+import { pushLog, updateMetrics } from '../services/monitorService.js';
 import logger from '../utils/logger.js';
 import config from '../config/config.js';
 
@@ -13,6 +14,7 @@ export default async function handler(req, res) {
   if (!message) return res.status(200).send('ok');
 
   const chatId = message.chat.id;
+  const startTime = Date.now();
   const rawText = (message.text || body?.callback_query?.data || '').trim();
   const hasMedia = !!(message.photo || message.document || message.video || message.voice);
 
@@ -50,6 +52,10 @@ export default async function handler(req, res) {
         await sendReply(chatId, result);
     }
     
+    const latency = Date.now() - startTime;
+    await pushLog('grievance', 'info', `Grievance Req: ${rawText.slice(0, 20)}`, { latency });
+    await updateMetrics('grievance', latency, true);
+
     return res.status(200).json({ status: 'success' });
 
   } catch (error) {
