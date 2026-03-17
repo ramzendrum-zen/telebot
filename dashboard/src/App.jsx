@@ -56,14 +56,22 @@ const App = () => {
                     <p className="text-neutral-500 text-[10px] font-black tracking-widest uppercase">{title} ({bot.toUpperCase()})</p>
                     <span className={`w-2 h-2 rounded-full ${theme.bg} animate-pulse`}></span>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 mt-2">
                     <div>
-                        <h4 className="text-2xl font-black text-white leading-tight">{(data?.avg_latency || 0).toFixed(0)}<span className="text-[10px] text-neutral-600 ml-1 font-bold uppercase">ms</span></h4>
+                        <h4 className="text-lg font-black text-white leading-tight">{(data?.avg_latency || 0).toFixed(0)}<span className="text-[10px] text-neutral-600 ml-1 font-bold uppercase">ms</span></h4>
                         <p className="text-[9px] text-neutral-600 font-bold uppercase tracking-tighter">Avg Latency</p>
                     </div>
                     <div>
-                        <h4 className="text-2xl font-black text-white leading-tight">{data?.total_requests || 0}</h4>
+                        <h4 className="text-lg font-black text-white leading-tight">{data?.total_requests || 0}</h4>
                         <p className="text-[9px] text-neutral-600 font-bold uppercase tracking-tighter">Total Hits</p>
+                    </div>
+                    <div>
+                        <h4 className="text-lg font-black text-emerald-400 leading-tight">{data?.success_rate || 100}%</h4>
+                        <p className="text-[9px] text-neutral-600 font-bold uppercase tracking-tighter">Success</p>
+                    </div>
+                    <div>
+                        <h4 className="text-lg font-black text-red-400 leading-tight">{data?.total_errors || 0}</h4>
+                        <p className="text-[9px] text-neutral-600 font-bold uppercase tracking-tighter">Errors</p>
                     </div>
                 </div>
             </div>

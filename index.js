@@ -20,34 +20,25 @@ app.get('/api/monitor', monitorHandler);
 app.use('/api/admin', adminRouter);
 app.get('/api/health', (req, res) => res.json({ status: 'ok', uptime: process.uptime() }));
 
-// Dashboard Frontend Paths
-const publicPath = path.resolve(process.cwd(), 'public');
-console.log(`[System] Static Assets Root: ${publicPath}`);
+// Dashboard Frontend Paths (React Build)
+const publicPath = path.resolve(process.cwd(), 'dashboard', 'dist');
+console.log(`[System] Serving React Dashboard from: ${publicPath}`);
 
-// Serve static files from public
+// Serve static files from dashboard/dist
 app.use(express.static(publicPath));
 
 app.get('/dashboard', (req, res) => {
-  const filePath = path.join(publicPath, 'dashboard.html');
+  const filePath = path.join(publicPath, 'index.html');
   if (fs.existsSync(filePath)) {
-      // Use root option for reliable absolute path sending in Express
-      res.sendFile('dashboard.html', { root: publicPath });
+      res.sendFile('index.html', { root: publicPath });
   } else {
-      res.status(404).send(`Dashboard file missing at: ${filePath}`);
+      res.status(404).send(`Dashboard build mission. Run 'npm run build' in /dashboard.`);
   }
 });
 
 // Root Redirect
 app.get('/', (req, res) => {
-  res.send(`
-    <body style="font-family:Inter,sans-serif; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; background:#fff">
-        <div style="text-align:center">
-            <h1 style="font-weight:600; font-size:18px; letter-spacing:-0.02em">MSAJCE TERMINAL</h1>
-            <p style="color:#666; font-size:14px">Academic & Grievance Systems are Active.</p>
-            <a href="/dashboard" style="color:#2563eb; font-weight:600; text-decoration:none; border-bottom:1px solid #2563eb; padding-bottom:2px">Access Fleet Dashboard</a>
-        </div>
-    </body>
-  `);
+  res.redirect('/dashboard');
 });
 
 // Global Error Handler
