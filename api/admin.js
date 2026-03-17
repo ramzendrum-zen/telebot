@@ -75,6 +75,13 @@ router.get('/stats', async (req, res) => {
             { $group: { _id: "$status", count: { $sum: 1 } } }
         ])) || [];
 
+        const resolvedData = await Complaint.aggregate([
+            { $match: { status: 'resolved' } },
+            { $project: { duration: { $subtract: ["$updated_at", "$created_at"] } } },
+            { $group: { _id: null, avgDuration: { $avg: "$duration" } } }
+        ]);
+        const avgResolutionHrs = resolvedData.length > 0 ? (resolvedData[0].avgDuration / (1000 * 60 * 60)).toFixed(1) : "0.0";
+
         res.json({
             users: { total: totalUsers || 0, active_today: activeToday || 0 },
             complaints: {
@@ -82,7 +89,8 @@ router.get('/stats', async (req, res) => {
                 open: openComplaints || 0,
                 resolved: resolvedComplaints || 0,
                 alerts_today: alertsToday || 0,
-                today: complaintsToday || 0
+                today: complaintsToday || 0,
+                avg_resolution: avgResolutionHrs
             },
             byCategory: constByCategory,
             byStatus: constByStatus

@@ -9,6 +9,13 @@ import path from 'path';
 import { getOrCreateUser, verifyUser } from './userService.js';
 import { uploadTelegramMedia } from '../utils/cloudinary.js';
 
+const getHumanGreeting = (user) => {
+  if (!user || !user.verified) return "Welcome to the Official MSAJCE Grievance Assistance System.";
+  const title = user.salutation || "";
+  const name = user.name ? user.name.split(' ')[0] : "User";
+  return `Hello ${title} ${name}. I will assist you with the portal operations.`;
+};
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -17,85 +24,84 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+const sendEmail = async (to, subject, html) => {
+  try {
+    await transporter.sendMail({
+      from: '"MSAJCE Grievance Oracle" <eventbooking.otp@gmail.com>',
+      to,
+      subject,
+      html
+    });
+    return true;
+  } catch (e) {
+    logger.error(`SMTP Error: ${e.message}`);
+    return false;
+  }
+};
+
 const COMPLAINT_STATE_PREFIX = 'grv_state:';
 const VERIFY_STATE_PREFIX = 'verify_state:';
 const EMERGENCY_STATE_PREFIX = 'emg_state:';
 
 const DEPT_ROUTING = {
-  'Hostel Issues': 'Hostel Warden',
-  'Transport / Bus': 'Transport Manager',
-  'Mess / Food': 'Mess Committee',
-  'WiFi / IT Issues': 'IT Support Team',
-  'Faculty Issues': 'Academic Office',
-  'Administration': 'Admin Office',
-  'Harassment / Misconduct': 'Principal / Disciplinary Committee',
-  'Infrastructure': 'Estate Office',
-  'Library Issues': 'Librarian',
-  'Sports / Gym': 'Physical Director',
-  'Placement / Training': 'Placement Officer',
-  'Fee / Scholarship': 'Accounts Office',
-  'Certificate / Document': 'Exam Cell',
-  'Cleanliness / Hygiene': 'Maintenance Team',
-  'Lab Equipment': 'Lab In-charge',
-  'Marks / Attendance': 'HOD Department',
+  'Hostel': 'Hostel Warden',
+  'Mess': 'Mess Committee',
+  'Transport': 'Transport Manager',
+  'Academic': 'Academic Office',
+  'Technical': 'IT Support Team',
+  'Harassment': 'Principal / Disciplinary Committee',
   'Other': 'General Admin'
 };
 
 export const MAIN_MENU = {
-  text: "Welcome to the MSAJCE Grievance Management Portal.\n\n_Please select an option from the official dashboard:_ ",
+  text: "🏛 **MSAJCE Official Grievance Redressal Portal**\n\nWelcome back. This terminal allows you to file formal grievances, report campus emergencies, and track resolution status in real-time.\n\n*Please select an institutional service to proceed:*",
   keyboard: {
     keyboard: [
       ['📝 Register Complaint', '🚨 Emergency Alert'],
-      ['🔍 Track Complaint', '👤 My Profile'],
-      ['💡 FAQ & Help']
+      ['🔎 Track Complaint', '📂 My Complaints'],
+      ['💡 FAQ & Help', '📞 Contact Administration'],
+      ['⚙ Report System Issue']
     ],
     resize_keyboard: true,
     one_time_keyboard: false
   }
 };
 
-const getHumanGreeting = (user) => {
-    if (!user || !user.verified) return "Welcome to the Official MSAJCE Grievance Assistance System.";
-    const title = user.salutation || "";
-    const name = user.name ? user.name.split(' ')[0] : "User";
-    return `Hello ${title} ${name}. I will assist you with the portal operations.`;
-};
-
 const FAQ_DATA = {
-  text: "💡 *MSAJCE Knowledge Hub*\n\n" +
-        "*🏫 College Timings*\n" +
-        "• Mon - Fri: 09:00 AM - 08:00 PM\n" +
-        "• Sat: 10:00 AM - 04:00 PM\n\n" +
-        "*🎯 Vision & Mission*\n" +
-        "To be a leading institution for higher education through innovative teaching and sustainable practices.\n\n" +
-        "*📚 Learning Centre (Library)*\n" +
-        "• 29,853+ Volumes | 1885 Reference Books\n" +
-        "• Equipped with Wi-Fi, DELNET and J-Gate.\n\n" +
-        "*📞 Key Contacts*\n" +
-        "• Principal: Dr. K.S. Srinivasan (9150575066)\n" +
-        "• Out-of-State Support: Dr. Vamsi Naga Mohan (9043358674)\n\n" +
-        "Select an option below or ask me anything!",
+  text: "💡 **MSAJCE Institutional Knowledge Hub**\n\nWelcome to the official FAQ repository. Find answers to common institutional queries below:\n\n" +
+    "🏫 **Campus Operations**\n" +
+    "• **Mon - Fri**: 09:00 AM – 04:30 PM\n" +
+    "• **Sat (Working)**: 09:00 AM – 01:30 PM\n\n" +
+    "📝 **Grievance Process**\n" +
+    "1. Registration: Use '📝 Register Complaint'.\n" +
+    "2. Tracking: Monitor via Case ID (e.g., GRV-2045).\n" +
+    "3. TAT: Standard resolution time is 3-5 working days.\n\n" +
+    "🚌 **Transport Hub**\n" +
+    "Access route maps and driver details via '📞 Contact Administration'.\n\n" +
+    "🎓 **Academics**\n" +
+    "Submit requests for certificates or marksheets through the accounts/academic desk.",
   keyboard: MAIN_MENU.keyboard
 };
 
 const HELP_MESSAGE = {
   text: "📖 *MSAJCE Bot Help Guide*\n\n" +
-        "• *Register Complaint*: Formal submission for any college issue. (Supports Anonymous mode)\n" +
-        "• *Emergency*: High-priority safety/medical alerts.\n" +
-        "• *Track*: Check status using your GRV-ID.\n" +
-        "• *Profile*: Manage your registered academic details.\n\n" +
-        "*Commands:*\n" +
-        "/start - Reset to Main Menu\n" +
-        "/cancel - Stop current process\n" +
-        "/profile - View your details\n" +
-        "/track - Alias for Tracking\n\n" +
-        "For technical issues, contact @ramzendrum_zen",
+    "• *Register Complaint*: Formal submission for any college issue. (Supports Anonymous mode)\n" +
+    "• *Emergency*: High-priority safety/medical alerts.\n" +
+    "• *Track*: Check status using your GRV-ID.\n" +
+    "• *Profile*: Manage your registered academic details.\n\n" +
+    "*Commands:*\n" +
+    "/start - Reset to Main Menu\n" +
+    "/cancel - Stop current process\n" +
+    "/profile - View your details\n" +
+    "/track - Alias for Tracking\n\n" +
+    "For technical issues, contact @ramzendrum_zen",
   keyboard: MAIN_MENU.keyboard
 };
 
-const generateComplaintId = async () => {
-  const count = await Complaint.countDocuments();
-  return `GRV-${(count + 2043).toString().padStart(4, '0')}`;
+const generateComplaintId = async (isEmergency = false) => {
+  const count = await Complaint.countDocuments({ is_emergency: isEmergency });
+  const prefix = isEmergency ? 'EMG' : 'GRV';
+  return `${prefix}-${(count + 2043).toString().padStart(4, '0')}`;
 };
 
 const generateUserId = async () => {
@@ -107,15 +113,15 @@ const generateUserId = async () => {
  * REDESIGNED PROFESSIONAL EMAIL TEMPLATE
  */
 const getProfessionalEmailTemplate = (grvId, user, state, dept, isEmergency = false) => {
-    const accentColor = isEmergency ? '#ef4444' : '#3b82f6';
-    const urgencyLabel = isEmergency ? 'CRITICAL EMERGENCY' : 'NORMAL COMPLAINT';
-    const emergencyHeader = isEmergency ? `
+  const accentColor = isEmergency ? '#ef4444' : '#3b82f6';
+  const urgencyLabel = isEmergency ? 'CRITICAL EMERGENCY' : 'NORMAL COMPLAINT';
+  const emergencyHeader = isEmergency ? `
         <div style="background-color: #ef4444; color: #ffffff; padding: 12px; text-align: center; font-weight: 900; font-size: 14px; letter-spacing: 3px; border-radius: 12px 12px 0 0;">
             🚨 PRIORITY: ${urgencyLabel}
         </div>
     ` : '';
 
-    return `
+  return `
     <div style="background-color: #f8fafc; color: #1e293b; font-family: 'Inter', -apple-system, sans-serif; padding: 40px 20px;">
         <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #e2e8f0;">
             ${emergencyHeader}
@@ -187,439 +193,654 @@ const getProfessionalEmailTemplate = (grvId, user, state, dept, isEmergency = fa
 };
 
 /**
- * Handle Verification Flow for new users
+ * Step-by-Step Profile Verification Flow (Deterministic)
  */
 export const handleVerificationFlow = async (chatId, text, message) => {
   const stateKey = `${VERIFY_STATE_PREFIX}${chatId}`;
   const state = await getCache(stateKey);
 
+  // 0. Cancel Logic
+  if (text === '❌ Cancel Enrollment' || text === '/cancel') {
+    await setCache(stateKey, null);
+    return { text: "❌ Verification process terminated. Use /start to try again.", keyboard: { remove_keyboard: true } };
+  }
+
+  // 1. Initial Trigger
   if (!state) {
-    await setCache(stateKey, { step: 'asking_salutation' });
-    return { 
-      text: "Welcome to the Official MSAJCE Grievance Assistance System.\n\nTo ensure secure communication, please complete your profile verification before submitting complaints.\n\n*Select your salutation:*",
-      keyboard: { keyboard: [['👨 Mr.', '👩 Ms.'], ['❌ Cancel Registration']], resize_keyboard: true }
-    };
-  }
-
-  if (text === '❌ Cancel Registration' || text === '/cancel') {
-    await setCache(stateKey, null);
-    return { text: "❌ Registration cancelled. Use /start to begin again.", keyboard: { remove_keyboard: true } };
-  }
-
-  let nextState = { ...state };
-
-  if (state.step === 'asking_salutation') {
-    if (!['👨 Mr.', '👩 Ms.'].includes(text)) return { text: "⚠️ Please select your salutation using the buttons provided." };
-    nextState.salutation = text === '👨 Mr.' ? 'Mr.' : 'Ms.';
-    nextState.step = 'asking_role';
-    await setCache(stateKey, nextState);
-    return { 
-      text: "Thank you. Please select your role in the institution.",
-      keyboard: { keyboard: [['🎓 Student', '👨‍🏫 Staff'], ['❌ Cancel Registration']], resize_keyboard: true }
-    };
-  }
-
-  if (state.step === 'asking_role') {
-    if (!['🎓 Student', '👨‍🏫 Staff'].includes(text)) return { text: "⚠️ Please use the buttons to select your academic role." };
-    nextState.role = text.includes('Student') ? 'student' : 'staff';
-    nextState.step = nextState.role === 'student' ? 'asking_reg' : 'asking_emp_id';
-    await setCache(stateKey, nextState);
-    return { 
-      text: nextState.role === 'student' ? "Please enter your *University Register Number*:" : "Please enter your *Staff ID Number*:",
-      keyboard: { keyboard: [['❌ Cancel Registration']], resize_keyboard: true } 
-    };
-  }
-
-  if (state.step === 'asking_reg' || state.step === 'asking_emp_id') {
-    const idVal = text.trim().toUpperCase();
-    const query = state.role === 'student' ? { register_number: idVal } : { employee_id: idVal };
-    const existing = await User.findOne(query);
-    if (existing) return { text: "⚠️ This identity is already associated with another account." };
-    
-    // Simulate Institutional Verification
-    if (state.role === 'student') nextState.register_number = idVal;
-    else nextState.employee_id = idVal;
-    
-    nextState.step = 'asking_name';
-    await setCache(stateKey, nextState);
-    return { text: "Thank you. Please enter your *Full Name* (as per college records):" };
-  }
-
-  if (state.step === 'asking_name') {
-    nextState.name = text;
-    nextState.step = 'asking_dept';
-    const title = nextState.salutation || "";
-    await setCache(stateKey, nextState);
-    return { 
-      text: `Thank you *${title} ${nextState.name.split(' ')[0]}*.\n\nWe have successfully verified your identity against the college records.\n\nPlease select your *Department*:`, 
-      keyboard: { keyboard: [['CSE', 'ECE'], ['EEE', 'Mech'], ['IT', 'Civil'], ['AI & DS', 'Cyber Security'], ['❌ Cancel Registration']], resize_keyboard: true } 
-    };
-  }
-
-  if (state.step === 'asking_dept') {
-    nextState.department = text;
-    if (state.role === 'student') {
-        nextState.step = 'asking_year';
-        await setCache(stateKey, nextState);
-        return { 
-          text: `Certainly *${nextState.salutation} ${nextState.name.split(' ')[0]}*. Which *Year* of study are you in?`, 
-          keyboard: { keyboard: [['1', '2'], ['3', '4'], ['❌ Cancel Registration']], resize_keyboard: true } 
-        };
-    } else {
-        nextState.step = 'asking_phone';
-        nextState.designation = 'Staff Member';
-        await setCache(stateKey, nextState);
-        return { 
-            text: `Thank you Ms. ${nextState.name}. Please confirm your phone number for official communication.`,
-            keyboard: { 
-                keyboard: [[{ text: "📱 Share Phone Number", request_contact: true }], ['❌ Cancel Registration']], 
-                resize_keyboard: true 
-            } 
-        };
-    }
-  }
-
-  if (state.step === 'asking_year') {
-    nextState.year = parseInt(text);
-    nextState.step = 'asking_phone';
-    await setCache(stateKey, nextState);
-    return { 
-        text: `We have registered you as a ${nextState.year} Year Student.\n\nPlease confirm your phone number for official communication.`, 
-        keyboard: { 
-            keyboard: [[{ text: "📱 Share Phone Number", request_contact: true }], ['❌ Cancel Registration']], 
-            resize_keyboard: true 
-        } 
-    };
-  }
-
-  if (state.step === 'asking_phone') {
-    const contact = message?.contact;
-    if (!contact && !text.match(/^\+?[0-9]{10,15}$/)) {
-        return { text: "⚠️ Please click the '📱 Share Phone Number' button for secure verification." };
-    }
-    nextState.phone = contact ? contact.phone_number : text;
-    const usrId = await generateUserId();
-    const finalData = { ...nextState, user_id: usrId, verified: true };
-    delete finalData.step;
-
-    await verifyUser(chatId, finalData);
-    await setCache(stateKey, null);
-
-    const greeting = getHumanGreeting(finalData);
-    return { 
-      text: `Your profile has been successfully verified.\n\n${greeting} Welcome to the MSAJCE Grievance Management Portal.`,
-      keyboard: MAIN_MENU.keyboard 
-    };
-  }
-
-  return MAIN_MENU;
-};
-
-/**
- * EMERGENCY COMPLAINT FLOW
- */
-export const handleEmergencyFlow = async (chatId, text, message) => {
-    const stateKey = `${EMERGENCY_STATE_PREFIX}${chatId}`;
-    const state = await getCache(stateKey);
-
-    if (text === '❌ Cancel' || text === '/cancel') {
-        await setCache(stateKey, null);
-        return { text: "🚨 Emergency alert process terminated.", keyboard: MAIN_MENU.keyboard };
-    }
-
-    if (!state) {
-        await setCache(stateKey, { step: 'asking_type' });
-        return {
-            text: "⚠️ *Emergency Alerts immediately notify campus security and administration.*\n\n*Please select the type of emergency:*",
-            keyboard: { 
-                keyboard: [['🚑 Medical Emergency', '🔥 Fire Hazard'], ['🆘 Harassment Incident', '🚨 Theft or Security Threat'], ['❌ Cancel']], 
-                resize_keyboard: true 
-            }
-        };
-    }
-
-    let nextState = { ...state };
-
-    if (state.step === 'asking_type') {
-        nextState.incident_type = text;
-        nextState.step = 'asking_loc';
-        await setCache(stateKey, nextState);
-        return { text: "Please provide the *exact location* of the incident.\n\n_Example: Hostel Block B, Library Floor 2, or Parking Area._" };
-    }
-
-    if (state.step === 'asking_loc') {
-        nextState.location = text;
-        nextState.step = 'confirm_alert';
-        await setCache(stateKey, nextState);
-        return { 
-            text: `⚠️ *Final Confirmation*\n\nIncident: ${state.incident_type}\nLocation: ${text}\n\n*This alert will immediately notify security and administrative authorities.*\n\nConfirm sending emergency alert?`,
-            keyboard: { keyboard: [['🚨 Send Emergency Alert'], ['❌ Cancel']], resize_keyboard: true }
-        };
-    }
-
-    if (state.step === 'confirm_alert') {
-        if (text !== '🚨 Send Emergency Alert') return { text: "⚠️ Please confirm using the button or click Cancel." };
-        
-        const user = await User.findOne({ telegram_id: chatId });
-        const grvId = await generateComplaintId();
-        
-        const newComplaint = new Complaint({
-            complaint_id: grvId,
-            student_id: user._id,
-            telegram_id: chatId,
-            category: 'Other',
-            incident_type: state.incident_type,
-            location: state.location,
-            description: `EMERGENCY ALERT: ${state.incident_type} at ${state.location}`,
-            is_emergency: true,
-            status: 'submitted',
-            department_assigned: 'Principal / Security Team'
-        });
-        await newComplaint.save();
-
-        // Send High Priority Email
-        try {
-            await transporter.sendMail({
-                from: '"🚨 MSAJCE EMERGENCY" <eventbooking.otp@gmail.com>',
-                to: 'cookwithcomali5@gmail.com',
-                subject: `⛔ [EMERGENCY] ${state.incident_type} at ${state.location}`,
-                html: getProfessionalEmailTemplate(grvId, user, { ...state, description: "Emergency Alert Broadcast" }, 'Principal / Security Team', true)
-            });
-        } catch (e) { logger.error(`Emergency Email Fail: ${e.message}`); }
-
-        await setCache(stateKey, null);
-        return {
-            text: `⚠️ *EMERGENCY NOTIFIED*\n\nYour alert has been broadcasted to the top administration with ID: \`${grvId}\`.\n\nHelp is being dispatched immediately.`,
-            keyboard: MAIN_MENU.keyboard
-        };
-    }
-};
-
-/**
- * MAIN ENTRY POINT FOR GRIEVANCE BOT
- */
-export const handleGrievanceFlow = async (chatId, text, message) => {
-  const user = await getOrCreateUser(chatId, message);
-  if (!user) return { text: "⚠️ Database connection error." };
-
-  // 1. Force Registration if not verified
-  if (!user.verified) {
-      if (text === '/start') return await handleVerificationFlow(chatId, null, message);
-      return await handleVerificationFlow(chatId, text, message);
-  }
-
-  // Command Routing
-  if (text === '/start' || text === '🏠 Back to Menu' || text === '🏫 Back to Menu') {
-      return {
-          ...MAIN_MENU,
-          text: `${getHumanGreeting(user)}\n\n${MAIN_MENU.text}`
-      };
-  }
-
-  if (text === '/help' || text === '💡 FAQ & Help') {
-      await setCache(`${COMPLAINT_STATE_PREFIX}${chatId}`, { step: 'asking_faq' });
-      return { 
-          text: "💡 *MSAJCE Knowledge Assistant*\n\nI am connected to the official institutional database. Please ask your question below.\n\n*Examples:*\n• What are the bus timings?\n• Who is the Principal?\n• Tell me about the IT department.",
-          keyboard: { keyboard: [['🏠 Back to Menu']], resize_keyboard: true }
-      };
-  }
-
-  if (text === '/cancel' || text === '❌ Cancel') {
-      await setCache(`${COMPLAINT_STATE_PREFIX}${chatId}`, null);
-      await setCache(`${EMERGENCY_STATE_PREFIX}${chatId}`, null);
-      return { text: "Certainly. The current process has been terminated.", keyboard: MAIN_MENU.keyboard };
-  }
-
-  if (text === '/profile' || text === '👤 My Profile') {
-      const p = user;
-      const title = p.salutation || 'Mr./Ms.';
-      let profileText = `👤 *Institutional Profile*\n\n` +
-          `*Name:* ${title} ${p.name}\n` +
-          `*Role:* ${p.role.toUpperCase()}\n` +
-          `*Department:* ${p.department}\n` +
-          `*ID Number:* ${p.register_number || p.employee_id}\n` +
-          `*Phone:* ${p.phone}\n` +
-          `*Status:* ✅ Verified`;
-      return { 
-          text: profileText, 
-          keyboard: { keyboard: [['✏ Edit Profile'], ['📜 Complaint History'], ['🏠 Back to Menu']], resize_keyboard: true } 
-      };
-  }
-
-  if (text === '/history' || text === '📜 Complaint History') {
-      const history = await Complaint.find({ telegram_id: chatId }).sort({ created_at: -1 }).limit(5);
-      if (history.length === 0) return { text: "📜 You have no active or historical complaints recorded." };
-      let logs = "📜 *Your Recent Complaints:*\n\n";
-      history.forEach(c => logs += `• \`${c.complaint_id}\` - ${c.status.toUpperCase()}\n  (${c.category})\n\n`);
-      return { text: logs, keyboard: MAIN_MENU.keyboard };
-  }
-
-  // Emergency Flow Trigger
-  const emgState = await getCache(`${EMERGENCY_STATE_PREFIX}${chatId}`);
-  if (text === '🚨 Emergency Alert' || emgState) return await handleEmergencyFlow(chatId, text, message);
-
-  const stateKey = `${COMPLAINT_STATE_PREFIX}${chatId}`;
-  const state = await getCache(stateKey);
-
-  if (state?.step === 'asking_faq') {
-    if (text === '🏠 Back to Menu' || text === '🏫 Back to Menu') {
-        await setCache(stateKey, null);
-        return {
-            ...MAIN_MENU,
-            text: `${getHumanGreeting(user)}\n\n${MAIN_MENU.text}`
-        };
-    }
-    return { 
-        text: "🔍 Searching knowledge base...", 
-        use_rag: true,
-        query: text 
-    };
-  }
-
-  if (text === '📝 Register Complaint') {
-    await setCache(stateKey, { step: 'asking_privacy' });
-    const name = user.name.split(' ')[0];
+    const tgName = message?.from?.first_name || "";
+    await setCache(stateKey, { step: 'asking_name' });
     return {
-      text: `${user.salutation} ${name}, how would you like to submit this complaint?`,
-      keyboard: {
-        keyboard: [['👤 Normal Submission', '🎭 Anonymous to Department'], ['❌ Cancel']],
-        resize_keyboard: true
-      }
-    };
-  }
-
-  if (!state) return MAIN_MENU;
-
-  let nextState = { ...state };
-
-  if (state.step === 'asking_privacy') {
-    nextState.is_anonymous = text.includes('Anonymous');
-    nextState.step = 'asking_category';
-    await setCache(stateKey, nextState);
-    return {
-      text: "Please select the *category* that best describes your issue:",
+      text: "🛡️ **MSAJCE Identity Enrollment**\n\nTo ensure institutional security, please provide your legal name as per college records.\n\n_Is your name correct below?_",
       keyboard: {
         keyboard: [
-          ['🏠 Hostel', '🚌 Transport'],
-          ['🍱 Mess', '📚 Academic Affairs'],
-          ['🛠 Infrastructure', '👨‍🏫 Faculty'],
-          ['🛡 Security', '⚠ Harassment'],
-          ['📌 Other'],
-          ['❌ Cancel']
+          [tgName],
+          ['❌ Cancel Enrollment']
         ],
         resize_keyboard: true
       }
     };
   }
 
-  const CATEGORY_MAPPING = {
-    '🏠 Hostel': 'Hostel Issues',
-    '🚌 Transport': 'Transport / Bus',
-    '🍱 Mess': 'Mess / Food',
-    '📚 Academic Affairs': 'Faculty Issues',
-    '🛠 Infrastructure': 'Infrastructure',
-    '👨‍🏫 Faculty': 'Faculty Issues',
-    '🛡 Security': 'Administration',
-    '⚠ Harassment': 'Harassment / Misconduct',
-    '📌 Other': 'Other'
-  };
+  let nextState = { ...state };
 
-  if (state.step === 'asking_category') {
-    nextState.category = CATEGORY_MAPPING[text] || text.replace(/[^a-zA-Z /]/g, '').trim();
-    nextState.step = 'asking_desc';
-    await setCache(stateKey, nextState);
-    return { 
-        text: `Certainly ${user.salutation} ${user.name.split(' ')[0]}.\n\nPlease describe the issue in detail so that the administration can investigate effectively.`, 
-        keyboard: { keyboard: [['❌ Cancel']], resize_keyboard: true } 
+  // 2. Handling Steps
+  switch (state.step) {
+    case 'asking_name':
+      if (text.startsWith('/') || text.length < 3) return { text: "⚠️ Please enter a valid name (at least 3 characters and no commands)." };
+      nextState.name = text.trim();
+      nextState.step = 'asking_role';
+      await setCache(stateKey, nextState);
+      return {
+        text: `Thank you *${nextState.name}*. Select your role:`,
+        keyboard: { keyboard: [['🎓 Student', '👨‍🏫 Staff'], ['❌ Cancel Enrollment']], resize_keyboard: true }
+      };
+
+    case 'asking_role':
+      if (!['🎓 Student', '👨‍🏫 Staff'].includes(text)) return { text: "⚠️ Please select your role using the buttons." };
+      nextState.role = text.includes('Student') ? 'student' : 'staff';
+      nextState.step = 'asking_id';
+      await setCache(stateKey, nextState);
+      return {
+        text: `Enter your *${nextState.role === 'student' ? 'Register Number' : 'Staff ID'}*:`,
+        keyboard: { keyboard: [['❌ Cancel Enrollment']], resize_keyboard: true }
+      };
+
+    case 'asking_id':
+      if (text.startsWith('/') || text.length < 2) return { text: "⚠️ Please enter a valid institutional ID." };
+      const idVal = text.trim().toUpperCase();
+      if (nextState.role === 'student') nextState.register_number = idVal;
+      else nextState.employee_id = idVal;
+      nextState.step = 'asking_dept';
+      await setCache(stateKey, nextState);
+      return {
+        text: "Select your *Department*:",
+        keyboard: { keyboard: [['CSE', 'IT', 'ECE'], ['EEE', 'MECH', 'CIVIL'], ['MBA', 'MCA'], ['❌ Cancel Enrollment']], resize_keyboard: true }
+      };
+
+    case 'asking_dept': {
+      const depts = ['CSE', 'IT', 'ECE', 'EEE', 'MECH', 'CIVIL', 'MBA', 'MCA'];
+      if (!depts.includes(text.toUpperCase())) return { text: "⚠️ Select from the available departments." };
+      nextState.department = text.toUpperCase();
+      nextState.step = 'asking_email';
+      await setCache(stateKey, nextState);
+      return {
+        text: "📧 Enter your *official college email* (@msajce-edu.in):",
+        keyboard: { keyboard: [['❌ Cancel Enrollment']], resize_keyboard: true }
+      };
+    }
+
+    case 'asking_email':
+      const email = text.trim().toLowerCase();
+      if (!email.endsWith('@msajce-edu.in')) {
+        return { text: "⚠️ Only official *@msajce-edu.in* email addresses are allowed.\n\nExample: `student@msajce-edu.in`" };
+      }
+      nextState.email = email;
+      nextState.step = 'review_details';
+      await setCache(stateKey, nextState);
+      return {
+        text: `🔍 *Institutional Identity Review*\n\n**Name:** ${nextState.name}\n**Role:** ${nextState.role.toUpperCase()}\n**ID:** ${nextState.register_number || nextState.employee_id}\n**Dept:** ${nextState.department}\n**Email:** ${nextState.email}\n\n*Are these details correct?*`,
+        keyboard: { keyboard: [['✅ Correct - Send OTP'], ['✏ Name', '✏ Role'], ['✏ ID Number', '✏ Dept'], ['✏ Email', '❌ Cancel Enrollment']], resize_keyboard: true }
+      };
+
+    case 'review_details':
+      if (text.includes('Correct')) {
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const html = `
+            <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+              <h2 style="color: #2563eb;">MSAJCE Verification</h2>
+              <p>Your OTP for the Grievance Portal is:</p>
+              <div style="font-size: 32px; font-weight: 800; letter-spacing: 5px; color: #1e293b; padding: 10px 0;">${otp}</div>
+              <p style="color: #64748b; font-size: 12px;">This code expires in 10 minutes.</p>
+            </div>
+          `;
+        const emailSent = await sendEmail(nextState.email, "MSAJCE Portal Security Code", html);
+        if (!emailSent) return { text: "❌ Failed to send OTP. Attempting institutional SMTP reset. Please try again." };
+        nextState.otp = otp;
+        nextState.step = 'asking_otp';
+        await setCache(stateKey, nextState);
+        return { text: "📩 A 6-digit OTP has been sent to your email. Please enter it here:", keyboard: { keyboard: [['❌ Cancel Enrollment']], resize_keyboard: true } };
+      }
+
+      if (text.includes('Name')) { nextState.step = 'edit_name'; await setCache(stateKey, nextState); return { text: "Enter your correct *Full Name*:" }; }
+      if (text.includes('Role')) { nextState.step = 'edit_role'; await setCache(stateKey, nextState); return { text: "Select your correct role:", keyboard: { keyboard: [['🎓 Student', '👨‍🏫 Staff'], ['❌ Cancel Enrollment']], resize_keyboard: true } }; }
+      if (text.includes('ID')) { nextState.step = 'edit_id'; await setCache(stateKey, nextState); return { text: "Enter your correct *ID/Register Number*:" }; }
+      if (text.includes('Dept')) { nextState.step = 'edit_dept'; await setCache(stateKey, nextState); return { text: "Select your correct *Department*:", keyboard: { keyboard: [['CSE', 'IT', 'ECE'], ['EEE', 'MECH', 'CIVIL'], ['MBA', 'MCA'], ['❌ Cancel Enrollment']], resize_keyboard: true } }; }
+      if (text.includes('Email')) { nextState.step = 'edit_email'; await setCache(stateKey, nextState); return { text: "Enter your correct *Official Email* (@msajce-edu.in):" }; }
+
+      return { text: "⚠️ Please use the buttons below to confirm or edit details." };
+
+    case 'edit_name':
+      if (text.startsWith('/') || text.length < 3) return { text: "⚠️ Enter a valid name." };
+      nextState.name = text.trim();
+      nextState.step = 'review_details';
+      await setCache(stateKey, nextState);
+      return { text: "✅ Name updated.", keyboard: { keyboard: [['✅ Correct - Send OTP'], ['✏ Name', '✏ Role'], ['✏ ID Number', '✏ Dept'], ['✏ Email', '❌ Cancel Enrollment']], resize_keyboard: true } };
+
+    case 'edit_role':
+      if (!['🎓 Student', '👨‍🏫 Staff'].includes(text)) return { text: "⚠️ Select a role." };
+      nextState.role = text.includes('Student') ? 'student' : 'staff';
+      nextState.step = 'review_details';
+      await setCache(stateKey, nextState);
+      return { text: "✅ Role updated.", keyboard: { keyboard: [['✅ Correct - Send OTP'], ['✏ Name', '✏ Role'], ['✏ ID Number', '✏ Dept'], ['✏ Email', '❌ Cancel Enrollment']], resize_keyboard: true } };
+
+    case 'edit_id':
+      if (text.startsWith('/') || text.length < 2) return { text: "⚠️ Enter a valid ID." };
+      if (nextState.role === 'student') nextState.register_number = text.trim().toUpperCase();
+      else nextState.employee_id = text.trim().toUpperCase();
+      nextState.step = 'review_details';
+      await setCache(stateKey, nextState);
+      return { text: "✅ ID updated.", keyboard: { keyboard: [['✅ Correct - Send OTP'], ['✏ Name', '✏ Role'], ['✏ ID Number', '✏ Dept'], ['✏ Email', '❌ Cancel Enrollment']], resize_keyboard: true } };
+
+    case 'edit_dept': {
+      const depts = ['CSE', 'IT', 'ECE', 'EEE', 'MECH', 'CIVIL', 'MBA', 'MCA'];
+      if (!depts.includes(text.toUpperCase())) return { text: "⚠️ Select a department." };
+      nextState.department = text.toUpperCase();
+      nextState.step = 'review_details';
+      await setCache(stateKey, nextState);
+      return { text: "✅ Department updated.", keyboard: { keyboard: [['✅ Correct - Send OTP'], ['✏ Name', '✏ Role'], ['✏ ID Number', '✏ Dept'], ['✏ Email', '❌ Cancel Enrollment']], resize_keyboard: true } };
+    }
+
+    case 'edit_email':
+      if (!text.trim().toLowerCase().endsWith('@msajce-edu.in')) return { text: "⚠️ Must be *@msajce-edu.in*." };
+      nextState.email = text.trim().toLowerCase();
+      nextState.step = 'review_details';
+      await setCache(stateKey, nextState);
+      return { text: "✅ Email updated.", keyboard: { keyboard: [['✅ Correct - Send OTP'], ['✏ Name', '✏ Role'], ['✏ ID Number', '✏ Dept'], ['✏ Email', '❌ Cancel Enrollment']], resize_keyboard: true } };
+
+    case 'asking_otp':
+      if (text.trim() !== state.otp) return { text: "❌ Incorrect OTP. Please try again." };
+      const usrId = await generateUserId();
+      const finalData = { ...nextState, user_id: usrId, verified: true };
+      delete finalData.step;
+      delete finalData.otp;
+      await verifyUser(chatId, finalData);
+      await setCache(stateKey, null);
+      return { text: "✅ *Profile Verified Successfully*\n\nWelcome to the MSAJCE Internal Grievance System.", keyboard: MAIN_MENU.keyboard };
+
+    default:
+      await setCache(stateKey, null);
+      return MAIN_MENU;
+  }
+};
+
+/**
+ * EMERGENCY ALERT FLOW (Rate Limited & Deterministic)
+ */
+export const handleEmergencyFlow = async (chatId, text, user) => {
+  const stateKey = `${EMERGENCY_STATE_PREFIX}${chatId}`;
+  const state = await getCache(stateKey);
+
+  // Rate Limit Check
+  const today = new Date().toDateString();
+  const lastEmg = user.last_emergency_date ? new Date(user.last_emergency_date).toDateString() : null;
+  if (today === lastEmg && (user.emergency_today_count || 0) >= 1) {
+    return { text: "⚠️ *Emergency Alert Limit Reached*\n\nOnly one emergency alert is allowed per day for security reasons.", keyboard: MAIN_MENU.keyboard };
+  }
+
+  if (text.includes('Cancel') || text === '/cancel') {
+    await setCache(stateKey, null);
+    return { text: "🚨 Emergency process cancelled.", keyboard: MAIN_MENU.keyboard };
+  }
+
+  if (!state) {
+    await setCache(stateKey, { step: 'asking_type' });
+    return {
+      text: "🚑 *Campus Emergency System*\n\nPlease select the type of emergency:",
+      keyboard: {
+        keyboard: [['🚑 Medical Emergency', '🔥 Fire Hazard'], ['🆘 Harassment', '🚨 Theft / Security'], ['❌ Cancel']],
+        resize_keyboard: true
+      }
     };
   }
 
-  if (state.step === 'asking_desc') {
-    nextState.description = text;
-    nextState.step = 'asking_evidence';
+  let nextState = { ...state };
+  if (state.step === 'asking_type') {
+    nextState.incident_type = text;
+    nextState.step = 'asking_loc';
+    await setCache(stateKey, nextState);
+    return { text: "📍 Please enter the *incident location*:" };
+  }
+
+  if (state.step === 'asking_loc') {
+    nextState.location = text;
+    nextState.step = 'confirm';
     await setCache(stateKey, nextState);
     return {
-      text: "If you have any supporting evidence such as a *photo* or *document*, you may upload it now.",
-      keyboard: { keyboard: [['➡ Skip']], resize_keyboard: true }
+      text: `⚠ *CONFIRM ALERT*\n\nType: ${nextState.incident_type}\nLoc: ${text}\n\n*Sending this will notify administration and security immediately.*`,
+      keyboard: { keyboard: [['🚨 Send Alert'], ['❌ Cancel']], resize_keyboard: true }
     };
   }
 
-  if (state.step === 'asking_evidence') {
-    if (text === '➡ Skip' || message?.photo || message?.document) {
-        nextState.step = 'final_confirmation';
-        if (message?.photo || message?.document) {
-            const media = message.photo?.[message.photo.length-1] || message.document;
-            nextState.file_id = media.file_id;
-        }
-        await setCache(stateKey, nextState);
-        return {
-            text: `*Please review your complaint before submission.*\n\n*Category:* ${nextState.category}\n*Privacy:* ${nextState.is_anonymous ? '🎭 Anonymous' : '👤 Normal'}\n*Description:* ${nextState.description}\n\nDo you want to submit this complaint?`,
-            keyboard: { keyboard: [['✅ Submit Complaint'], ['❌ Cancel']], resize_keyboard: true }
-        };
-    }
-    return { text: "⚠️ Please upload a file or click Skip." };
-  }
-
-  if (state.step === 'final_confirmation') {
-    if (text !== '✅ Submit Complaint') return { text: "⚠️ Please confirm your submission." };
-    
-    const grvId = await generateComplaintId();
-    const dept = DEPT_ROUTING[state.category] || 'General Admin';
-
-    let evidenceUrl = 'None';
-    if (state.file_id) {
-        try {
-            const token = config.telegram.complaintBotToken || config.telegram.token;
-            if (config.cloudinary.cloudName) {
-                const res = await uploadTelegramMedia(token, state.file_id);
-                evidenceUrl = res?.url;
-            }
-        } catch (e) { logger.error(`Media Error: ${e.message}`); }
-    }
-
+    if (state.step === 'confirm') {
+        if (!text.includes('Send Alert')) return { text: "⚠️ Use the button to send alert or Cancel." };
+        
+        const grvId = await generateComplaintId(true);
     const newComplaint = new Complaint({
       complaint_id: grvId,
       student_id: user._id,
       telegram_id: chatId,
-      category: state.category,
-      description: state.description,
-      evidence_url: evidenceUrl,
-      department_assigned: dept,
-      is_anonymous: state.is_anonymous
+      category: 'Other',
+      incident_type: nextState.incident_type,
+      location: nextState.location,
+      description: `🚨 EMERGENCY: ${nextState.incident_type} at ${nextState.location}`,
+      is_emergency: true,
+      status: 'submitted',
+      department_assigned: 'Security / Administration'
     });
     await newComplaint.save();
 
-    // Send Professional Email
-    try {
-      await transporter.sendMail({
-        from: '"MSAJCE Grievance Oracle" <eventbooking.otp@gmail.com>',
-        to: 'cookwithcomali5@gmail.com',
-        subject: `🚨 [MSAJCE Grievance System] New Complaint Submitted – ${grvId}`,
-        html: getProfessionalEmailTemplate(grvId, user, state, dept, false)
-      });
-    } catch (e) { logger.error(`Email Error: ${e.message}`); }
+    // Update Rate Limits
+    user.emergency_today_count = (user.emergency_today_count || 0) + 1;
+    user.last_emergency_date = new Date();
+    await user.save();
+
+    await sendEmail('cookwithcomali5@gmail.com', `🆘 EMERGENCY: ${nextState.incident_type}`, getProfessionalEmailTemplate(grvId, user, { description: `Emergency: ${nextState.incident_type} at ${nextState.location}` }, 'Security', true));
 
     await setCache(stateKey, null);
-    return { 
-      text: `Thank you ${user.salutation} ${user.name.split(' ')[0]}.\n\nYour complaint has been successfully submitted.\n\n*Complaint ID:* \`${grvId}\`\n\nYou can track its progress anytime using the Track Complaint option.`,
-      keyboard: { keyboard: [['🔍 Track Status'], ['🏠 Back to Menu']], resize_keyboard: true }
+    return { text: "🚨 *Emergency Alert Sent*\n\nHelp is being dispatched. ID: `" + grvId + "`", keyboard: MAIN_MENU.keyboard };
+  }
+};
+
+/**
+ * REGISTER COMPLAINT FLOW
+ */
+export const handleRegisterFlow = async (chatId, text, user, message) => {
+  const stateKey = `${COMPLAINT_STATE_PREFIX}${chatId}`;
+  const state = await getCache(stateKey);
+
+  // Rate Limit Check
+  const today = new Date().toDateString();
+  const lastCmp = user.last_complaint_date ? new Date(user.last_complaint_date).toDateString() : null;
+  if (today === lastCmp && (user.complaints_today_count || 0) >= 3) {
+    return { text: "⚠️ *Daily Limit Reached*\n\nYou can only submit 3 complaints per day.", keyboard: MAIN_MENU.keyboard };
+  }
+
+  if (text.includes('Cancel') || text === '/cancel') {
+    await setCache(stateKey, null);
+    return { text: "❌ Registration cancelled.", keyboard: MAIN_MENU.keyboard };
+  }
+
+  if (!state) {
+    await setCache(stateKey, { step: 'asking_privacy' });
+    return {
+      text: "📝 *Register New Complaint*\n\nSelect privacy level:",
+      keyboard: { keyboard: [['👤 Normal', '🎭 Anonymous'], ['❌ Cancel']], resize_keyboard: true }
     };
   }
 
-  return MAIN_MENU;
+  let nextState = { ...state };
+  switch (state.step) {
+    case 'asking_privacy':
+      nextState.is_anonymous = text.includes('Anonymous');
+      nextState.step = 'asking_category';
+      await setCache(stateKey, nextState);
+      return {
+        text: "Select Category:",
+        keyboard: { keyboard: [['🏠 Hostel', '🍱 Mess'], ['🚌 Transport', '📚 Academic'], ['💻 Technical', '⚠ Harassment'], ['❌ Cancel']], resize_keyboard: true }
+      };
+
+    case 'asking_category':
+      if (text.includes('Hostel')) nextState.category = 'Hostel Issues';
+      else if (text.includes('Mess')) nextState.category = 'Mess / Food';
+      else if (text.includes('Transport')) nextState.category = 'Transport / Bus';
+      else if (text.includes('Academic')) nextState.category = 'Faculty Issues';
+      else if (text.includes('Technical')) nextState.category = 'WiFi / IT Issues';
+      else if (text.includes('Harassment')) nextState.category = 'Harassment / Misconduct';
+      else nextState.category = 'Other';
+      
+      nextState.step = 'asking_desc';
+      await setCache(stateKey, nextState);
+      return { text: "Please describe the issue in detail:" };
+
+    case 'asking_desc':
+      nextState.description = text;
+      nextState.step = 'asking_evidence';
+      nextState.evidence_ids = []; 
+      await setCache(stateKey, nextState);
+      return {
+        text: "Please upload supporting evidence (Photo, Document, or Video).\n\n_Note: You can upload up to 5 files._",
+        keyboard: { keyboard: [['➡ Skip / Finish']], resize_keyboard: true }
+      };
+
+    case 'asking_evidence':
+      const currentFiles = nextState.evidence_ids || [];
+      const hasMedia = message?.photo || message?.document || message?.video;
+
+      if (hasMedia) {
+        if (currentFiles.length >= 5) {
+          return { text: "⚠️ Maximum limit of 5 files reached. Please click '✅ Finish & Review'." };
+        }
+        const media = message.photo ? message.photo[message.photo.length - 1] : (message.document || message.video);
+        currentFiles.push(media.file_id);
+        nextState.evidence_ids = currentFiles;
+        await setCache(stateKey, nextState);
+
+        return {
+          text: `✅ File #${currentFiles.length} received. You can upload more (up to 5) or finish.`,
+          keyboard: { keyboard: [['✅ Finish & Review'], ['❌ Cancel']], resize_keyboard: true }
+        };
+      }
+
+      if (text.includes('Finish') || text.includes('Skip')) {
+        nextState.step = 'review';
+        await setCache(stateKey, nextState);
+        return {
+          text: `📑 **REVIEW COMPLAINT**\n\n**Category:** ${nextState.category}\n**Privacy:** ${nextState.is_anonymous ? 'Anonymous' : 'Normal'}\n**Evidence:** ${nextState.evidence_ids.length} file(s)\n**Description:** ${nextState.description}`,
+          keyboard: { keyboard: [['✅ Submit Complaint'], ['❌ Cancel']], resize_keyboard: true }
+        };
+      }
+      return { text: "⚠️ Please upload a media file or use the buttons to finish." };
+    case 'review':
+      if (!text.includes('Submit Complaint')) return { text: "⚠️ Please confirm using the button." };
+      
+      const grvId = await generateComplaintId(false);
+      const evidenceUrls = [];
+
+      // Process and Upload Media
+      if (nextState.evidence_ids && nextState.evidence_ids.length > 0) {
+        const token = config.telegram.complaintBotToken || config.telegram.token;
+        for (const fId of nextState.evidence_ids) {
+          try {
+            const upload = await uploadTelegramMedia(token, fId);
+            if (upload?.url) evidenceUrls.push(upload.url);
+          } catch (err) {
+            logger.error(`Multi-upload failed for ${fId}: ${err.message}`);
+          }
+        }
+      }
+
+      const newC = new Complaint({
+        complaint_id: grvId,
+        student_id: user._id,
+        telegram_id: chatId,
+        category: nextState.category,
+        description: nextState.description,
+        is_anonymous: nextState.is_anonymous,
+        evidence_urls: evidenceUrls,
+        department_assigned: DEPT_ROUTING[nextState.category.split(' ')[0]] || 'Admin'
+      });
+      await newC.save();
+
+      // Send Email Notification
+      await sendEmail('cookwithcomali5@gmail.com', `📝 New Grievance: ${grvId}`, getProfessionalEmailTemplate(grvId, user, nextState, DEPT_ROUTING[nextState.category.split(' ')[0]] || 'Admin', false));
+
+      user.complaints_today_count = (user.complaints_today_count || 0) + 1;
+      user.last_complaint_date = new Date();
+      await user.save();
+
+      await setCache(stateKey, null);
+      return { text: `✅ **Complaint Registered Successfully**\n\nYour Case ID is: \`${grvId}\`\n\nKeep this ID to track your resolution status.`, keyboard: MAIN_MENU.keyboard };
+
+    default:
+      return MAIN_MENU;
+  }
+};
+
+/**
+ * MAIN ENTRY POINT
+ */
+export const handleGrievanceFlow = async (chatId, text, message) => {
+  const user = await getOrCreateUser(chatId, message);
+  const clean = text.toLowerCase().trim();
+
+  // 1. ABSOLUTE GLOBAL OVERRIDE (Reset & Core Commands)
+  const isGlobalCmd = ['/start', '/dashboard', '/menu', '🏠 back to menu', '🏠 return to dashboard'].includes(clean) || text === '🏠 Main Menu';
+  if (isGlobalCmd) {
+    await setCache(`${COMPLAINT_STATE_PREFIX}${chatId}`, null);
+    await setCache(`${EMERGENCY_STATE_PREFIX}${chatId}`, null);
+    await setCache(`${VERIFY_STATE_PREFIX}${chatId}`, null);
+    await setCache(`track:${chatId}`, null);
+
+    if (!user || !user.verified) return await handleVerificationFlow(chatId, text, message);
+
+    const greeting = getHumanGreeting(user);
+    return { ...MAIN_MENU, text: `${greeting}\n\n${MAIN_MENU.text}` };
+  }
+
+  // 2. Command Aliases
+  if (clean === '/my_complaints') return handleGrievanceFlow(chatId, '📂 My Complaints', message);
+  if (clean === '/report_bug') return handleGrievanceFlow(chatId, '⚙ Report System Issue', message);
+  if (clean === '/verify_profile' || clean === '/profile') {
+      await User.findOneAndUpdate({ telegram_id: chatId }, { verified: false });
+      return await handleVerificationFlow(chatId, null, message);
+  }
+
+  // 3. Verification Gate
+  const vState = await getCache(`${VERIFY_STATE_PREFIX}${chatId}`);
+  if (!user || !user.verified || vState) {
+    return await handleVerificationFlow(chatId, text, message);
+  }
+
+  // 3. Active Flow Check
+  const grvState = await getCache(`${COMPLAINT_STATE_PREFIX}${chatId}`);
+  if (grvState) return await handleRegisterFlow(chatId, text, user, message);
+
+  const emgState = await getCache(`${EMERGENCY_STATE_PREFIX}${chatId}`);
+  if (emgState) return await handleEmergencyFlow(chatId, text, user);
+
+  // 5. Command Routing (Verified Users Only)
+
+  if (/emergency|alert|sos|assistance/.test(clean)) return await handleEmergencyFlow(chatId, text, user);
+
+  if (/track|status|check/.test(clean) && !clean.includes('my complaints')) {
+    await setCache(`track:${chatId}`, true);
+    return {
+      text: "🔎 **Institutional Tracking System**\n\nPlease enter the unique Complaint ID (e.g. `GRV-2045`) associated with your request:",
+      keyboard: { keyboard: [['🔙 Back to Menu']], resize_keyboard: true }
+    };
+  }
+
+  // Active tracking state handling
+  const isTracking = await getCache(`track:${chatId}`);
+  if (isTracking) {
+    if (text.toUpperCase().trim().match(/^(GRV|EMG)-/)) {
+      await setCache(`track:${chatId}`, null);
+      return await trackComplaint(text);
+    }
+  }
+
+  if (/history|my records|my complaints|📂/.test(clean)) {
+    const history = await Complaint.find({ telegram_id: chatId }).sort({ created_at: -1 }).limit(10);
+    if (history.length === 0) return { text: "📜 **System Record**: You have no active or historical complaints on record.", keyboard: { keyboard: [['🔙 Back']], resize_keyboard: true } };
+    let list = "📂 **Your Recent Case Files**\n\n";
+    history.forEach(c => {
+      const time = new Date(c.created_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+      list += `🔹 \`${c.complaint_id}\` — **${c.status.toUpperCase()}**\n`;
+      list += `📅 _${time}_\n`;
+      list += `📂 **Category:** ${c.category}\n`;
+      list += `🏛 **Dept:** ${c.department_assigned}\n`;
+      list += `📝 _${c.description.slice(0, 70)}${c.description.length > 70 ? '...' : ''}_\n\n`;
+    });
+    return { text: list, keyboard: { keyboard: [['🔙 Back']], resize_keyboard: true } };
+  }
+
+  if (/profile|account|identity|👤/.test(clean)) {
+    if (/edit|update|change/.test(clean)) {
+      await User.findOneAndUpdate({ telegram_id: chatId }, { verified: false });
+      await setCache(`${VERIFY_STATE_PREFIX}${chatId}`, null);
+      return await handleVerificationFlow(chatId, null, message);
+    }
+    const name = user.name || "Not Set";
+    const role = (user.role || "student").toUpperCase();
+    const id = user.register_number || user.employee_id || "Not Set";
+    const dept = user.department || "Not Set";
+    const email = user.email || "Not Set";
+
+    return {
+      text: `👤 **Institutional Identity Profile**\n\n**Full Name:** ${name}\n**Designation:** ${role}\n**ID Number:** ${id}\n**Department:** ${dept}\n**Official Email:** ${email}\n\n**Verification Status:** ✅ Fully Verified`,
+      keyboard: { keyboard: [['✏ Edit Profile'], ['🔙 Back to Menu']], resize_keyboard: true }
+    };
+  }
+
+  // 6. FAQ & KNOWLEDGE HUB
+  const isKnowledgeHub = clean.includes('faq') || clean.includes('help center') || clean.includes('hub');
+  
+  // Rules Category
+  if (clean.includes('grievance resolution rules') || (isKnowledgeHub && (clean.includes('grievance') || clean.includes('rule'))) || clean === '📌 grievance rules') {
+      return {
+          text: "📌 **Grievance Resolution Rules**\n\n• **Submission**: All complaints must be formal and descriptive.\n• **Anonymity**: Your name won't be shared with college depts if 'Anonymous' is selected.\n• **Limits**: Maximum 3 complaints per 24 hours.\n• **Evidence**: Attach up to 5 files (Images/PDFs) for faster audit.",
+          keyboard: { keyboard: [['📝 Register Complaint'], ['🔙 Back to FAQ', '🏠 Return to Dashboard']], resize_keyboard: true }
+      };
+  }
+  
+  // Landmarks Category
+  if (clean.includes('campus') || clean.includes('location') || clean.includes('landmark') || clean === '📍 campus locations') {
+      if (clean.includes('principal office')) {
+          return { text: "🏢 **Principal Office**\n\n**Location**: Main Administrative Block – First Floor.\n**Access**: Monday - Saturday (9:00 AM - 5:00 PM).", keyboard: { keyboard: [['📍 Campus Locations'], ['🏠 Return to Dashboard']], resize_keyboard: true } };
+      }
+      if (clean.includes('library')) {
+          return { text: "📚 **Central Learning Centre (Library)**\n\n**Location**: Ground & First Floor.\n**Volume**: 29,853 Books | 1,885 Reference Files.\n**Hours**: Mon-Sat (8:00 AM - 7:00 PM), Sun (10 AM - 4 PM).", keyboard: { keyboard: [['📍 Campus Locations'], ['🏠 Return to Dashboard']], resize_keyboard: true } };
+      }
+      if (clean.includes('first aid')) {
+          return { text: "🏥 **Medical & First Aid**\n\n**Location**: Adjacent to Dining Hall.\n**Hours**: 24/7 on-call service for emergencies.", keyboard: { keyboard: [['📍 Campus Locations'], ['🏠 Return to Dashboard']], resize_keyboard: true } };
+      }
+      if (clean.includes('cafeteria') || clean.includes('canteen')) {
+          return { text: "🍲 **Institutional Cafeteria**\n\n**Location**: Campus Central.\n**Capacity**: 100+ Seats.\n**Hours**: 8:00 AM - 8:00 PM.", keyboard: { keyboard: [['📍 Campus Locations'], ['🏠 Return to Dashboard']], resize_keyboard: true } };
+      }
+      return {
+          text: "📍 **Institutional Landmarks**\n\nSelect a facility for location and details:",
+          keyboard: { keyboard: [['🏢 Principal Office', '📚 Library'], ['🏥 First Aid Room', '🍲 Cafeteria'], ['🔙 Back to FAQ', '🏠 Return to Dashboard']], resize_keyboard: true }
+      };
+  }
+
+  // Departments Category
+  if (clean.includes('department') || clean === '🏫 departments') {
+      if (clean.includes('mech')) {
+          return { text: "⚙ **Mechanical Engineering**\n\n**Key Official**: Mr. S. Syed Abuthahir\n**Contact**: 99441 27339\n**Location**: Block B, Room 204.", keyboard: { keyboard: [['🏫 Departments'], ['🏠 Return to Dashboard']], resize_keyboard: true } };
+      }
+      if (clean.includes('civil')) {
+          return { text: "🏗 **Civil Engineering**\n\n**Key Official**: Mr. B. Rizha Ur Rahman\n**Contact**: 97908 36981\n**Location**: Block A, Room 105.", keyboard: { keyboard: [['🏫 Departments'], ['🏠 Return to Dashboard']], resize_keyboard: true } };
+      }
+      if (clean.includes('ece') || clean.includes('electronics')) {
+          return { text: "📡 **Electronics & Comm (ECE)**\n\n**Head**: Dr. I. Manju (99490 55026)\n**Asst**: Mrs. I. S. Suganthi (72997 72958)", keyboard: { keyboard: [['🏫 Departments'], ['🏠 Return to Dashboard']], resize_keyboard: true } };
+      }
+      if (clean.includes('it') || clean.includes('cse') || clean.includes('computing')) {
+          return { text: "💻 **CSE & Information Technology**\n\n**Official**: Dr. D. Weslin\n**Contact**: 97152 02533\n**Student Branch**: CSI Kancheepuram Chapter.", keyboard: { keyboard: [['🏫 Departments'], ['🏠 Return to Dashboard']], resize_keyboard: true } };
+      }
+      return {
+          text: "🏫 **Academic Departments**\n\nSelect a branch to view official contacts:",
+          keyboard: { keyboard: [['⚙ Mechanical', '🏗 Civil'], ['📡 ECE', '💻 CSE / IT'], ['🔙 Back to FAQ', '🏠 Return to Dashboard']], resize_keyboard: true }
+      };
+  }
+
+  // Base Knowledge Hub Entry
+  if (isKnowledgeHub) {
+      return {
+          text: "💡 **MSAJCE Institutional Knowledge Hub**\n\nExplore our facilities and procedural details:",
+          keyboard: { keyboard: [['📌 Grievance Rules', '📍 Campus Locations'], ['🏫 Departments', '🚌 Transport Hub'], ['🏠 Return to Dashboard']], resize_keyboard: true }
+      };
+  }
+
+  // 7. ADMINISTRATION DIRECTORY
+  if (/contact|admin|support|📞|principal|admission|hostel|account|office/.test(clean)) {
+      if (clean.includes('principal')) {
+          return {
+              text: "👨‍💼 **Principal's Desk**\n\n**Principal**: Dr. K.S. Srinivasan\n**Phone**: 91505 75066\n**Email**: principal@msajce-edu.in\n**Access**: Admin Block, 1st Floor.",
+              keyboard: { keyboard: [['🔙 Back to Admin', '🏠 Return to Dashboard']], resize_keyboard: true }
+          };
+      }
+      if (clean.includes('admission')) {
+          return {
+              text: "🎓 **Admission Cell**\n\n**Head**: Dr. K.P. Santhosh Nathan (98408 86992)\n**Other States Desk**: Dr. Vamsi (90433 58674)\n**Location**: Ground Floor Lobby - Admissions Desk.",
+              keyboard: { keyboard: [['🔙 Back to Admin', '🏠 Return to Dashboard']], resize_keyboard: true }
+          };
+      }
+      if (clean.includes('admin office') || clean.includes('officer')) {
+          return {
+              text: "👔 **Administrative Office**\n\n**Admin Officer**: Mr. A. Abdul Gafoor\n**Phone**: 99403 19629\n**Responsibility**: Professional society & statutory affairs.",
+              keyboard: { keyboard: [['🔙 Back to Admin', '🏠 Return to Dashboard']], resize_keyboard: true }
+          };
+      }
+      if (clean.includes('hostel')) {
+          return {
+              text: "🏠 **Hostel Administration**\n\n**Boys Hostel**: Dr. S. Kamal (Inside Campus)\n**Girls Hostel**: Sholinganallur (5KM Away)\n**Warden Contact**: 94441 56789.",
+              keyboard: { keyboard: [['🔙 Back to Admin', '🏠 Return to Dashboard']], resize_keyboard: true }
+          };
+      }
+      if (clean.includes('account')) {
+          return {
+              text: "💰 **Accounts & Finance**\n\n**Office**: Room 101, Main Block.\n**Scholarship**: Scholarship Desk Desk, Ground Floor.",
+              keyboard: { keyboard: [['🔙 Back to Admin', '🏠 Return to Dashboard']], resize_keyboard: true }
+          };
+      }
+      if (clean.includes('transport office')) {
+          return {
+              text: "🚌 **Transport Office**\n\n**Convener**: Dr. K.P. Santhosh Nathan\n**Asst**: Mr. A. Abdul Gafoor\n\n_Use Transport Hub for bus-specific drivers._",
+              keyboard: { keyboard: [['🚌 Transport Hub'], ['🔙 Back to Admin', '🏠 Return to Dashboard']], resize_keyboard: true }
+          };
+      }
+      return {
+          text: "📞 **Institutional Directory**\n\nDirect links to administrative departments:",
+          keyboard: { keyboard: [['👨‍💼 Principal', '🎓 Admission'], ['👔 Admin Office', '🏠 Hostel'], ['💰 Accounts', '🚌 Transport Office'], ['🏠 Return to Dashboard']], resize_keyboard: true }
+      };
+  }
+
+  // 7. TRANSPORT HUB (Shared)
+  if (clean.includes('bus') || clean.includes('transport hub') || clean.match(/ar\d+|r-\d+|r\d+/)) {
+      const busDetails = {
+          'ar3': { driver: 'Mr. Sathish K', phone: '97899 70304', route: 'T. Nagar ↔ Campus', time: '06:20 AM' },
+          'ar4': { driver: 'TBA', phone: '98408 86992', route: 'Moolakadai ↔ Campus', time: '06:10 AM' },
+          'ar5': { driver: 'Mr. Murugan / Velu', phone: '99622 54425', route: 'MMDA School ↔ Campus', time: '06:15 AM' },
+          'ar6': { driver: 'TBA', phone: '98408 86992', route: 'ICF ↔ Campus', time: '06:15 AM' },
+          'ar7': { driver: 'TBA', phone: '98408 86992', route: 'Chunambedu ↔ Campus', time: '05:25 AM' },
+          'ar8': { driver: 'Mr. Raju', phone: '97907 50906', route: 'Manjambakkam ↔ Campus', time: '07:10 AM' },
+          'ar9': { driver: 'TBA', phone: '98408 86992', route: 'Ennore ↔ Campus', time: '06:15 AM' },
+          'ar10': { driver: 'TBA', phone: '98408 86992', route: 'Porur ↔ Campus', time: '06:25 AM' },
+          'r21': { driver: 'TBA', phone: '98408 86992', route: 'Contact Admin', time: 'Check Schedule' },
+          'r22': { driver: 'Mr. Panneerselvam', phone: '98404 28612', route: 'Nemilichery ↔ Campus', time: '06:00 AM' }
+      };
+
+      const match = clean.match(/(ar|r|r-)([3-9]|10|21|22)/);
+      if (match) {
+          const prefix = match[1].toLowerCase();
+          const num = match[2];
+          const key = prefix.startsWith('ar') ? `ar${num}` : (num === '21' ? 'r21' : 'r22');
+          const bus = busDetails[key];
+          if (bus) {
+            return {
+                text: `🚌 **Bus ${key.toUpperCase()}**\n\n**Route:** ${bus.route}\n**Driver:** ${bus.driver}\n**Contact:** ${bus.phone}\n**Pickup:** ${bus.time}\n\n**Notice:** Please reach the stop 5 mins early. For real-time updates, contact the driver directly.`,
+                keyboard: { keyboard: [['🚌 Transport Hub'], ['🔙 Back to Admin', '🏠 Return to Dashboard']], resize_keyboard: true }
+            };
+          }
+      }
+      return {
+          text: "🚌 **MSAJCE Transport Hub**\n\nSelect a bus route to view driver and schedule details:",
+          keyboard: { 
+              keyboard: [
+                  ['AR3', 'AR4', 'AR5'], 
+                  ['AR6', 'AR7', 'AR8'], 
+                  ['AR9', 'AR10'],
+                  ['R-21', 'R-22'],
+                  ['🏠 Return to Dashboard']
+              ], 
+              resize_keyboard: true 
+          }
+      };
+  }
+
+  // 8. REPORT SYSTEM ISSUE
+  if (clean.includes('report system issue') || clean.includes('bug')) {
+      return {
+          text: "⚙ **System Support Desk**\n\nPlease describe the technical issue or bug you encountered. Our developers will review it within 24 hours.",
+          keyboard: { keyboard: [['🏠 Return to Dashboard']], resize_keyboard: true }
+      };
+  }
+
+  const professionalMenu = (user && user.verified) ? MAIN_MENU : { text: "⚠ Identity Enrollment Required", keyboard: { keyboard: [['👤 Complete Profile']], resize_keyboard: true } };
+  return professionalMenu;
 };
 
 export const trackComplaint = async (id) => {
-  const grv = await Complaint.findOne({ complaint_id: id.toUpperCase().trim() });
-  if (!grv) return { text: "❌ *Invalid Ticket ID.*\n\nPlease check the ID and try again." };
-  
-  let statusText = `🔍 *Status Review: ${grv.complaint_id}*\n\n` +
-      `📅 *Filed:* ${new Date(grv.created_at).toLocaleDateString()}\n` +
-      `📁 *Category:* ${grv.category}\n` +
-      `📊 *Current Status:* ${grv.status.replace('_', ' ').toUpperCase()}\n` +
-      `🏢 *Assigned To:* ${grv.department_assigned}\n\n`;
-  
-  if (grv.admin_response) statusText += `💬 *Admin Note:* ${grv.admin_response}`;
-  
-  return { text: statusText, keyboard: MAIN_MENU.keyboard };
+  const c = await Complaint.findOne({ complaint_id: id.toUpperCase().trim() });
+  if (!c) return { text: "❌ *Invalid Ticket ID.*\n\nPlease check the ID and try again." };
+  const time = new Date(c.created_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+  return {
+    text: `🔎 **Institutional Ticket Audit**\n\n` +
+      `**Ticket ID:** \`${c.complaint_id}\`\n` +
+      `**Current Status:** \`${c.status.toUpperCase()}\`\n` +
+      `**Assigned Pool:** ${c.department_assigned}\n` +
+      `**Submission Time:** ${time}\n\n` +
+      `**Brief Summary:**\n_${c.description}_`,
+    keyboard: MAIN_MENU.keyboard
+  };
 };

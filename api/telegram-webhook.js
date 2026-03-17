@@ -43,7 +43,7 @@ export default async function handler(req, res) {
     await sendTelegramMessage(chatId, ragResult.aiReply);
     
     const latency = Date.now() - startTime;
-    await pushLog('assistant', 'info', `RAG Query: ${rawText.slice(0, 20)}`, { 
+    await pushLog('assistant', 'info', `RAG Query: ${rawText.slice(0, 80)}`, { 
         latency, 
         source: ragResult.source,
         chunks: ragResult.chunkCount 

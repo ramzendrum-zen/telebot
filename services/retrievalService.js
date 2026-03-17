@@ -162,7 +162,7 @@ export const performHybridSearch = async (queryText, category = 'general', filte
     ).join(', ');
 
     pushLog('rag_step', `Found Chunks: [${chunkNames}]`).catch(() => {});
-    logger.info(`Hybrid Search [${intent}]: Final ${finalResults.length} chunks. Top score: ${finalResults[0]?.finalScore || 0}`);
+    logger.info(`Hybrid Search: Final ${finalResults.length} chunks. Top score: ${finalResults[0]?.finalScore || 0}`);
 
     // Return in the shape the rest of the app expects
     return finalResults.map(r => ({ ...r, score: r.finalScore }));

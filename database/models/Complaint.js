@@ -17,7 +17,7 @@ const complaintSchema = new mongoose.Schema({
     ]
   },
   description: { type: String, required: true },
-  evidence_url: { type: String },
+  evidence_urls: [{ type: String }],
   status: { 
     type: String, 
     enum: ['submitted', 'under_review', 'assigned', 'in_progress', 'resolved', 'rejected'], 

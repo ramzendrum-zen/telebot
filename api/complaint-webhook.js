@@ -1,3 +1,4 @@
+import fetch from 'node-fetch';
 import connectDB from '../database/mongo.js';
 import { handleGrievanceFlow, trackComplaint, MAIN_MENU } from '../services/complaintService.js';
 import { getCache, setCache } from '../services/cacheService.js';
@@ -23,50 +24,15 @@ export default async function handler(req, res) {
   try {
     await connectDB();
 
-    // 1. Root & Utility Commands
-    if (rawText === '/start') {
-        await setCache(`track_state:${chatId}`, null);
-    }
-
-    // 2. Tracking Mode (Direct trigger)
-    if (rawText === '🔍 Track Complaint' || rawText === '/track') {
-      await setCache(`track_state:${chatId}`, true);
-      await sendReply(chatId, {
-        text: "🔍 *Grievance Status Tracking*\n\nPlease enter your *Complaint ID* (e.g., GRV-2045):",
-        keyboard: { keyboard: [['🏫 Back to Menu']], resize_keyboard: true }
-      });
-      return res.status(200).send('ok');
-    }
-
-    const isTracking = await getCache(`track_state:${chatId}`);
-    if (isTracking && rawText.toUpperCase().startsWith('GRV-')) {
-      await setCache(`track_state:${chatId}`, null);
-      const result = await trackComplaint(rawText);
-      await sendReply(chatId, result);
-      return res.status(200).send('ok');
-    }
-
-    // 3. Main Grievance Flow
+    // Delegate all routing and flow logic to the deterministic service
     const result = await handleGrievanceFlow(chatId, rawText, message);
+    
     if (result) {
-        if (result.use_rag) {
-            const { processRAGQuery } = await import('../services/ragService.js');
-            const ragResult = await processRAGQuery(chatId, result.query);
-            await sendReply(chatId, { 
-                text: ragResult.aiReply, 
-                keyboard: { keyboard: [['🏠 Back to Menu']], resize_keyboard: true } 
-            });
-            
-            const latency = Date.now() - startTime;
-            await pushLog('grievance_rag', 'info', `RAG Query: ${result.query.slice(0, 20)}`, { latency, source: ragResult.source });
-            await updateMetrics('grievance_rag', latency, true);
-        } else {
-            await sendReply(chatId, result);
-        }
+        await sendReply(chatId, result);
     }
     
     const latency = Date.now() - startTime;
-    await pushLog('grievance', 'info', `Grievance Req: ${rawText.slice(0, 20)}`, { latency });
+    await pushLog('grievance', 'info', `Grievance Cmd: ${rawText.slice(0, 80)}`, { latency });
     await updateMetrics('grievance', latency, true);
 
     return res.status(200).json({ status: 'success' });

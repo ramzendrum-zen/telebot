@@ -4,13 +4,14 @@ import axios from 'axios';
 const App = () => {
     const [activeTab, setActiveTab] = useState('grievance');
     const [complaints, setComplaints] = useState([]);
-    const [assistantData, setAssistantData] = useState({ logs: [], metrics: {} });
+    const [monitorData, setMonitorData] = useState({ logs: [], metrics: { assistant: {}, grievance: {} } });
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
+    const [botLogFilter, setBotLogFilter] = useState('all');
 
     useEffect(() => {
         fetchData();
-        const interval = setInterval(fetchData, 30000); // Auto refresh every 30s
+        const interval = setInterval(fetchData, 15000); // Faster refresh for live feel
         return () => clearInterval(interval);
     }, [activeTab]);
 
@@ -22,7 +23,7 @@ const App = () => {
                 setComplaints(res.data);
             } else {
                 const res = await axios.get('/api/monitor');
-                setAssistantData(res.data);
+                setMonitorData(res.data);
             }
             setLoading(false);
         } catch (e) {
@@ -39,17 +40,46 @@ const App = () => {
     };
 
     const filteredComplaints = filter === 'all' ? complaints : complaints.filter(c => c.status === filter);
+    const filteredLogs = botLogFilter === 'all' ? monitorData.logs : monitorData.logs.filter(l => l.bot === botLogFilter);
+
+    const MetricsCard = ({ title, bot, data, color }) => {
+        const colorMap = {
+            indigo: { text: 'text-indigo-500', bg: 'bg-indigo-500', border: 'hover:border-indigo-500/50', glow: 'bg-indigo-500/5' },
+            amber: { text: 'text-amber-500', bg: 'bg-amber-500', border: 'hover:border-amber-500/50', glow: 'bg-amber-500/5' }
+        };
+        const theme = colorMap[color];
+
+        return (
+            <div className={`bg-neutral-900/40 p-6 rounded-3xl border border-neutral-800 relative overflow-hidden group ${theme.border} transition-all`}>
+                <div className={`absolute top-0 right-0 w-24 h-24 ${theme.glow} blur-3xl rounded-full translate-x-12 -translate-y-12`}></div>
+                <div className="flex justify-between items-start mb-4">
+                    <p className="text-neutral-500 text-[10px] font-black tracking-widest uppercase">{title} ({bot.toUpperCase()})</p>
+                    <span className={`w-2 h-2 rounded-full ${theme.bg} animate-pulse`}></span>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <h4 className="text-2xl font-black text-white leading-tight">{(data?.avg_latency || 0).toFixed(0)}<span className="text-[10px] text-neutral-600 ml-1 font-bold uppercase">ms</span></h4>
+                        <p className="text-[9px] text-neutral-600 font-bold uppercase tracking-tighter">Avg Latency</p>
+                    </div>
+                    <div>
+                        <h4 className="text-2xl font-black text-white leading-tight">{data?.total_requests || 0}</h4>
+                        <p className="text-[9px] text-neutral-600 font-bold uppercase tracking-tighter">Total Hits</p>
+                    </div>
+                </div>
+            </div>
+        );
+    };
 
     return (
         <div className="min-h-screen bg-neutral-950 text-neutral-100 font-sans p-4 md:p-8 selection:bg-blue-500/30">
-            {/* Main Header & Tab Switcher */}
+            {/* Header */}
             <header className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
                 <div>
                     <h1 className="text-4xl font-black tracking-tighter text-white flex items-center gap-3">
                         <span className="bg-gradient-to-br from-blue-500 to-indigo-600 p-2 rounded-xl border border-blue-400/20 shadow-xl shadow-blue-500/20">🏫</span>
                         MSAJCE <span className="text-blue-500">ADMIN</span>
                     </h1>
-                    <p className="text-neutral-500 mt-2 font-medium tracking-wide first-letter:uppercase">Unified control center for college services</p>
+                    <p className="text-neutral-500 mt-2 font-medium tracking-wide first-letter:uppercase">Institutional Fleet & Grievance Control</p>
                 </div>
 
                 <div className="flex bg-neutral-900/80 backdrop-blur-md p-1.5 rounded-2xl border border-neutral-800 shadow-2xl">
@@ -57,13 +87,13 @@ const App = () => {
                         onClick={() => setActiveTab('grievance')}
                         className={`px-6 py-3 rounded-xl text-sm font-black transition-all duration-300 flex items-center gap-2 ${activeTab === 'grievance' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25 ring-1 ring-blue-400/30' : 'text-neutral-500 hover:text-neutral-300 hover:bg-neutral-800'}`}
                     >
-                        <span>📂</span> GRIEVANCE MANAGER
+                        <span>📂</span> TICKETS
                     </button>
                     <button 
                         onClick={() => setActiveTab('assistant')}
                         className={`px-6 py-3 rounded-xl text-sm font-black transition-all duration-300 flex items-center gap-2 ${activeTab === 'assistant' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/25 ring-1 ring-indigo-400/30' : 'text-neutral-500 hover:text-neutral-300 hover:bg-neutral-800'}`}
                     >
-                        <span>⚡</span> ASSISTANT MONITOR
+                        <span>⚡</span> BOT STATS
                     </button>
                 </div>
             </header>
@@ -71,7 +101,7 @@ const App = () => {
             <main className="max-w-7xl mx-auto">
                 {activeTab === 'grievance' ? (
                     <section className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        {/* Grievance Header Controls */}
+                        {/* Grievance Controls */}
                         <div className="flex justify-between items-center bg-neutral-900/30 p-4 rounded-2xl border border-neutral-800/50">
                             <h2 className="text-lg font-bold text-neutral-300 flex items-center gap-2">
                                 <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
@@ -98,13 +128,11 @@ const App = () => {
                             <div className="grid gap-6">
                                 {filteredComplaints.length === 0 && (
                                     <div className="text-center py-20 bg-neutral-900/20 rounded-3xl border border-neutral-800 border-dashed">
-                                        <p className="text-neutral-500 font-medium">No grievances found matching this criteria.</p>
+                                        <p className="text-neutral-500 font-medium">No grievances on record.</p>
                                     </div>
                                 )}
                                 {filteredComplaints.map(c => (
-                                    <div key={c._id} className="bg-neutral-900/40 backdrop-blur-xl rounded-3xl border border-neutral-800 p-8 hover:border-neutral-700 hover:bg-neutral-900/60 transition-all duration-300 group relative overflow-hidden">
-                                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 blur-3xl rounded-full translate-x-12 -translate-y-12"></div>
-                                        
+                                    <div key={c._id} className="bg-neutral-900/40 backdrop-blur-xl rounded-3xl border border-neutral-800 p-8 hover:border-neutral-700 hover:bg-neutral-900/60 transition-all duration-300 group overflow-hidden">
                                         <div className="flex flex-col md:flex-row justify-between items-start mb-8 gap-4">
                                             <div className="space-y-3">
                                                 <div className="flex items-center gap-3">
@@ -120,44 +148,32 @@ const App = () => {
                                                     </span>
                                                 </div>
                                                 <h3 className="text-3xl font-black text-white tracking-tight">{c.category}</h3>
-                                                <div className="flex items-center gap-2 text-neutral-500 text-xs font-medium">
-                                                    <span className="opacity-70">⏱️</span>
+                                                <div className="text-neutral-500 text-xs font-medium">
                                                     {new Date(c.created_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
                                                 </div>
                                             </div>
-                                            <div className="flex gap-3">
-                                                <button 
-                                                    onClick={() => updateStatus(c.complaint_id, 'in_progress')} 
-                                                    className="bg-neutral-800 text-neutral-300 px-5 py-2.5 rounded-xl text-xs font-black tracking-widest hover:bg-amber-500 hover:text-black transition-all border border-neutral-700"
-                                                >
-                                                    PROCESS
-                                                </button>
-                                                <button 
-                                                    onClick={() => updateStatus(c.complaint_id, 'resolved')} 
-                                                    className="bg-neutral-800 text-neutral-300 px-5 py-2.5 rounded-xl text-xs font-black tracking-widest hover:bg-emerald-600 hover:text-white transition-all border border-neutral-700"
-                                                >
-                                                    RESOLVE
-                                                </button>
+                                            <div className="flex gap-2">
+                                                <button onClick={() => updateStatus(c.complaint_id, 'in_progress')} className="bg-neutral-800 text-neutral-300 px-5 py-2.5 rounded-xl text-[10px] font-black tracking-widest hover:bg-amber-500 hover:text-black transition-all">PROCESS</button>
+                                                <button onClick={() => updateStatus(c.complaint_id, 'resolved')} className="bg-neutral-800 text-neutral-300 px-5 py-2.5 rounded-xl text-[10px] font-black tracking-widest hover:bg-emerald-600 hover:text-white transition-all">RESOLVE</button>
                                             </div>
                                         </div>
                                         
                                         <div className="p-6 bg-black/40 rounded-2xl border border-neutral-800/50 mb-8">
-                                            <p className="text-neutral-300 leading-relaxed text-sm font-medium">{c.description}</p>
+                                            <p className="text-neutral-300 text-sm font-medium leading-relaxed">{c.description}</p>
                                         </div>
                                         
                                         <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-6 border-t border-neutral-800/50">
                                             <div className="flex items-center gap-4">
-                                                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-sm font-black shadow-lg shadow-blue-600/20">
+                                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-xs font-black">
                                                     {c.student_id?.name?.charAt(0) || 'S'}
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm font-black text-white tracking-tight">{c.student_id?.name || 'Anonymous Student'}</p>
-                                                    <p className="text-xs text-neutral-500 font-bold uppercase tracking-widest">{c.student_id?.department || 'N/A'} • Year {c.student_id?.year || '?'}</p>
+                                                    <p className="text-sm font-black text-white">{c.student_id?.name || 'Anonymous'}</p>
+                                                    <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest">{c.student_id?.department || 'N/A'}</p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-2 px-4 py-2 bg-neutral-900 rounded-xl border border-neutral-800">
-                                                <span className="text-[10px] text-neutral-500 font-black tracking-[0.2em] uppercase">ROUTED TO:</span>
-                                                <span className="text-xs text-blue-400 font-black tracking-tight underline decoration-blue-500/30 underline-offset-4">{c.department_assigned}</span>
+                                            <div className="text-[10px] text-blue-400 font-black tracking-widest uppercase px-4 py-2 bg-neutral-900 rounded-xl border border-neutral-800">
+                                                ROUTED TO: {c.department_assigned}
                                             </div>
                                         </div>
                                     </div>
@@ -167,52 +183,72 @@ const App = () => {
                     </section>
                 ) : (
                     <section className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        {/* Assistant Metrics Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="bg-neutral-900/40 p-8 rounded-3xl border border-neutral-800 relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-4 opacity-10 scale-150 rotate-12 group-hover:rotate-0 transition-transform">📉</div>
-                                <p className="text-neutral-500 text-xs font-black tracking-widest mb-2 uppercase">Avg Latency</p>
-                                <h4 className="text-4xl font-black text-white">{(assistantData.metrics?.avg_latency || 0).toFixed(0)}<span className="text-lg text-neutral-600 ml-1 font-bold">ms</span></h4>
-                            </div>
-                            <div className="bg-neutral-900/40 p-8 rounded-3xl border border-neutral-800 relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-4 opacity-10 scale-150 -rotate-12 group-hover:rotate-0 transition-transform">🔥</div>
-                                <p className="text-neutral-500 text-xs font-black tracking-widest mb-2 uppercase">Total Requests</p>
-                                <h4 className="text-4xl font-black text-white">{assistantData.metrics?.total_requests || 0}</h4>
-                            </div>
-                            <div className="bg-neutral-900/40 p-8 rounded-3xl border border-neutral-800 relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-4 opacity-10 scale-150 rotate-45 group-hover:rotate-0 transition-transform">✅</div>
-                                <p className="text-neutral-500 text-xs font-black tracking-widest mb-2 uppercase">Success Rate</p>
-                                <h4 className="text-4xl font-black text-emerald-500">{assistantData.metrics?.success_rate || 100}<span className="text-lg opacity-50 ml-1 font-bold">%</span></h4>
-                            </div>
+                        {/* Dual Bot Metrics Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <MetricsCard title="Knowledge Assistant" bot="assistant" data={monitorData.metrics?.assistant} color="indigo" />
+                            <MetricsCard title="Grievance Dispatch" bot="grievance" data={monitorData.metrics?.grievance} color="amber" />
                         </div>
 
-                        {/* Live Activity Log */}
+                        {/* Unified Log Stream */}
                         <div className="bg-neutral-900/40 rounded-3xl border border-neutral-800 overflow-hidden shadow-2xl">
-                            <div className="p-6 border-b border-neutral-800 flex justify-between items-center bg-black/20">
+                            <div className="p-6 border-b border-neutral-800 flex flex-col md:flex-row justify-between items-center bg-black/20 gap-4">
                                 <h3 className="font-black text-neutral-300 tracking-widest text-xs flex items-center gap-3">
                                     <span className="w-2 h-2 rounded-full bg-indigo-500 animate-ping"></span>
-                                    LIVE ACTIVITY STREAM
+                                    LIVE BOT ACTIVITY STREAM
                                 </h3>
-                                <div className="text-[10px] font-mono text-neutral-600">POLLING: 30s</div>
+                                
+                                <div className="flex bg-black/40 p-1 rounded-xl border border-neutral-800">
+                                    {[
+                                        { id: 'all', label: 'ALL LOGS' },
+                                        { id: 'assistant', label: 'ASSISTANT' },
+                                        { id: 'grievance', label: 'GRIEVANCE' }
+                                    ].map(b => (
+                                        <button 
+                                            key={b.id}
+                                            onClick={() => setBotLogFilter(b.id)}
+                                            className={`px-3 py-1.5 rounded-lg text-[9px] font-black tracking-widest transition-all ${botLogFilter === b.id ? 'bg-neutral-800 text-white shadow-inner' : 'text-neutral-500 hover:text-neutral-300'}`}
+                                        >
+                                            {b.label}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
-                            <div className="p-4 space-y-1 font-mono max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-800">
-                                {assistantData.logs?.length === 0 && (
-                                    <div className="py-10 text-center text-neutral-600">No recent logs available.</div>
+                            
+                            <div className="p-4 space-y-1 font-mono max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-800 bg-neutral-950/20">
+                                {filteredLogs?.length === 0 && (
+                                    <div className="py-20 text-center text-neutral-600 text-xs font-black tracking-widest uppercase">IDLE • Awaiting Bot Input</div>
                                 )}
-                                {assistantData.logs?.map((log, idx) => (
-                                    <div key={idx} className="flex gap-4 p-3 hover:bg-neutral-800/50 rounded-lg group transition-colors">
-                                        <span className="text-[10px] text-neutral-700 group-hover:text-neutral-500 shrink-0 mt-1">
-                                            [{new Date(log.timestamp).toLocaleTimeString()}]
-                                        </span>
-                                        <span className={`text-[10px] font-black shrink-0 mt-1 ${
-                                            log.type === 'error' ? 'text-red-500' : 
-                                            log.type === 'intent' ? 'text-blue-400' : 'text-emerald-500'
-                                        }`}>
-                                            {log.type.toUpperCase()}
-                                        </span>
-                                        <p className="text-xs text-neutral-400 group-hover:text-neutral-200 leading-relaxed">
-                                            {log.message}
-                                        </p>
+                                {filteredLogs?.map((log, idx) => (
+                                    <div key={idx} className="flex gap-4 p-4 hover:bg-neutral-800/30 rounded-2xl group transition-all border border-transparent hover:border-neutral-800">
+                                        <div className="flex flex-col items-center gap-2 shrink-0">
+                                            <span className="text-[9px] text-neutral-600 font-bold">
+                                                {new Date(log.timestamp).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                                            </span>
+                                            <span className={`text-[8px] font-black px-2 py-0.5 rounded-md uppercase tracking-tighter ${
+                                                log.bot === 'assistant' ? 'bg-indigo-500/20 text-indigo-400' : 'bg-amber-500/20 text-amber-400'
+                                            }`}>
+                                                {log.bot}
+                                            </span>
+                                        </div>
+                                        
+                                        <div className="space-y-1">
+                                            <div className="flex items-center gap-3">
+                                                <span className={`text-[9px] font-black uppercase tracking-[0.2em] ${
+                                                    log.type === 'error' ? 'text-red-500' : 
+                                                    log.type === 'intent' ? 'text-blue-400' : 'text-emerald-500'
+                                                }`}>
+                                                    {log.type}
+                                                </span>
+                                                {log.metadata?.latency && (
+                                                    <span className="text-[9px] text-neutral-700 font-bold bg-neutral-900 px-1.5 py-0.5 rounded border border-neutral-800">
+                                                        {log.metadata.latency}ms
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <p className="text-[11px] text-neutral-400 group-hover:text-neutral-200 leading-relaxed font-medium">
+                                                {log.message}
+                                            </p>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
