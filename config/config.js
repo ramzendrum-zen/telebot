@@ -45,9 +45,10 @@ const config = {
   },
   
   rag: {
-    topK: 10, // Increased for better accuracy
-    maxContextTokens: 2000,
-    similarityThreshold: 0.6
+    topK: 7, // Captures enough context for complex 3072-dim vectors
+    maxContextTokens: 3000,
+    similarityThreshold: 0.7,
+    temperature: 0.1 // Stay factual
   }
 };
 
