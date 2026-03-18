@@ -62,15 +62,31 @@ const App = () => {
         return (complaints || []).filter(c => c.is_emergency && c.status !== 'resolved' && c.status !== 'rejected');
     }, [complaints]);
 
-    const navItems = [
-        { id: 'overview', label: 'Overview', icon: Lucide.LayoutDashboard },
-        { id: 'tickets', label: 'Operational Tickets', icon: Lucide.Ticket },
-        { id: 'assistant', label: 'Academic Assistant', icon: Lucide.GraduationCap },
-        { id: 'grievance', label: 'Grievance Portal', icon: Lucide.ShieldCheck, badge: activeEmergencies.length },
-        { id: 'users', label: 'User Management', icon: Lucide.Users },
-        { id: 'analytics', label: 'System Analytics', icon: Lucide.BarChart3 },
-        { id: 'settings', label: 'Settings', icon: Lucide.Settings },
-    ];
+    const navItems = useMemo(() => {
+        const common = [
+            { id: 'overview', label: 'Overview', icon: Lucide.LayoutDashboard },
+            { id: 'analytics', label: 'System Analytics', icon: Lucide.BarChart3 },
+            { id: 'settings', label: 'Settings', icon: Lucide.Settings },
+        ];
+        
+        if (activeBot === 'assistant') {
+            return [
+                common[0], // Overview
+                { id: 'assistant', label: 'Academic Assistant', icon: Lucide.GraduationCap },
+                common[1], // Analytics
+                common[2], // Settings
+            ];
+        } else {
+            return [
+                common[0], // Overview
+                { id: 'tickets', label: 'Operational Tickets', icon: Lucide.Ticket },
+                { id: 'grievance', label: 'Grievance Portal', icon: Lucide.ShieldCheck, badge: activeEmergencies.length },
+                { id: 'users', label: 'User Management', icon: Lucide.Users },
+                common[1], // Analytics
+                common[2], // Settings
+            ];
+        }
+    }, [activeBot, activeEmergencies.length]);
 
     if (loading && !stats) {
         return (
