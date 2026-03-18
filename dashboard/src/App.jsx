@@ -1,4 +1,4 @@
-/* VERSION 10.1.0 - MSAJCE TERMINAL - PRECISION REFINED */
+/* VERSION 10.2.0 - MSAJCE TERMINAL - HIGH VISIBILITY IDS */
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { 
@@ -23,7 +23,7 @@ const MetricCard = ({ label, value, icon: Icon, color = "slate", unit = "" }) =>
                 <div className={`${colors[color] || colors.slate}`}>
                     {Icon ? <Icon size={16} strokeWidth={2} /> : <Activity size={16} strokeWidth={2} />}
                 </div>
-                <span className="text-[12px] text-slate-500 font-semibold lowercase tracking-tight">{label}</span>
+                <span className="text-[12px] text-slate-500 font-bold uppercase tracking-tight">{label}</span>
             </div>
             <div className="text-2xl text-slate-800 font-bold tracking-tighter">
                 {value ?? 0}<span className="text-sm ml-1 text-slate-400 font-normal">{unit}</span>
@@ -86,16 +86,16 @@ const App = () => {
     }, [activeBot, complaints]);
 
     const formatId = (id) => {
-        if (!id) return 'grv-unknown';
-        if (id.startsWith('grv-')) return id;
-        return `grv-${id.substring(id.length - 4)}`;
+        if (!id) return 'GRV-UNKNOWN';
+        const rawId = id.startsWith('grv-') ? id : `grv-${id.substring(id.length - 4)}`;
+        return rawId.toUpperCase();
     };
 
     const handle = async (id, action) => {
         try { await axios.post(`/api/admin/complaints/${id}/action`, { action }); pull(); } catch (e) {}
     };
 
-    if (loading && !stats) return <div className="min-h-screen bg-white flex items-center justify-center text-[11px] font-bold text-slate-300 uppercase tracking-widest">Establishing secure link...</div>;
+    if (loading && !stats) return <div className="min-h-screen bg-white flex items-center justify-center text-[11px] font-bold text-slate-300 uppercase tracking-widest">Synchronising terminal kernel...</div>;
 
     const botLogs = (monitorData.logs || []).filter(l => l.bot === activeBot);
 
@@ -104,8 +104,8 @@ const App = () => {
             {/* Sidebar */}
             <aside className="w-64 bg-white border-r border-slate-100 flex flex-col shrink-0 z-50">
                 <div className="p-8 pb-10 flex items-center gap-3">
-                    <div className="w-8 h-8 bg-slate-900 text-white flex items-center justify-center font-bold text-sm rounded-xl">m</div>
-                    <span className="text-[14px] tracking-widest text-slate-900 font-black uppercase">msajce</span>
+                    <div className="w-8 h-8 bg-slate-900 text-white flex items-center justify-center font-bold text-sm rounded-xl">M</div>
+                    <span className="text-[14px] tracking-widest text-slate-900 font-black uppercase">MSAJCE</span>
                 </div>
                 
                 <nav className="flex-1 px-3 space-y-1">
@@ -115,7 +115,7 @@ const App = () => {
                                 <span className={`w-4 shrink-0 flex justify-center ${activePanel === item.id ? "text-indigo-600" : "text-slate-300"}`}>
                                     {item.icon && <item.icon size={15} strokeWidth={2} />}
                                 </span>
-                                <span className="text-[13px] font-semibold lowercase tracking-tight">{item.label}</span>
+                                <span className="text-[13px] font-semibold tracking-tight">{item.label}</span>
                             </div>
                             {item.badge > 0 && <span className="bg-rose-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">{item.badge}</span>}
                         </button>
@@ -123,12 +123,12 @@ const App = () => {
                 </nav>
 
                 <div className="p-8">
-                    <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                    <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 italic">
                         <div className="flex items-center gap-2 text-[10px] text-slate-500 font-bold lowercase mb-1">
                             <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                            secure node online
+                            secure_gateway_online
                         </div>
-                        <div className="text-[9px] text-slate-400 font-bold tracking-tight uppercase">v10.1 / {lastSync}</div>
+                        <div className="text-[9px] text-slate-400 font-bold tracking-tight uppercase">v10.2 / {lastSync}</div>
                     </div>
                 </div>
             </aside>
@@ -137,13 +137,13 @@ const App = () => {
             <main className="flex-1 flex flex-col h-screen overflow-hidden">
                 <header className="h-20 bg-white border-b border-slate-100 flex items-center justify-between px-10 shrink-0">
                     <div className="flex items-center gap-4 text-sm text-slate-500 font-bold lowercase tracking-wide">
-                        {activeBot} hub / {activePanel} management
+                        {activeBot} control center / {activePanel}
                     </div>
 
                     <div className="flex items-center gap-6">
-                        <div className="flex bg-slate-50 p-1 rounded-xl gap-1 border border-slate-200">
-                            <button onClick={() => setActiveBot('assistant')} className={`px-8 py-2 rounded-lg text-xs font-semibold transition-all ${activeBot === 'assistant' ? 'bg-white text-slate-900 shadow-xl border border-slate-200' : 'text-slate-400 hover:text-slate-600'}`}>Assistant</button>
-                            <button onClick={() => setActiveBot('grievance')} className={`px-8 py-2 rounded-lg text-xs font-semibold transition-all ${activeBot === 'grievance' ? 'bg-white text-slate-900 shadow-xl border border-slate-200' : 'text-slate-400 hover:text-slate-600'}`}>Grievance</button>
+                        <div className="flex bg-slate-50 p-1.5 rounded-xl gap-1 border border-slate-200">
+                            <button onClick={() => setActiveBot('assistant')} className={`px-8 py-2 rounded-lg text-xs font-bold uppercase transition-all ${activeBot === 'assistant' ? 'bg-white text-slate-900 shadow-xl border border-slate-200' : 'text-slate-400 hover:text-slate-600'}`}>Assistant</button>
+                            <button onClick={() => setActiveBot('grievance')} className={`px-8 py-2 rounded-lg text-xs font-bold uppercase transition-all ${activeBot === 'grievance' ? 'bg-white text-slate-900 shadow-xl border border-slate-200' : 'text-slate-400 hover:text-slate-600'}`}>Grievance</button>
                         </div>
                         <div className="w-10 h-10 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-300 cursor-pointer shadow-sm">
                             <User size={18} />
@@ -151,14 +151,14 @@ const App = () => {
                     </div>
                 </header>
 
-                <div className="flex-1 overflow-y-auto p-10 custom-scrollbar bg-[#fafbfc]">
+                <div className="flex-1 overflow-y-auto p-12 custom-scrollbar bg-[#fafbfc]">
                     {activePanel === 'overview' && (
                         <div className="space-y-8 max-w-[1600px] mx-auto animate-in fade-in duration-500">
                             <div className="flex gap-6">
                                 <MetricCard label={activeBot === 'grievance' ? 'total users' : 'requests processed'} value={activeBot === 'grievance' ? stats?.users?.total : monitorData?.metrics?.assistant?.total_requests} icon={Users} color="indigo" />
                                 <MetricCard label={activeBot === 'grievance' ? 'active tickets' : 'throughput rate'} value={activeBot === 'grievance' ? stats?.complaints?.total : `${monitorData?.metrics?.assistant?.success_rate || 100}%`} icon={BarChart3} color="emerald" />
                                 <MetricCard label={activeBot === 'grievance' ? 'emergency alerts' : 'system errors'} value={activeBot === 'grievance' ? stats?.complaints?.emergency : monitorData?.metrics?.assistant?.total_errors} icon={AlertCircle} color="rose" />
-                                <MetricCard label="avg speed" value={activeBot === 'grievance' ? stats?.complaints?.avg_resolution : (monitorData?.metrics?.assistant?.avg_latency || 0).toFixed(0)} unit={activeBot === 'grievance' ? 'h' : 'ms'} icon={Clock} color="amber" />
+                                <MetricCard label="avg speed" value={activeBot === 'grievance' ? stats?.complaints?.avg_resolution : (monitorData?.metrics?.assistant?.avg_latency || 0).toFixed(0)} unit={activeBot === 'grievance' ? 'h' : 'ms'} icon={Clock} color="amber" trend="+0.1%" />
                             </div>
 
                             <div className="bg-white border border-slate-100 rounded-[2rem] shadow-sm overflow-hidden">
@@ -197,27 +197,29 @@ const App = () => {
                                             <p className="text-sm text-rose-700 font-medium font-mono">{log.message}</p>
                                         </div>
                                     ))}
-                                    {botLogs.filter(l => l.level === 'error').length === 0 && <div className="py-10 text-center text-slate-300 font-bold text-xs lowercase tracking-widest italic border-2 border-dashed border-slate-50 rounded-3xl">No system errors detected in current node buffer</div>}
+                                    {botLogs.filter(l => l.level === 'error').length === 0 && <div className="py-10 text-center text-slate-300 font-bold text-xs lowercase tracking-widest italic border-2 border-dashed border-slate-50 rounded-3xl">No system errors detected in node bridge</div>}
                                 </div>
                              </div>
                         </div>
                     )}
 
                     {activePanel === 'users' && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 max-w-[1600px] mx-auto animate-in fade-in duration-500">
+                        <div className="flex flex-col gap-4 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-5 duration-500">
                             {users.map(u => (
-                                <div key={u._id} className="bg-white border border-slate-100 p-8 rounded-[2rem] shadow-sm hover:shadow-md transition-all group flex flex-col gap-6">
-                                    <div className="flex justify-between items-start">
-                                        <div className="w-14 h-14 bg-indigo-50 text-indigo-500 rounded-3xl flex items-center justify-center font-black text-xl group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-lg shadow-indigo-50 leading-none">{u.name?.substring(0,1) || "U"}</div>
-                                        <div className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${u.verified ? 'bg-emerald-50 text-emerald-500 border border-emerald-100' : 'bg-slate-50 text-slate-300 border border-slate-100'}`}>{u.verified ? 'Verified' : 'Pending'}</div>
+                                <div key={u._id} className="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm hover:border-indigo-100 transition-all flex items-center justify-between group">
+                                    <div className="flex items-center gap-6">
+                                        <div className="w-12 h-12 bg-indigo-50 text-indigo-500 rounded-2xl flex items-center justify-center font-black text-lg group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm leading-none">{u.name?.substring(0,1) || "U"}</div>
+                                        <div className="flex flex-col gap-0.5">
+                                            <h4 className="text-base font-bold text-slate-900 tracking-tight">{u.name || "sys user"}</h4>
+                                            <div className="flex items-center gap-4 text-[11px] text-slate-400 font-medium">
+                                                <span className="flex items-center gap-1.5"><Mail size={12} /> {u.email || 'no-email'}</span>
+                                                <span className="flex items-center gap-1.5 uppercase font-bold text-slate-300 tracking-wider">/ {u.department || 'general'}</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="flex flex-col gap-1">
-                                        <h4 className="text-lg font-bold text-slate-900 lowercase tracking-tight">{u.name || "sys user"}</h4>
-                                        <p className="text-xs text-slate-400 font-medium flex items-center gap-2"><Mail size={12} /> {u.email || 'no-email-linked'}</p>
-                                    </div>
-                                    <div className="pt-6 border-t border-slate-50 flex items-center justify-between mt-auto">
-                                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-2"><Briefcase size={12} /> {u.department || 'General'}</span>
-                                        <span className="text-[10px] text-indigo-500 font-black tracking-[0.2em]">{u._id?.substring(u._id.length - 8)}</span>
+                                    <div className="flex items-center gap-8">
+                                        <span className="text-[10px] text-slate-300 font-black tracking-widest uppercase">{u._id?.substring(u._id.length - 8)}</span>
+                                        <div className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border ${u.verified ? 'bg-emerald-50 text-emerald-500 border-emerald-100 font-bold' : 'bg-slate-50 text-slate-200 border-slate-100'}`}>{u.verified ? 'Verified' : 'Pending'}</div>
                                     </div>
                                 </div>
                             ))}
@@ -229,25 +231,25 @@ const App = () => {
                             <table className="w-full text-left">
                                 <thead className="text-[11px] text-slate-400 uppercase tracking-widest border-b border-slate-100 bg-slate-50/30">
                                     <tr>
-                                        <th className="px-10 py-8 font-black">Ticket identification</th>
+                                        <th className="px-10 py-8 font-black">Identification</th>
                                         <th className="px-10 py-8 font-black">Current state</th>
                                         <th className="px-10 py-8 font-black">Operational dept</th>
-                                        <th className="px-10 py-8 text-right font-black">Management</th>
+                                        <th className="px-10 py-8 text-right font-black">Management suite</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-50">
                                     {complaints.filter(cl => (!cl.is_emergency && cl.status !== 'resolved' && cl.status !== 'rejected') || (activePanel === 'history' && (cl.status === 'resolved' || cl.status === 'rejected'))).filter(cl => activePanel === 'history' ? (cl.status === 'resolved' || cl.status === 'rejected') : true).map(cl => (
-                                        <tr key={cl._id} className="hover:bg-slate-50/50 transition-all font-medium text-slate-600 text-[14px] lowercase">
-                                            <td className="px-10 py-7 font-black text-slate-900 font-mono italic">{formatId(cl.complaint_id)}</td>
+                                        <tr key={cl._id} className="hover:bg-slate-50/50 transition-all font-medium text-slate-600 text-[14px]">
+                                            <td className="px-10 py-7 font-black text-blue-600 font-mono tracking-tighter">{formatId(cl.complaint_id)}</td>
                                             <td className="px-10 py-7">
-                                                <span className={`px-4 py-1 rounded-xl text-[10px] font-black uppercase ${cl.status === 'resolved' ? 'bg-emerald-50 text-emerald-500' : cl.status === 'rejected' ? 'bg-rose-50 text-rose-500' : 'bg-slate-50 text-slate-400'}`}>{cl.status.replace('_',' ')}</span>
+                                                <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase ${cl.status === 'resolved' ? 'bg-emerald-50 text-emerald-500 font-bold' : cl.status === 'rejected' ? 'bg-rose-50 text-rose-500 font-bold' : 'bg-slate-50 text-slate-400'}`}>{cl.status.replace('_',' ')}</span>
                                             </td>
-                                            <td className="px-10 py-7 font-bold text-slate-400">{cl.category}</td>
+                                            <td className="px-10 py-7 font-bold text-slate-400 lowercase">{cl.category}</td>
                                             <td className="px-10 py-7 text-right space-x-6">
                                                 {activePanel === 'tickets' ? (
-                                                    <><button onClick={() => handle(cl.complaint_id, 'resolve')} className="text-emerald-500 hover:text-emerald-700 font-bold border-b border-transparent hover:border-emerald-500">Approve</button>
-                                                    <button onClick={() => handle(cl.complaint_id, 'reject')} className="text-rose-400 hover:text-rose-600 font-bold border-b border-transparent hover:border-rose-400">Reject</button></>
-                                                ) : <span className="text-[10px] text-slate-300 font-bold uppercase tracking-widest italic tracking-widest italic">{new Date(cl.updated_at).toLocaleDateString()}</span>}
+                                                    <><button onClick={() => handle(cl.complaint_id, 'resolve')} className="text-emerald-500 hover:text-emerald-700 font-bold uppercase text-[11px] tracking-widest border-b-2 border-transparent hover:border-emerald-500">Approve</button>
+                                                    <button onClick={() => handle(cl.complaint_id, 'reject')} className="text-rose-400 hover:text-rose-600 font-bold uppercase text-[11px] tracking-widest border-b-2 border-transparent hover:border-rose-400">Reject</button></>
+                                                ) : <span className="text-[10px] text-slate-300 font-bold uppercase tracking-widest italic">{new Date(cl.updated_at).toLocaleDateString()}</span>}
                                             </td>
                                         </tr>
                                     ))}
