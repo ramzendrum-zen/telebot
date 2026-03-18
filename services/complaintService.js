@@ -624,8 +624,9 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
   }
 
   // 5. Command Routing (Verified Users Only)
-
-  if (/emergency|alert|sos|assistance/.test(clean)) return await handleEmergencyFlow(chatId, text, user);
+  
+  if (/register complaint|📝/i.test(clean)) return await handleRegisterFlow(chatId, text, user, message);
+  if (/emergency alert|🚨/i.test(clean) || /emergency|alert|sos|assistance/i.test(clean)) return await handleEmergencyFlow(chatId, text, user);
 
   if (/track|status|check/.test(clean) && !clean.includes('my complaints')) {
     await setCache(`track:${chatId}`, true);
