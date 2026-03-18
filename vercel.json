@@ -2,6 +2,10 @@
   "version": 2,
   "rewrites": [
     {
+      "source": "/assets/(.*)",
+      "destination": "/assets/$1"
+    },
+    {
       "source": "/api/telegram-webhook",
       "destination": "/api/telegram-webhook.js"
     },
