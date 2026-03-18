@@ -533,40 +533,56 @@ export const handleRegisterFlow = async (chatId, text, user, message) => {
       const grvId = await generateComplaintId(false);
       const evidenceUrls = [];
 
-      // Process and Upload Media
-      if (nextState.evidence_ids && nextState.evidence_ids.length > 0) {
-        const token = config.telegram.complaintBotToken || config.telegram.token;
-        for (const fId of nextState.evidence_ids) {
-          try {
-            const upload = await uploadTelegramMedia(token, fId);
-            if (upload?.url) evidenceUrls.push(upload.url);
-          } catch (err) {
-            logger.error(`Multi-upload failed for ${fId}: ${err.message}`);
+      try {
+        // 1. Process and Upload Media (Non-blocking but awaited within limits)
+        if (nextState.evidence_ids && nextState.evidence_ids.length > 0) {
+          const token = config.telegram.complaintBotToken || config.telegram.token;
+          for (const fId of nextState.evidence_ids.slice(0, 5)) { // Hard cap of 5
+            try {
+              const upload = await uploadTelegramMedia(token, fId);
+              if (upload?.url) evidenceUrls.push(upload.url);
+            } catch (err) {
+              logger.error(`Media upload error: ${err.message}`);
+            }
           }
         }
+
+        // 2. Initial Category Routing
+        const dept = DEPT_ROUTING[nextState.category.split(' ')[0]] || 'General Admin';
+
+        // 3. Create Record
+        const newC = new Complaint({
+          complaint_id: grvId,
+          student_id: user?._id,
+          telegram_id: chatId,
+          category: nextState.category,
+          description: nextState.description,
+          is_anonymous: nextState.is_anonymous,
+          evidence_urls: evidenceUrls,
+          department_assigned: dept
+        });
+        await newC.save();
+
+        // 4. Background Notifications (Non-blocking)
+        sendEmail('cookwithcomali5@gmail.com', `📝 New Grievance: ${grvId}`, getProfessionalEmailTemplate(grvId, user, nextState, dept, false))
+          .catch(e => logger.error(`Background Email Fail: ${e.message}`));
+
+        // 5. Update User Usage
+        user.complaints_today_count = (user.complaints_today_count || 0) + 1;
+        user.last_complaint_date = new Date();
+        await user.save();
+
+        // 6. Clear state and conclude
+        await setCache(stateKey, null);
+        return { 
+          text: `✅ **Complaint Registered Successfully**\n\nYour Case ID is: \`${grvId}\`\n\n_Note: It may take a few minutes for evidence to sync with the dashboard._`, 
+          keyboard: MAIN_MENU.keyboard 
+        };
+
+      } catch (err) {
+        logger.error(`CRITICAL SUBMISSION ERROR: ${err.message}`);
+        throw err; // Let the webhook catch-all handle it with the user-friendly alert
       }
-
-      const newC = new Complaint({
-        complaint_id: grvId,
-        student_id: user._id,
-        telegram_id: chatId,
-        category: nextState.category,
-        description: nextState.description,
-        is_anonymous: nextState.is_anonymous,
-        evidence_urls: evidenceUrls,
-        department_assigned: DEPT_ROUTING[nextState.category.split(' ')[0]] || 'Admin'
-      });
-      await newC.save();
-
-      // Send Email Notification
-      await sendEmail('cookwithcomali5@gmail.com', `📝 New Grievance: ${grvId}`, getProfessionalEmailTemplate(grvId, user, nextState, DEPT_ROUTING[nextState.category.split(' ')[0]] || 'Admin', false));
-
-      user.complaints_today_count = (user.complaints_today_count || 0) + 1;
-      user.last_complaint_date = new Date();
-      await user.save();
-
-      await setCache(stateKey, null);
-      return { text: `✅ **Complaint Registered Successfully**\n\nYour Case ID is: \`${grvId}\`\n\nKeep this ID to track your resolution status.`, keyboard: MAIN_MENU.keyboard };
 
     default:
       return MAIN_MENU;
