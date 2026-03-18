@@ -1,22 +1,22 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
-import { 
-    LayoutDashboard, 
-    Ticket, 
-    ShieldCheck, 
-    History, 
-    Users, 
-    BarChart3, 
-    Settings, 
-    Bot, 
-    AlertTriangle, 
-    CheckCircle, 
-    Activity,
-    MessageSquare,
-    Clock,
-    GraduationCap,
-    User
-} from 'lucide-react';
+import * as Lucide from 'lucide-react';
+
+const StatCard = ({ label, value, icon: Icon, trend, color = "blue", unit = "" }) => {
+    const iconColor = color === 'red' ? 'text-red-500' : 'text-emerald-500';
+    return (
+        <div className="bg-white p-6 rounded-xl border border-[#e2e8f0] shadow-sm flex flex-col gap-2 h-full">
+            <div className={`flex items-center gap-2 ${iconColor} text-[10px] font-semibold mb-2`}>
+                {Icon && <Icon size={12} />}
+                <span>{trend}</span>
+            </div>
+            <div className="text-[32px] font-bold text-slate-800 tracking-tight leading-tight">
+                {value ?? 0}<span className="text-xl font-normal ml-0.5">{unit}</span>
+            </div>
+            <span className="text-[11px] font-semibold text-[#6b7280]">{label}</span>
+        </div>
+    );
+};
 
 const App = () => {
     const [activeBot, setActiveBot] = useState('assistant');
@@ -24,28 +24,19 @@ const App = () => {
     const [complaints, setComplaints] = useState([]);
     const [stats, setStats] = useState(null);
     const [monitorData, setMonitorData] = useState({ logs: [], metrics: { assistant: {}, grievance: {} } });
-    const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [lastSync, setLastSync] = useState(null);
 
-    useEffect(() => {
-        fetchAllData();
-        const interval = setInterval(fetchAllData, 15000);
-        return () => clearInterval(interval);
-    }, []);
-
     const fetchAllData = async () => {
         try {
-            const [compRes, statsRes, monRes, usersRes] = await Promise.all([
-                axios.get('/api/admin/complaints'),
-                axios.get('/api/admin/stats'),
-                axios.get('/api/monitor'),
-                axios.get('/api/admin/users')
+            const [compRes, statsRes, monRes] = await Promise.all([
+                axios.get('/api/admin/complaints').catch(() => ({ data: [] })),
+                axios.get('/api/admin/stats').catch(() => ({ data: null })),
+                axios.get('/api/monitor').catch(() => ({ data: { logs: [], metrics: {} } }))
             ]);
-            setComplaints(compRes.data);
+            setComplaints(compRes.data || []);
             setStats(statsRes.data);
-            setMonitorData(monRes.data);
-            setUsers(usersRes.data);
+            setMonitorData(monRes.data || { logs: [], metrics: {} });
             setLastSync(new Date().toLocaleTimeString([], { hour12: true, hour: '2-digit', minute: '2-digit' }));
             setLoading(false);
         } catch (e) {
@@ -54,6 +45,12 @@ const App = () => {
         }
     };
 
+    useEffect(() => {
+        fetchAllData();
+        const interval = setInterval(fetchAllData, 15000);
+        return () => clearInterval(interval);
+    }, []);
+
     const handleAction = async (id, action) => {
         try {
             await axios.post(`/api/admin/complaints/${id}/action`, { action });
@@ -61,32 +58,32 @@ const App = () => {
         } catch (e) { console.error(e); }
     };
 
-    const activeEmergencies = useMemo(() => constraints(complaints).filter(c => c.is_emergency && c.status !== 'resolved' && c.status !== 'rejected'), [complaints]);
-    
-    function constraints(arr) { return arr || []; }
+    const activeEmergencies = useMemo(() => {
+        return (complaints || []).filter(c => c.is_emergency && c.status !== 'resolved' && c.status !== 'rejected');
+    }, [complaints]);
 
     const navItems = [
-        { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-        { id: 'tickets', label: 'Operational Tickets', icon: Ticket },
-        { id: 'assistant', label: 'Academic Assistant', icon: GraduationCap },
-        { id: 'grievance', label: 'Grievance Portal', icon: ShieldCheck, badge: activeEmergencies.length },
-        { id: 'users', label: 'User Management', icon: Users },
-        { id: 'analytics', label: 'System Analytics', icon: BarChart3 },
-        { id: 'settings', label: 'Settings', icon: Settings },
+        { id: 'overview', label: 'Overview', icon: Lucide.LayoutDashboard },
+        { id: 'tickets', label: 'Operational Tickets', icon: Lucide.Ticket },
+        { id: 'assistant', label: 'Academic Assistant', icon: Lucide.GraduationCap },
+        { id: 'grievance', label: 'Grievance Portal', icon: Lucide.ShieldCheck, badge: activeEmergencies.length },
+        { id: 'users', label: 'User Management', icon: Lucide.Users },
+        { id: 'analytics', label: 'System Analytics', icon: Lucide.BarChart3 },
+        { id: 'settings', label: 'Settings', icon: Lucide.Settings },
     ];
 
     if (loading && !stats) {
         return (
             <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-4">
                 <div className="w-12 h-12 border-[3px] border-blue-600/10 border-t-blue-600 rounded-full animate-spin"></div>
-                <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">Initializing MSAJCE Terminal...</p>
+                <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">Initializing Terminal...</p>
             </div>
         );
     }
 
     return (
-        <div className="flex min-h-screen bg-[#f9fafb] text-[#111827] font-['Inter',sans-serif] selection:bg-blue-100">
-            {/* Sidebar matching the 2nd screenshot */}
+        <div className="flex min-h-screen bg-[#f9fafb] text-[#111827] font-sans selection:bg-blue-100">
+            {/* Sidebar */}
             <aside className="w-64 bg-white border-r border-[#e2e8f0] flex flex-col fixed inset-y-0 z-50 shadow-sm">
                 <div className="p-6 flex items-center gap-3 border-b border-[#f1f5f9]">
                     <div className="bg-[#2563eb] text-white w-8 h-8 rounded-lg flex items-center justify-center font-black text-lg">M</div>
@@ -105,7 +102,7 @@ const App = () => {
                             }`}
                         >
                             <div className="flex items-center gap-3">
-                                <item.icon size={18} className={activePanel === item.id ? "text-blue-600" : "text-slate-400"} />
+                                {item.icon && <item.icon size={18} className={activePanel === item.id ? "text-blue-600" : "text-slate-400"} />}
                                 {item.label}
                             </div>
                             {item.badge > 0 && (
@@ -126,45 +123,37 @@ const App = () => {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 ml-64 flex flex-col min-h-screen">
-                {/* Header matching 2nd screenshot top switch button */}
+            <main className="flex-1 ml-64 flex flex-col min-h-screen relative">
                 <header className="h-16 bg-white border-b border-[#e2e8f0] px-8 flex items-center justify-between sticky top-0 z-40">
                     <h2 className="font-bold text-[#111827] text-lg tracking-tight">
-                        {activePanel === 'overview' ? 'Overview Dashboard' : 
-                         activePanel === 'grievance' ? 'Institutional Grievance Portal' :
-                         (activePanel.charAt(0).toUpperCase() + activePanel.slice(1).replace('_', ' '))}
+                        {activePanel.charAt(0).toUpperCase() + activePanel.slice(1)}
                     </h2>
 
-                    {/* Bot Switcher Panel */}
                     <div className="bg-[#f1f5f9] p-1 rounded-full flex gap-1 border border-[#e2e8f0]">
                         <button 
                             onClick={() => setActiveBot('assistant')}
                             className={`flex items-center gap-2 px-6 py-1.5 rounded-full text-[11px] font-bold transition-all ${
-                                activeBot === 'assistant' 
-                                ? 'bg-[#2563eb] text-white shadow-md' 
-                                : 'text-[#6b7280] hover:text-[#2563eb]'
+                                activeBot === 'assistant' ? 'bg-[#2563eb] text-white shadow-md' : 'text-[#6b7280] hover:text-[#2563eb]'
                             }`}
                         >
-                            <Bot size={14} /> ASSISTANT
+                            <Lucide.Bot size={14} /> ASSISTANT
                         </button>
                         <button 
                             onClick={() => setActiveBot('grievance')}
                             className={`flex items-center gap-2 px-6 py-1.5 rounded-full text-[11px] font-bold transition-all ${
-                                activeBot === 'grievance' 
-                                ? 'bg-white text-slate-800 shadow-sm border border-slate-200' 
-                                : 'text-[#6b7280] hover:text-[#2563eb]'
+                                activeBot === 'grievance' ? 'bg-white text-slate-800 shadow-sm border border-slate-200' : 'text-[#6b7280] hover:text-[#2563eb]'
                             }`}
                         >
-                            <ShieldCheck size={14} /> GRIEVANCE
+                            <Lucide.ShieldCheck size={14} /> GRIEVANCE
                         </button>
                     </div>
 
                     <div className="flex items-center gap-4 text-[#6b7280]">
                         <span className="text-[11px] font-bold uppercase tracking-widest border-r border-[#e2e8f0] pr-4">
-                            {lastSync ? `SYNCED ${lastSync}` : 'SYNCING...'}
+                            {lastSync || 'SYNCING...'}
                         </span>
-                        <div className="w-8 h-8 rounded-full bg-[#e2e8f0] flex items-center justify-center text-[#64748b] font-bold text-xs">
-                            <User size={14} />
+                        <div className="w-8 h-8 rounded-full bg-[#e2e8f0] flex items-center justify-center text-[#64748b]">
+                            <Lucide.User size={14} />
                         </div>
                     </div>
                 </header>
@@ -175,181 +164,67 @@ const App = () => {
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
                                 <StatCard 
                                     label={activeBot === 'grievance' ? 'Total Users' : 'Total Queries'}
-                                    value={activeBot === 'grievance' ? stats?.users?.total : monitorData?.metrics?.assistant?.total_requests || 0}
-                                    icon={Users}
-                                    trend="Institutional Base"
+                                    value={activeBot === 'grievance' ? stats?.users?.total : monitorData?.metrics?.assistant?.total_requests}
+                                    icon={Lucide.Users}
+                                    trend="System Base"
                                     color="blue"
                                 />
                                 <StatCard 
-                                    label={activeBot === 'grievance' ? 'Tickets (Today)' : 'Success Rate'}
-                                    value={activeBot === 'grievance' ? stats?.complaints?.total || 0 : `${monitorData?.metrics?.assistant?.success_rate || 100}%`}
-                                    icon={Activity}
-                                    trend="Active Session"
+                                    label={activeBot === 'grievance' ? 'Tickets' : 'Success Rate'}
+                                    value={activeBot === 'grievance' ? stats?.complaints?.total : `${monitorData?.metrics?.assistant?.success_rate || 100}%`}
+                                    icon={Lucide.Activity}
+                                    trend="Live Session"
                                     color="blue"
                                 />
                                 <StatCard 
-                                    label={activeBot === 'grievance' ? 'Emergencies' : 'System Errors'}
-                                    value={activeBot === 'grievance' ? stats?.complaints?.emergency || 0 : monitorData?.metrics?.assistant?.total_errors || 0}
-                                    icon={AlertTriangle}
-                                    trend="Needs Review"
+                                    label={activeBot === 'grievance' ? 'Emergencies' : 'Errors'}
+                                    value={activeBot === 'grievance' ? stats?.complaints?.emergency : monitorData?.metrics?.assistant?.total_errors}
+                                    icon={Lucide.AlertTriangle}
+                                    trend="Review Needed"
                                     color="red"
                                 />
                                 <StatCard 
-                                    label={activeBot === 'grievance' ? 'Resolution Time' : 'Avg Latency'}
-                                    value={activeBot === 'grievance' ? stats?.complaints?.avg_resolution || '0.0' : (monitorData?.metrics?.assistant?.avg_latency || 0).toFixed(0)}
+                                    label={activeBot === 'grievance' ? 'Res. Time' : 'Avg Latency'}
+                                    value={activeBot === 'grievance' ? stats?.complaints?.avg_resolution : (monitorData?.metrics?.assistant?.avg_latency || 0).toFixed(0)}
                                     unit={activeBot === 'grievance' ? 'h' : 'ms'}
-                                    icon={CheckCircle}
-                                    trend={activeBot === 'grievance' ? 'Target: < 12h' : 'Network Speed'}
+                                    icon={Lucide.CheckCircle}
+                                    trend="Target Net"
                                     color="green"
                                 />
-                            </div>
-
-                            <div className="grid lg:grid-cols-3 gap-6">
-                                <div className="lg:col-span-1 bg-white p-6 rounded-xl border border-[#e2e8f0] shadow-sm">
-                                    <h3 className="text-sm font-bold border-b border-[#f1f5f9] pb-4 mb-4 text-[#111827]">Complaint Distribution (by Category)</h3>
-                                    <div className="flex items-center justify-center py-10">
-                                        <div className="w-48 h-48 rounded-full border-[20px] border-slate-100 flex items-center justify-center text-slate-300 font-black">
-                                            CHART
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="lg:col-span-2 bg-white p-6 rounded-xl border border-[#e2e8f0] shadow-sm">
-                                    <h3 className="text-sm font-bold border-b border-[#f1f5f9] pb-4 mb-4 text-[#111827]">System Pulse (Live Activity)</h3>
-                                    <div className="space-y-4 max-h-[300px] overflow-y-auto">
-                                        {monitorData.logs.slice(0, 10).map((log, i) => (
-                                            <div key={i} className="flex gap-4 items-start py-2 border-b border-[#f8fafc] last:border-0 relative">
-                                                <div className="absolute left-0 top-3 w-1.5 h-1.5 bg-slate-300 rounded-full"></div>
-                                                <div className="pl-4">
-                                                    <span className="text-[11px] font-mono text-[#6b7280] min-w-[50px] mr-2">{new Date(log.timestamp).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit' })}</span>
-                                                    <p className="inline text-xs font-semibold text-[#111827]">{log.message}</p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     )}
 
                     {activePanel === 'grievance' && (
                         <div className="space-y-6">
-                            <div className="flex gap-6 mb-8">
-                                <div className="bg-[#fff1f2] border-2 border-[#fee2e2] p-6 rounded-2xl flex-1 flex flex-col gap-1">
-                                    <span className="text-[10px] font-black text-[#ef4444] uppercase tracking-widest">Emergency Alerts Active</span>
-                                    <div className="text-3xl font-black text-[#991b1b]">{activeEmergencies.length}</div>
-                                </div>
-                                <div className="bg-white border border-[#e2e8f0] p-6 rounded-2xl flex-1 flex flex-col gap-1 shadow-sm">
-                                     <span className="text-[10px] font-black text-[#6b7280] uppercase tracking-widest">Avg Resolution Time</span>
-                                     <div className="text-3xl font-black text-[#111827]">{stats?.complaints?.avg_resolution || '0.0'} <span className="text-sm text-slate-400">hrs</span></div>
-                                </div>
-                            </div>
-
                             <div className="bg-white rounded-2xl border border-[#e2e8f0] shadow-sm overflow-hidden">
                                 <div className="p-4 px-6 border-b border-[#f1f5f9] flex justify-between items-center">
-                                    <h3 className="text-sm font-bold text-[#111827]">Active Emergency Incidents</h3>
-                                    <span className="text-[10px] font-black text-[#ef4444] uppercase tracking-tighter flex items-center gap-2">
-                                        LIVE UPDATING
-                                    </span>
+                                    <h3 className="text-sm font-bold text-[#111827]">Active Emergencies</h3>
+                                    <span className="text-[10px] font-black text-[#ef4444] animate-pulse">LIVE</span>
                                 </div>
-                                <div className="p-6 space-y-6">
-                                    {activeEmergencies.length === 0 && (
-                                        <p className="text-center py-10 text-slate-400 font-bold uppercase text-xs">No Active Alerts</p>
-                                    )}
+                                <div className="p-6 space-y-4">
+                                    {activeEmergencies.length === 0 && <p className="text-center py-10 text-slate-400 text-xs font-bold uppercase tracking-widest">No Active Alerts</p>}
                                     {activeEmergencies.map(c => (
-                                        <div key={c.complaint_id} className="border-2 border-[#fee2e2] rounded-2xl overflow-hidden relative">
-                                            <div className="bg-white border-l-4 border-red-500 p-4 flex justify-between items-start">
-                                                <div className="flex flex-col gap-1">
-                                                    <h4 className="font-bold text-slate-900 flex items-center gap-2">
-                                                        🚨 {c.category}
-                                                    </h4>
-                                                    <div className="flex gap-6 mt-3 mb-2">
-                                                        <div className="flex flex-col text-[11px] leading-tight text-slate-600 font-medium">
-                                                            <span className="font-bold">Location:</span>
-                                                            <span className="mt-1">{c.location || 'N/A'}</span>
-                                                        </div>
-                                                        <div className="flex flex-col text-[11px] leading-tight text-slate-600 font-medium">
-                                                            <span className="font-bold">Time:</span>
-                                                            <span className="mt-1">{new Date(c.created_at).toLocaleTimeString().toLowerCase()}</span>
-                                                        </div>
-                                                        <div className="flex flex-col text-[11px] leading-tight text-slate-600 font-medium">
-                                                            <span className="font-bold">Reported By:</span>
-                                                            <span className="mt-1">{c.is_anonymous ? 'Anonymous' : (c.student_id?.name || 'User')}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                        <div key={c.complaint_id} className="border-2 border-[#fee2e2] rounded-xl p-4 flex flex-col gap-4">
+                                            <div className="flex justify-between items-start">
+                                                <h4 className="font-bold text-red-700">🚨 {c.category}</h4>
+                                                <span className="text-[10px] text-slate-400">{new Date(c.created_at).toLocaleTimeString()}</span>
                                             </div>
-                                            <div className="p-4 bg-white flex flex-col gap-4 border-t border-[#fee2e2]">
-                                                <button 
-                                                    onClick={() => handleAction(c.complaint_id, 'resolve')}
-                                                    className="w-full bg-[#991b1b] text-white py-2.5 rounded-lg font-bold text-[11px] uppercase tracking-widest hover:bg-red-800 transition-colors"
-                                                >
-                                                    MARK RESOLVED
-                                                </button>
-                                            </div>
+                                            <p className="text-sm text-slate-600">{c.description}</p>
+                                            <button 
+                                                onClick={() => handleAction(c.complaint_id, 'resolve')}
+                                                className="bg-red-700 text-white py-2 rounded-lg font-bold text-[10px] hover:bg-red-800"
+                                            >
+                                                MARK RESOLVED
+                                            </button>
                                         </div>
                                     ))}
                                 </div>
                             </div>
                         </div>
                     )}
-
-                    {activePanel === 'tickets' && (
-                        <div className="bg-white rounded-xl border border-[#e2e8f0] shadow-sm overflow-hidden">
-                             <div className="p-4 px-6 border-b border-[#f1f5f9] flex justify-between items-center">
-                                <h3 className="text-sm font-bold text-[#111827]">Live Operational Tickets (Pending)</h3>
-                             </div>
-                             <div className="overflow-x-auto">
-                                <table className="w-full text-left">
-                                    <thead className="bg-[#f8fafc] text-[11px] font-bold text-[#6b7280] uppercase tracking-widest border-b border-[#e2e8f0]">
-                                        <tr>
-                                            <th className="px-6 py-4">Ticket ID</th>
-                                            <th className="px-6 py-4">Category</th>
-                                            <th className="px-6 py-4">Initiator</th>
-                                            <th className="px-6 py-4">Status</th>
-                                            <th className="px-6 py-4 text-right">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-[#f1f5f9]">
-                                        {constraints(complaints).filter(c => c.status !== 'resolved' && c.status !== 'rejected' && !c.is_emergency).map(c => (
-                                            <tr key={c.complaint_id} className="hover:bg-[#fcfdfe]">
-                                                <td className="px-6 py-4 font-bold text-[#2563eb]">{c.complaint_id}</td>
-                                                <td className="px-6 py-4 font-semibold text-slate-700">{c.category}</td>
-                                                <td className="px-6 py-4 text-sm font-medium">{c.is_anonymous ? 'Anonymous' : (c.student_id?.name || 'User')}</td>
-                                                <td className="px-6 py-4">
-                                                    <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase ${
-                                                        c.status === 'in_progress' ? 'bg-[#fffbeb] text-[#b45309]' : 'bg-[#eff6ff] text-[#2563eb]'
-                                                    }`}>
-                                                        {c.status}
-                                                    </span>
-                                                </td>
-                                                <td className="px-6 py-4 text-right flex gap-2 justify-end">
-                                                    <button onClick={() => handleAction(c.complaint_id, 'resolve')} className="bg-[#2563eb] text-white px-3 py-1 rounded-md font-bold text-[11px]">RESOLVE</button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                             </div>
-                        </div>
-                    )}
                 </div>
             </main>
-        </div>
-    );
-};
-
-const StatCard = ({ label, value, icon: Icon, trend, color = "blue", unit = "" }) => {
-    return (
-        <div className="bg-white p-6 rounded-xl border border-[#e2e8f0] shadow-sm flex flex-col gap-2 h-full">
-            <div className="flex items-center gap-2 text-[#10b981] text-[10px] font-semibold mb-2">
-                <Icon size={12} className={color === 'red' ? 'text-red-500' : 'text-emerald-500'} />
-                <span className={color === 'red' ? 'text-red-500' : 'text-emerald-500'}>{trend}</span>
-            </div>
-            <div className="text-[32px] font-bold text-slate-800 tracking-tight leading-tight">
-                <span className="invisible opacity-0 text-[10px] float-right">{label}</span>
-                {value}<span className="text-xl font-normal ml-0.5">{unit}</span>
-            </div>
-            <span className="text-[11px] font-semibold text-[#6b7280]">{label}</span>
         </div>
     );
 };
