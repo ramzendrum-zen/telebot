@@ -946,13 +946,28 @@ export const trackComplaint = async (id) => {
   const date = new Date(c.created_at).toLocaleDateString('en-IN');
   const time = new Date(c.created_at).toLocaleTimeString('en-IN');
   
-  return {
-    text: `Ticket Audit Report\n\n` +
+  let reportText = `Ticket Audit Report\n\n` +
       `Ticket ID: ${c.complaint_id}\n\n` +
       `Current Status: ${c.status.toUpperCase()}\n\n` +
-      `Assigned Pool: ${c.department_assigned}\n\n` +
-      `Submission Date: ${date} at ${time}\n\n` +
-      `Description:\n${c.description}`,
+      `Assigned Pool: ${c.department_assigned || 'Not Yet Assigned'}\n\n` +
+      `Submission Date: ${date} at ${time}\n\n`;
+
+  // Show Resolution/Closing Date for Resolved or Rejected tickets
+  if (['resolved', 'rejected'].includes(c.status)) {
+    const closedDate = new Date(c.updated_at).toLocaleDateString('en-IN');
+    const closedTime = new Date(c.updated_at).toLocaleTimeString('en-IN');
+    const label = c.status === 'resolved' ? 'Resolution Date' : 'Closing Date';
+    reportText += `${label}: ${closedDate} at ${closedTime}\n\n`;
+  }
+
+  if (c.admin_response) {
+      reportText += `Admin Response: ${c.admin_response}\n\n`;
+  }
+
+  reportText += `Description: ${c.description}`;
+
+  return {
+    text: reportText,
     keyboard: { keyboard: [['📂 My Complaints'], ['🏠 Return to Dashboard']], resize_keyboard: true }
   };
 };
