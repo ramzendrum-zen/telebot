@@ -71,9 +71,8 @@ const FAQ_DATA = {
   text: "Institutional Knowledge Hub\n\nExplore our facilities and procedural details below:",
   keyboard: {
     keyboard: [
-        ['📌 Grievance Rules', '📍 Campus Locations'],
-        ['🏫 Departments', '🚌 Transport Hub'],
-        ['🏠 Return to Dashboard']
+        ['📌 Grievance Rules', '🏫 Departments'],
+        ['🚌 Transport Hub', '🏠 Return to Dashboard']
     ],
     resize_keyboard: true
   }
@@ -619,6 +618,11 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
   const emgState = await getCache(`${EMERGENCY_STATE_PREFIX}${chatId}`);
   if (emgState) return await handleEmergencyFlow(chatId, text, user);
 
+  // 4. Global Ticket ID Match (Support clicking buttons from History/Lists)
+  if (text.toUpperCase().trim().match(/^(GRV|EMG)-\d+$/)) {
+      return await trackComplaint(text);
+  }
+
   // 5. Command Routing (Verified Users Only)
 
   if (/emergency|alert|sos|assistance/.test(clean)) return await handleEmergencyFlow(chatId, text, user);
@@ -687,6 +691,8 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
   }
 
   // 7. TRANSPORT HUB
+
+  // 7. TRANSPORT HUB (Restored & Cleaned)
   const busMatch = clean.match(/(ar|r|r-)\s*(\d+)/i);
   if (busMatch || /transport|bus|route|pickup/i.test(clean)) {
       const busDetails = {
@@ -730,53 +736,151 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
       };
   }
 
-  // 8. FAQ & KNOWLEDGE HUB CATEGORIES
+  // 8. FAQ CATEGORIES
   
-  // Rules Category
   if (/rules|grievance rules/i.test(clean)) {
       return {
           text: "Grievance Resolution Rules\n\n• Submission: All complaints must be formal and descriptive.\n• Anonymity: Your name won't be shared with college depts if 'Anonymous' is selected.\n• Limits: Maximum 3 complaints per 24 hours.\n• Evidence: Attach up to 5 files (Images/PDFs) for faster audit.",
           keyboard: { keyboard: [['🔙 Back to FAQ'], ['🏠 Return to Dashboard']], resize_keyboard: true }
       };
   }
-  
-  // Landmarks Category
-  if (/campus|location|landmark/i.test(clean)) {
-      if (/principal/i.test(clean)) {
-          return { text: "Principal Office\n\nLocation: Main Administrative Block – First Floor.\nAccess: Monday - Saturday (9:00 AM - 5:00 PM).", keyboard: { keyboard: [['📍 Campus Locations'], ['🔙 Back to FAQ']], resize_keyboard: true } };
-      }
-      if (/library/i.test(clean)) {
-          return { text: "Central Learning Centre (Library)\n\nLocation: Ground & First Floor.\nVolume: 29,853 Books.\nHours: Mon-Sat (8:00 AM - 7:00 PM).", keyboard: { keyboard: [['📍 Campus Locations'], ['🔙 Back to FAQ']], resize_keyboard: true } };
-      }
-      if (/aid|medical/i.test(clean)) {
-          return { text: "Medical & First Aid\n\nLocation: Adjacent to Dining Hall.\nHours: 24/7 on-call service for emergencies.", keyboard: { keyboard: [['📍 Campus Locations'], ['🔙 Back to FAQ']], resize_keyboard: true } };
-      }
-      if (/cafeteria|canteen/i.test(clean)) {
-          return { text: "Institutional Cafeteria\n\nLocation: Campus Central.\nHours: 8:00 AM - 8:00 PM.", keyboard: { keyboard: [['📍 Campus Locations'], ['🔙 Back to FAQ']], resize_keyboard: true } };
-      }
-      return {
-          text: "Institutional Landmarks\n\nSelect a facility for location and details:",
-          keyboard: { keyboard: [['🏢 Principal Office', '📚 Library'], ['🏥 First Aid Room', '🍲 Cafeteria'], ['🔙 Back to FAQ', '🏠 Return to Dashboard']], resize_keyboard: true }
-      };
-  }
 
-  // Departments Category
-  if (/department|branch/i.test(clean)) {
+  // 8. ACADEMIC DEPARTMENTS
+  if (/department|branch|mech|civil|ece|electronics|cse|it|computing|eee|electrical|ai\s*&\s*ds|ai\s*&\s*ml|cyber|security|business\s*systems/i.test(clean)) {
+      // 1. Mechanical
       if (/mech/i.test(clean)) {
-          return { text: "Mechanical Engineering\n\nKey Official: Mr. S. Syed Abuthahir\nContact: 99441 27339\nLocation: Block B, Room 204.", keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ']], resize_keyboard: true } };
+          return { 
+              text: "⚙ **Mechanical Engineering**\n\n" +
+                    "• **Intake**: 30 Seats (Permanent Affiliation)\n" +
+                    "• **Lead**: Mr. S. Syed Abuthahir (99441 27339)\n" +
+                    "• **Email**: mech.syedabuthahir@msajce-edu.in\n" +
+                    "• **Focus**: R&D in Thermal and Manufacturing.\n" +
+                    "• **Facility**: Multi-Material 3D Printing Lab.",
+              keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ']], resize_keyboard: true } 
+          };
       }
+      // 2. Civil
       if (/civil/i.test(clean)) {
-          return { text: "Civil Engineering\n\nKey Official: Mr. B. Rizha Ur Rahman\nContact: 97908 36981\nLocation: Block A, Room 105.", keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ']], resize_keyboard: true } };
+          return { 
+              text: "🏗 **Civil Engineering**\n\n" +
+                    "• **Intake**: 30 (UG) | 18 (PG Structural)\n" +
+                    "• **Asst Prof**: Mr. B. Rizha Ur Rahman (97908 36981)\n" +
+                    "• **Email**: civil.rizha@msajce-edu.in\n" +
+                    "• **Specialization**: Structural Design and QAQC.\n" +
+                    "• **Labs**: Concrete and Highway Engineering Tech.",
+              keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ']], resize_keyboard: true } 
+          };
       }
+      // 3. ECE
       if (/ece|electronics/i.test(clean)) {
-          return { text: "Electronics & Comm (ECE)\n\nHead: Dr. I. Manju (99490 55026)\nAsst: Mrs. I. S. Suganthi (72997 72958)", keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ']], resize_keyboard: true } };
+          return { 
+              text: "📡 **Electronics & Communication**\n\n" +
+                    "• **Core Intake**: 60 Seats\n" +
+                    "• **Specialized**: VLSI Design (30), Adv Comm (30)\n" +
+                    "• **Contact**: Mrs. I. S. Suganthi (72997 72958)\n" +
+                    "• **Email**: ece.suganthi@msajce-edu.in\n" +
+                    "• **Hours**: 9:00 AM - 4:00 PM (Mon-Sat).",
+              keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ']], resize_keyboard: true } 
+          };
       }
-      if (/it|cse|computing/i.test(clean)) {
-          return { text: "CSE & Information Technology\n\nOfficial: Dr. D. Weslin\nContact: 97152 02533\nStudent Branch: CSI Kancheepuram Chapter.", keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ']], resize_keyboard: true } };
+      // 4. EEE
+      if (/eee|electrical/i.test(clean)) {
+          return { 
+              text: "⚡ **Electrical & Electronics (EEE)**\n\n" +
+                    "• **Intake**: 30 Seats\n" +
+                    "• **Admin**: Dr. K.P. Santhosh Nathan (Admissions)\n" +
+                    "• **Focus**: Power Systems and Smart Grid Tech.\n" +
+                    "• **Projects**: Industry-sponsored renewable energy research.\n" +
+                    "• **Placement**: Strong ties with Core Power sector.",
+              keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ']], resize_keyboard: true } 
+          };
       }
+      // 5. CSE
+      if (/cse|computer\s*science/i.test(clean)) {
+          return { 
+              text: "🖥 **Computer Science (CSE)**\n\n" +
+                    "• **Intake**: 60 Seats (Permanent Affiliation)\n" +
+                    "• **Lead**: Dr. D. Weslin (97152 02533)\n" +
+                    "• **Org**: CSI Kancheepuram Student Chapter.\n" +
+                    "• **Labs**: High-Performance AI Computing Lab.\n" +
+                    "• **Focus**: Algorithm Design and Cloud Systems.",
+              keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ']], resize_keyboard: true } 
+          };
+      }
+      // 6. IT
+      if (/it|information\s*technology/i.test(clean)) {
+          return { 
+              text: "🌐 **Information Technology (IT)**\n\n" +
+                    "• **Intake**: 30 Seats (Reg 2024 PG)\n" +
+                    "• **Admin**: Mr. A. Abdul Gafoor (99403 19629)\n" +
+                    "• **Proximity**: Located near Sirucheri IT Park Hub.\n" +
+                    "• **Focus**: Full-stack Development and Data Ops.\n" +
+                    "• **Collab**: Industry 4.0 Readiness Centers.",
+              keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ']], resize_keyboard: true } 
+          };
+      }
+      // 7. AI & DS
+      if (/ai\s*&\s*ds|data\s*science/i.test(clean)) {
+          return { 
+              text: "🤖 **Artificial Intelligence & DS**\n\n" +
+                    "• **Intake**: 60 Seats\n" +
+                    "• **Head**: Dr. K.S. Srinivasan (Admissions Oversight)\n" +
+                    "• **Focus**: Big Data Analytics and Predictive Modeling.\n" +
+                    "• **Tech**: Python, R, and Distributed Systems.\n" +
+                    "• **Outlook**: High-demand industry placement.",
+              keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ']], resize_keyboard: true } 
+          };
+      }
+      // 8. AI & ML
+      if (/ai\s*&\s*ml|machine\s*learning/i.test(clean)) {
+          return { 
+              text: "🧠 **Artificial Intelligence & ML**\n\n" +
+                    "• **Intake**: 60 Seats\n" +
+                    "• **Lead**: Dr. I. Manju (Technical Advice)\n" +
+                    "• **Focus**: Deep Learning and Neural Networks.\n" +
+                    "• **Environment**: Experimental Research-oriented labs.\n" +
+                    "• **Competition**: Heavy involvement in Hackathons.",
+              keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ']], resize_keyboard: true } 
+          };
+      }
+      // 9. Cyber Security
+      if (/cyber|security/i.test(clean)) {
+          return { 
+              text: "🛡 **Cyber Security**\n\n" +
+                    "• **Intake**: 30 Seats\n" +
+                    "• **Contact**: Dr. Vamsi (Admissions Desk)\n" +
+                    "• **Focus**: Ethical Hacking and Network Security.\n" +
+                    "• **Curriculum**: Regulations 2024 UG Path.\n" +
+                    "• **Labs**: Secure Network Simulation Center.",
+              keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ']], resize_keyboard: true } 
+          };
+      }
+      // 10. CSBS
+      if (/csbs|business\s*systems/i.test(clean)) {
+          return { 
+              text: "📊 **Computer Science & Business**\n\n" +
+                    "• **Intake**: 30 Seats\n" +
+                    "• **Officer**: Administrative Wing (Gafoor)\n" +
+                    "• **Focus**: Fintech, ERP, and Enterprise Systems.\n" +
+                    "• **Concept**: Blending CS with Management principles.\n" +
+                    "• **Scope**: Placement in Top Tier 1 IT MNCs.",
+              keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ']], resize_keyboard: true } 
+          };
+      }
+
       return {
-          text: "Academic Departments\n\nSelect a branch to view official contacts:",
-          keyboard: { keyboard: [['⚙ Mechanical', '🏗 Civil'], ['📡 ECE', '💻 CSE / IT'], ['🔙 Back to FAQ', '🏠 Return to Dashboard']], resize_keyboard: true }
+          text: "Academic Departments\n\nSelect a branch to view structured official details:",
+          keyboard: { 
+              keyboard: [
+                  ['⚙ Mechanical', '🏗 Civil'], 
+                  ['📡 ECE', '⚡ EEE'], 
+                  ['🖥 CSE', '🌐 IT'],
+                  ['🤖 AI & DS', '🧠 AI & ML'],
+                  ['🛡 Cyber Security', '📊 CSBS'],
+                  ['🔙 Back to FAQ', '🏠 Return to Dashboard']
+              ], 
+              resize_keyboard: true 
+          }
       };
   }
 
@@ -811,21 +915,15 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
               keyboard: { keyboard: [['📞 Contact Administration'], ['🏠 Return to Dashboard']], resize_keyboard: true }
           };
       }
-      if (/account|fees/i.test(clean)) {
-          return {
-              text: "Accounts & Finance\n\nAccounts Manager: Mr. R. Jagan (98403 12546)\nFees Collector: Mrs. S. Deepa (Room 101)\n\nOffice: Main Block, Ground Floor.\nHours: 9:00 AM - 4:00 PM.",
-              keyboard: { keyboard: [['📞 Contact Administration'], ['🏠 Return to Dashboard']], resize_keyboard: true }
-          };
-      }
       if (/transport office/i.test(clean)) {
           return {
               text: "Transport Office\n\nConvener: Dr. K.P. Santhosh Nathan\nAsst: Mr. A. Abdul Gafoor\n\nUse Transport Hub for bus-specific drivers.",
-              keyboard: { keyboard: [['🚌 Transport Hub'], ['🏠 Return to Dashboard']], resize_keyboard: true }
+              keyboard: { keyboard: [['🚌 Transport Hub'], ['📞 Contact Administration'], ['🏠 Return to Dashboard']], resize_keyboard: true }
           };
       }
       return {
           text: "Institutional Directory\n\nDirect links to administrative departments:",
-          keyboard: { keyboard: [['👨‍💼 Principal', '🎓 Admission'], ['👔 Admin Office', '🏠 Hostel'], ['💰 Accounts', '🚌 Transport Office'], ['🏠 Return to Dashboard']], resize_keyboard: true }
+          keyboard: { keyboard: [['👨‍💼 Principal', '🎓 Admission'], ['👔 Admin Office', '🏠 Hostel'], ['🚌 Transport Office'], ['🏠 Return to Dashboard']], resize_keyboard: true }
       };
   }
 
