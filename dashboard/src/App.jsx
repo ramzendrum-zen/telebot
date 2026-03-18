@@ -177,6 +177,24 @@ const App = () => {
                                                 <p className="text-[10px] text-neutral-600 font-bold uppercase tracking-widest mb-1.5">Description:</p>
                                                 <p className="text-neutral-300 text-sm font-medium leading-relaxed">{c.description}</p>
                                             </div>
+                                            
+                                            {c.evidence_urls && c.evidence_urls.length > 0 && (
+                                                <div className="pt-4 border-t border-neutral-800/50">
+                                                    <p className="text-[10px] text-neutral-600 font-bold uppercase tracking-widest mb-3">Evidence Artifacts:</p>
+                                                    <div className="flex flex-wrap gap-3">
+                                                        {c.evidence_urls.map((url, i) => (
+                                                            <a key={i} href={url} target="_blank" rel="noreferrer" className="block w-20 h-20 rounded-xl overflow-hidden border border-neutral-700 hover:border-blue-500 transition-all bg-neutral-800 flex items-center justify-center">
+                                                                {url.match(/\.(jpg|jpeg|png|webp|gif)/i) ? (
+                                                                    <img src={url} alt="Evidence" className="w-full h-full object-cover" />
+                                                                ) : (
+                                                                    <span className="text-[10px] text-neutral-500 font-black">FILE</span>
+                                                                )}
+                                                            </a>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+
                                             {c.admin_response && (
                                                 <div className="pt-4 border-t border-neutral-800/50">
                                                     <p className="text-[10px] text-emerald-500/70 font-bold uppercase tracking-widest mb-1.5 flex items-center gap-1.5">

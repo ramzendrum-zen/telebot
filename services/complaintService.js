@@ -12,7 +12,7 @@ import { uploadTelegramMedia } from '../utils/cloudinary.js';
 const getHumanGreeting = (user) => {
   if (!user || !user.verified) return "Welcome to the Official MSAJCE Grievance Assistance System.";
   const title = user.salutation || "";
-  const name = user.name ? user.name.split(' ')[0] : "User";
+  const name = user.name ? user.name.split(' ')[0] : (user.telegram_first_name || "User");
   return `Hello ${title} ${name}. I will assist you with the portal operations.`;
 };
 
@@ -48,7 +48,9 @@ const DEPT_ROUTING = {
   'Mess': 'Mess Committee',
   'Transport': 'Transport Manager',
   'Academic': 'Academic Office',
+  'Faculty': 'Academic Office',
   'Technical': 'IT Support Team',
+  'WiFi': 'IT Support Team',
   'Harassment': 'Principal / Disciplinary Committee',
   'Other': 'General Admin'
 };
@@ -152,21 +154,21 @@ const getProfessionalEmailTemplate = (grvId, user, state, dept, isEmergency = fa
                     <table style="width: 100%; border-collapse: collapse;">
                         <tr>
                             <td style="padding: 8px 0; font-size: 13px; color: #64748b; font-weight: 500;">Name</td>
-                            <td style="padding: 8px 0; font-size: 13px; color: #0f172a; font-weight: 700; text-align: right;">${state.is_anonymous ? '🎭 ANONYMOUS' : user.name}</td>
+                            <td style="padding: 8px 0; font-size: 13px; color: #0f172a; font-weight: 700; text-align: right;">${state.is_anonymous ? '🎭 ANONYMOUS' : (user?.name || 'Unknown User')}</td>
                         </tr>
                         <tr>
                             <td style="padding: 8px 0; font-size: 13px; color: #64748b; font-weight: 500;">College ID</td>
-                            <td style="padding: 8px 0; font-size: 13px; color: #0f172a; font-weight: 700; text-align: right;">${state.is_anonymous ? 'REDACTED' : (user.register_number || user.employee_id)}</td>
+                            <td style="padding: 8px 0; font-size: 13px; color: #0f172a; font-weight: 700; text-align: right;">${state.is_anonymous ? 'REDACTED' : (user?.register_number || user?.employee_id || 'N/A')}</td>
                         </tr>
                         <tr>
                             <td style="padding: 8px 0; font-size: 13px; color: #64748b; font-weight: 500;">Department</td>
-                            <td style="padding: 8px 0; font-size: 13px; color: #0f172a; font-weight: 700; text-align: right;">${user.department}</td>
+                            <td style="padding: 8px 0; font-size: 13px; color: #0f172a; font-weight: 700; text-align: right;">${user?.department || 'N/A'}</td>
                         </tr>
                         <tr>
                             <td style="padding: 8px 0; font-size: 13px; color: #64748b; font-weight: 500;">Role</td>
-                            <td style="padding: 8px 0; font-size: 13px; color: #0f172a; font-weight: 700; text-align: right;">${user.role.toUpperCase()}</td>
+                            <td style="padding: 8px 0; font-size: 13px; color: #0f172a; font-weight: 700; text-align: right;">${(user?.role || 'student').toUpperCase()}</td>
                         </tr>
-                        ${user.phone && !state.is_anonymous ? `
+                        ${user?.phone && !state.is_anonymous ? `
                         <tr>
                             <td style="padding: 8px 0; font-size: 13px; color: #64748b; font-weight: 500;">Contact Phone</td>
                             <td style="padding: 8px 0; font-size: 13px; color: #ef4444; font-weight: 800; text-align: right;">${user.phone}</td>

@@ -5,9 +5,9 @@ import logger from './logger.js';
 
 // Configuration
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, // Need this from user
-  api_key: process.env.CLOUDINARY_API_KEY || '771675394986651',
-  api_secret: process.env.CLOUDINARY_API_SECRET || 'eBFjmujdu4yvlfGmPs2N-Z31CjI',
+  cloud_name: config.cloudinary.cloudName,
+  api_key: config.cloudinary.apiKey,
+  api_secret: config.cloudinary.apiSecret,
   secure: true
 });
 
@@ -19,7 +19,7 @@ cloudinary.config({
  */
 export const uploadTelegramMedia = async (token, fileId) => {
   try {
-    if (!process.env.CLOUDINARY_CLOUD_NAME) {
+    if (!config.cloudinary.cloudName) {
       logger.warn("Cloudinary Cloud Name missing. Skipping upload.");
       return null;
     }
