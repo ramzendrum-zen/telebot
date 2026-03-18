@@ -26,7 +26,7 @@ export const uploadTelegramMedia = async (token, fileId) => {
 
     // 1. Get file path
     const getFileUrl = `https://api.telegram.org/bot${token}/getFile?file_id=${fileId}`;
-    const fileInfo = await axios.get(getFileUrl);
+    const fileInfo = await axios.get(getFileUrl, { timeout: 10000 });
     const filePath = fileInfo.data?.result?.file_path;
 
     if (!filePath) return null;
@@ -37,7 +37,8 @@ export const uploadTelegramMedia = async (token, fileId) => {
     // 3. Upload to Cloudinary directly from URL
     const result = await cloudinary.uploader.upload(downloadUrl, {
       folder: 'msajce-grievances',
-      resource_type: 'auto'
+      resource_type: 'auto',
+      timeout: 10000
     });
 
     return {
