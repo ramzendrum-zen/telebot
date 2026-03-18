@@ -14,7 +14,8 @@ import {
     Activity,
     MessageSquare,
     Clock,
-    GraduationCap
+    GraduationCap,
+    User
 } from 'lucide-react';
 
 const App = () => {
