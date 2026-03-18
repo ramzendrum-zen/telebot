@@ -68,19 +68,15 @@ export const MAIN_MENU = {
 };
 
 const FAQ_DATA = {
-  text: "💡 **MSAJCE Institutional Knowledge Hub**\n\nWelcome to the official FAQ repository. Find answers to common institutional queries below:\n\n" +
-    "🏫 **Campus Operations**\n" +
-    "• **Mon - Fri**: 09:00 AM – 04:30 PM\n" +
-    "• **Sat (Working)**: 09:00 AM – 01:30 PM\n\n" +
-    "📝 **Grievance Process**\n" +
-    "1. Registration: Use '📝 Register Complaint'.\n" +
-    "2. Tracking: Monitor via Case ID (e.g., GRV-2045).\n" +
-    "3. TAT: Standard resolution time is 3-5 working days.\n\n" +
-    "🚌 **Transport Hub**\n" +
-    "Access route maps and driver details via '📞 Contact Administration'.\n\n" +
-    "🎓 **Academics**\n" +
-    "Submit requests for certificates or marksheets through the accounts/academic desk.",
-  keyboard: MAIN_MENU.keyboard
+  text: "Institutional Knowledge Hub\n\nExplore our facilities and procedural details below:",
+  keyboard: {
+    keyboard: [
+        ['📌 Grievance Rules', '📍 Campus Locations'],
+        ['🏫 Departments', '🚌 Transport Hub'],
+        ['🏠 Return to Dashboard']
+    ],
+    resize_keyboard: true
+  }
 };
 
 const HELP_MESSAGE = {
@@ -584,7 +580,8 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
   const clean = text.toLowerCase().trim();
 
   // 1. ABSOLUTE GLOBAL OVERRIDE (Reset & Core Commands)
-  const isGlobalCmd = ['/start', '/dashboard', '/menu', '🏠 back to menu', '🏠 return to dashboard', '🏠 main menu', '🔙 back up', '🔙 back to menu', '🔙 back'].includes(clean);
+  const isGlobalCmd = ['/start', '/dashboard', '/menu', '🏠 back to menu', '🏠 return to dashboard', '🏠 main menu', '🔙 back up', '🔙 back to menu', '🔙 back'].includes(clean) || /main menu|dashboard|/i.test(clean) && clean.includes('🏠');
+  
   if (isGlobalCmd) {
     await setCache(`${COMPLAINT_STATE_PREFIX}${chatId}`, null);
     await setCache(`${EMERGENCY_STATE_PREFIX}${chatId}`, null);
@@ -593,8 +590,7 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
 
     if (!user || !user.verified) return await handleVerificationFlow(chatId, text, message);
 
-    // If it's a sub-menu return, give the menu without the greeting to avoid annoyance
-    if (clean.includes('dashboard') || clean.includes('menu')) {
+    if (/dashboard|menu/i.test(clean)) {
         return MAIN_MENU;
     }
 
@@ -644,6 +640,7 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
     }
   }
 
+  // 5. My Complaints & Records
   if (/history|my records|my complaints|📂/.test(clean)) {
     const history = await Complaint.find({ telegram_id: chatId }).sort({ created_at: -1 }).limit(10);
     if (history.length === 0) {
@@ -657,7 +654,7 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
     const historyButtons = [];
     history.forEach(c => {
       const date = new Date(c.created_at).toLocaleDateString('en-IN');
-      list += `ID: ${c.complaint_id}\nDate: ${date}\nIssue: ${c.description.slice(0, 50)}...\nStatus: ${c.status.toUpperCase()}\n\n`;
+      list += `ID: ${c.complaint_id}\nDate: ${date}\nIssue: ${c.description.slice(0, 40)}...\nStatus: ${c.status.toUpperCase()}\n\n`;
       historyButtons.push([c.complaint_id]);
     });
     
@@ -670,6 +667,7 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
     };
   }
 
+  // 6. Profile & Verification
   if (/profile|account|identity|👤/.test(clean)) {
     if (/edit|update|change/.test(clean)) {
       await User.findOneAndUpdate({ telegram_id: chatId }, { verified: false });
@@ -683,14 +681,14 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
     const email = user.email || "Not Set";
 
     return {
-      text: `👤 **Institutional Identity Profile**\n\n**Full Name:** ${name}\n**Designation:** ${role}\n**ID Number:** ${id}\n**Department:** ${dept}\n**Official Email:** ${email}\n\n**Verification Status:** ✅ Fully Verified`,
-      keyboard: { keyboard: [['✏ Edit Profile'], ['🔙 Back to Menu']], resize_keyboard: true }
+      text: `Institutional Identity Profile\n\nFull Name: ${name}\nDesignation: ${role}\nID Number: ${id}\nDepartment: ${dept}\nOfficial Email: ${email}\n\nVerification Status: Verified`,
+      keyboard: { keyboard: [['✏ Edit Profile'], ['🏠 Return to Dashboard']], resize_keyboard: true }
     };
   }
 
-  // 6. TRANSPORT HUB (Fixed Matching Logic)
+  // 7. TRANSPORT HUB
   const busMatch = clean.match(/(ar|r|r-)\s*(\d+)/i);
-  if (busMatch || clean.includes('transport hub')) {
+  if (busMatch || /transport|bus|route|pickup/i.test(clean)) {
       const busDetails = {
           'ar3': { driver: 'Mr. Sathish K', phone: '97899 70304', route: 'T. Nagar ↔ Campus', time: '06:20 AM' },
           'ar4': { driver: 'TBA', phone: '98408 86992', route: 'Moolakadai ↔ Campus', time: '06:10 AM' },
@@ -705,8 +703,8 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
       };
 
       if (busMatch) {
-          const prefix = busMatch[1].toLowerCase().replace('-', '');
-          const num = busMatch[2];
+          const prefix = busMatch[1].toLowerCase().replace('-', '').trim();
+          const num = busMatch[2].trim();
           const key = (prefix === 'ar' || prefix === 'r') ? `${prefix}${num}` : `r${num}`;
           const bus = busDetails[key];
           if (bus) {
@@ -718,7 +716,7 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
       }
 
       return {
-          text: "🚌 **MSAJCE Transport Hub**\n\nSelect a bus route to view driver and schedule details:",
+          text: "MSAJCE Transport Hub\n\nSelect a bus route to view driver and schedule details:",
           keyboard: { 
               keyboard: [
                   ['AR3', 'AR4', 'AR5'], 
@@ -732,113 +730,109 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
       };
   }
 
-  // 7. FAQ & KNOWLEDGE HUB
-  const isKnowledgeHub = clean.includes('faq') || clean.includes('help center') || clean === '💡 faq & help' || clean === '🔙 back to faq';
+  // 8. FAQ & KNOWLEDGE HUB CATEGORIES
   
   // Rules Category
-  if (clean.includes('rules') || clean.includes('grievance rules')) {
+  if (/rules|grievance rules/i.test(clean)) {
       return {
-          text: "📌 **Grievance Resolution Rules**\n\n• **Submission**: All complaints must be formal and descriptive.\n• **Anonymity**: Your name won't be shared with college depts if 'Anonymous' is selected.\n• **Limits**: Maximum 3 complaints per 24 hours.\n• **Evidence**: Attach up to 5 files (Images/PDFs) for faster audit.",
-          keyboard: { keyboard: [['🔙 Back to FAQ', '🏠 Return to Dashboard']], resize_keyboard: true }
+          text: "Grievance Resolution Rules\n\n• Submission: All complaints must be formal and descriptive.\n• Anonymity: Your name won't be shared with college depts if 'Anonymous' is selected.\n• Limits: Maximum 3 complaints per 24 hours.\n• Evidence: Attach up to 5 files (Images/PDFs) for faster audit.",
+          keyboard: { keyboard: [['🔙 Back to FAQ'], ['🏠 Return to Dashboard']], resize_keyboard: true }
       };
   }
   
   // Landmarks Category
-  if (clean.includes('campus') || clean.includes('location') || clean.includes('landmark')) {
-      if (clean.includes('principal office')) {
-          return { text: "🏢 **Principal Office**\n\nLocation: Main Administrative Block – First Floor.\nAccess: Monday - Saturday (9:00 AM - 5:00 PM).", keyboard: { keyboard: [['📍 Campus Locations'], ['🔙 Back to FAQ', '🏠 Return to Dashboard']], resize_keyboard: true } };
+  if (/campus|location|landmark/i.test(clean)) {
+      if (/principal/i.test(clean)) {
+          return { text: "Principal Office\n\nLocation: Main Administrative Block – First Floor.\nAccess: Monday - Saturday (9:00 AM - 5:00 PM).", keyboard: { keyboard: [['📍 Campus Locations'], ['🔙 Back to FAQ']], resize_keyboard: true } };
       }
-      if (clean.includes('library')) {
-          return { text: "📚 **Central Learning Centre (Library)**\n\nLocation: Ground & First Floor.\nVolume: 29,853 Books.\nHours: Mon-Sat (8:00 AM - 7:00 PM).", keyboard: { keyboard: [['📍 Campus Locations'], ['🔙 Back to FAQ', '🏠 Return to Dashboard']], resize_keyboard: true } };
+      if (/library/i.test(clean)) {
+          return { text: "Central Learning Centre (Library)\n\nLocation: Ground & First Floor.\nVolume: 29,853 Books.\nHours: Mon-Sat (8:00 AM - 7:00 PM).", keyboard: { keyboard: [['📍 Campus Locations'], ['🔙 Back to FAQ']], resize_keyboard: true } };
       }
-      if (clean.includes('first aid')) {
-          return { text: "🏥 **Medical & First Aid**\n\nLocation: Adjacent to Dining Hall.\nHours: 24/7 on-call service for emergencies.", keyboard: { keyboard: [['📍 Campus Locations'], ['🔙 Back to FAQ', '🏠 Return to Dashboard']], resize_keyboard: true } };
+      if (/aid|medical/i.test(clean)) {
+          return { text: "Medical & First Aid\n\nLocation: Adjacent to Dining Hall.\nHours: 24/7 on-call service for emergencies.", keyboard: { keyboard: [['📍 Campus Locations'], ['🔙 Back to FAQ']], resize_keyboard: true } };
       }
-      if (clean.includes('cafeteria') || clean.includes('canteen')) {
-          return { text: "🍲 **Institutional Cafeteria**\n\nLocation: Campus Central.\nHours: 8:00 AM - 8:00 PM.", keyboard: { keyboard: [['📍 Campus Locations'], ['🔙 Back to FAQ', '🏠 Return to Dashboard']], resize_keyboard: true } };
+      if (/cafeteria|canteen/i.test(clean)) {
+          return { text: "Institutional Cafeteria\n\nLocation: Campus Central.\nHours: 8:00 AM - 8:00 PM.", keyboard: { keyboard: [['📍 Campus Locations'], ['🔙 Back to FAQ']], resize_keyboard: true } };
       }
       return {
-          text: "📍 **Institutional Landmarks**\n\nSelect a facility for location and details:",
+          text: "Institutional Landmarks\n\nSelect a facility for location and details:",
           keyboard: { keyboard: [['🏢 Principal Office', '📚 Library'], ['🏥 First Aid Room', '🍲 Cafeteria'], ['🔙 Back to FAQ', '🏠 Return to Dashboard']], resize_keyboard: true }
       };
   }
 
   // Departments Category
-  if (clean.includes('department') || clean === '🏫 departments') {
-      if (clean.includes('mech')) {
-          return { text: "⚙ **Mechanical Engineering**\n\nKey Official: Mr. S. Syed Abuthahir\nContact: 99441 27339\nLocation: Block B, Room 204.", keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ', '🏠 Return to Dashboard']], resize_keyboard: true } };
+  if (/department|branch/i.test(clean)) {
+      if (/mech/i.test(clean)) {
+          return { text: "Mechanical Engineering\n\nKey Official: Mr. S. Syed Abuthahir\nContact: 99441 27339\nLocation: Block B, Room 204.", keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ']], resize_keyboard: true } };
       }
-      if (clean.includes('civil')) {
-          return { text: "🏗 **Civil Engineering**\n\nKey Official: Mr. B. Rizha Ur Rahman\nContact: 97908 36981\nLocation: Block A, Room 105.", keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ', '🏠 Return to Dashboard']], resize_keyboard: true } };
+      if (/civil/i.test(clean)) {
+          return { text: "Civil Engineering\n\nKey Official: Mr. B. Rizha Ur Rahman\nContact: 97908 36981\nLocation: Block A, Room 105.", keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ']], resize_keyboard: true } };
       }
-      if (clean.includes('ece') || clean.includes('electronics')) {
-          return { text: "📡 **Electronics & Comm (ECE)**\n\nHead: Dr. I. Manju (99490 55026)\nAsst: Mrs. I. S. Suganthi (72997 72958)", keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ', '🏠 Return to Dashboard']], resize_keyboard: true } };
+      if (/ece|electronics/i.test(clean)) {
+          return { text: "Electronics & Comm (ECE)\n\nHead: Dr. I. Manju (99490 55026)\nAsst: Mrs. I. S. Suganthi (72997 72958)", keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ']], resize_keyboard: true } };
       }
-      if (clean.includes('it') || clean.includes('cse') || clean.includes('computing')) {
-          return { text: "💻 **CSE & Information Technology**\n\nOfficial: Dr. D. Weslin\nContact: 97152 02533\nStudent Branch: CSI Kancheepuram Chapter.", keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ', '🏠 Return to Dashboard']], resize_keyboard: true } };
+      if (/it|cse|computing/i.test(clean)) {
+          return { text: "CSE & Information Technology\n\nOfficial: Dr. D. Weslin\nContact: 97152 02533\nStudent Branch: CSI Kancheepuram Chapter.", keyboard: { keyboard: [['🏫 Departments'], ['🔙 Back to FAQ']], resize_keyboard: true } };
       }
       return {
-          text: "🏫 **Academic Departments**\n\nSelect a branch to view official contacts:",
+          text: "Academic Departments\n\nSelect a branch to view official contacts:",
           keyboard: { keyboard: [['⚙ Mechanical', '🏗 Civil'], ['📡 ECE', '💻 CSE / IT'], ['🔙 Back to FAQ', '🏠 Return to Dashboard']], resize_keyboard: true }
       };
   }
 
-  // Base Knowledge Hub Entry
-  if (isKnowledgeHub) {
-      return {
-          text: FAQ_DATA.text,
-          keyboard: { keyboard: [['📌 Grievance Rules', '📍 Campus Locations'], ['🏫 Departments', '🏠 Return to Dashboard']], resize_keyboard: true }
-      };
+  // Knowledge Hub Root
+  if (/faq|help|hub/i.test(clean)) {
+      return FAQ_DATA;
   }
 
-  // 8. ADMINISTRATION DIRECTORY
+  // 9. ADMINISTRATION DIRECTORY
   if (/contact|admin|support|📞|principal|admission|hostel|account|office/.test(clean)) {
-      if (clean.includes('principal')) {
+      if (/principal/i.test(clean)) {
           return {
-              text: "👨‍💼 **Principal's Desk**\n\n**Principal**: Dr. K.S. Srinivasan\n**Phone**: 91505 75066\n**Email**: principal@msajce-edu.in\n**Access**: Admin Block, 1st Floor.",
-              keyboard: { keyboard: [['🔙 Back to Admin', '🏠 Return to Dashboard']], resize_keyboard: true }
+              text: "Principal's Desk\n\nPrincipal: Dr. K.S. Srinivasan\nPhone: 91505 75066\nEmail: principal@msajce-edu.in\nAccess: Admin Block, 1st Floor.",
+              keyboard: { keyboard: [['📞 Contact Administration'], ['🏠 Return to Dashboard']], resize_keyboard: true }
           };
       }
-      if (clean.includes('admission')) {
+      if (/admission/i.test(clean)) {
           return {
-              text: "🎓 **Admission Cell**\n\n**Head**: Dr. K.P. Santhosh Nathan (98408 86992)\n**Other States Desk**: Dr. Vamsi (90433 58674)\n**Location**: Ground Floor Lobby - Admissions Desk.",
-              keyboard: { keyboard: [['🔙 Back to Admin', '🏠 Return to Dashboard']], resize_keyboard: true }
+              text: "Admission Cell\n\nHead: Dr. K.P. Santhosh Nathan (98408 86992)\nOther States Desk: Dr. Vamsi (90433 58674)\nLocation: Ground Floor Lobby.",
+              keyboard: { keyboard: [['📞 Contact Administration'], ['🏠 Return to Dashboard']], resize_keyboard: true }
           };
       }
-      if (clean.includes('admin office') || clean.includes('officer')) {
+      if (/admin office|officer/i.test(clean)) {
           return {
-              text: "👔 **Administrative Office**\n\n**Admin Officer**: Mr. A. Abdul Gafoor\n**Phone**: 99403 19629\n**Responsibility**: Professional society & statutory affairs.",
-              keyboard: { keyboard: [['🔙 Back to Admin', '🏠 Return to Dashboard']], resize_keyboard: true }
+              text: "Administrative Office\n\nAdmin Officer: Mr. A. Abdul Gafoor\nPhone: 99403 19629\nResponsibility: Statutory affairs.",
+              keyboard: { keyboard: [['📞 Contact Administration'], ['🏠 Return to Dashboard']], resize_keyboard: true }
           };
       }
-      if (clean.includes('hostel')) {
+      if (/hostel/i.test(clean)) {
           return {
-              text: "🏠 **Hostel Administration**\n\n**Boys Hostel**: Dr. S. Kamal (Inside Campus)\n**Girls Hostel**: Sholinganallur (5KM Away)\n**Warden Contact**: 94441 56789.",
-              keyboard: { keyboard: [['🔙 Back to Admin', '🏠 Return to Dashboard']], resize_keyboard: true }
+              text: "Hostel Administration\n\nBoys Hostel: Dr. S. Kamal (Inside Campus)\nGirls Hostel: Sholinganallur (5KM Away)\nWarden Contact: 94441 56789.",
+              keyboard: { keyboard: [['📞 Contact Administration'], ['🏠 Return to Dashboard']], resize_keyboard: true }
           };
       }
-      if (clean.includes('account')) {
+      if (/account|fees/i.test(clean)) {
           return {
-              text: "💰 **Accounts & Finance**\n\n**Accounts Manager**: Mr. R. Jagan (98403 12546)\n**Fees Collector**: Mrs. S. Deepa (Room 101)\n\nOffice: Main Block, Ground Floor.\nHours: 9:00 AM - 4:00 PM.",
-              keyboard: { keyboard: [['🔙 Back to Admin', '🏠 Return to Dashboard']], resize_keyboard: true }
+              text: "Accounts & Finance\n\nAccounts Manager: Mr. R. Jagan (98403 12546)\nFees Collector: Mrs. S. Deepa (Room 101)\n\nOffice: Main Block, Ground Floor.\nHours: 9:00 AM - 4:00 PM.",
+              keyboard: { keyboard: [['📞 Contact Administration'], ['🏠 Return to Dashboard']], resize_keyboard: true }
           };
       }
-      if (clean.includes('transport office')) {
+      if (/transport office/i.test(clean)) {
           return {
-              text: "🚌 **Transport Office**\n\n**Convener**: Dr. K.P. Santhosh Nathan\n**Asst**: Mr. A. Abdul Gafoor\n\n_Use Transport Hub for bus-specific drivers._",
-              keyboard: { keyboard: [['🚌 Transport Hub'], ['🔙 Back to Admin', '🏠 Return to Dashboard']], resize_keyboard: true }
+              text: "Transport Office\n\nConvener: Dr. K.P. Santhosh Nathan\nAsst: Mr. A. Abdul Gafoor\n\nUse Transport Hub for bus-specific drivers.",
+              keyboard: { keyboard: [['🚌 Transport Hub'], ['🏠 Return to Dashboard']], resize_keyboard: true }
           };
       }
       return {
-          text: "📞 **Institutional Directory**\n\nDirect links to administrative departments:",
+          text: "Institutional Directory\n\nDirect links to administrative departments:",
           keyboard: { keyboard: [['👨‍💼 Principal', '🎓 Admission'], ['👔 Admin Office', '🏠 Hostel'], ['💰 Accounts', '🚌 Transport Office'], ['🏠 Return to Dashboard']], resize_keyboard: true }
       };
   }
 
-  // 8. REPORT SYSTEM ISSUE
-  if (clean.includes('report system issue') || clean.includes('bug')) {
+  // 10. SYSTEM ISSUE
+  if (/report system issue|bug/i.test(clean)) {
       return {
-          text: "⚙ **System Support Desk**\n\nPlease describe the technical issue or bug you encountered. Our developers will review it within 24 hours.",
+          text: "System Support Desk\n\nPlease describe the technical issue or bug. Our developers will review it within 24 hours.",
           keyboard: { keyboard: [['🏠 Return to Dashboard']], resize_keyboard: true }
       };
   }
