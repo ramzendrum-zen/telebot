@@ -584,7 +584,7 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
   const clean = text.toLowerCase().trim();
 
   // 1. ABSOLUTE GLOBAL OVERRIDE (Reset & Core Commands)
-  const isGlobalCmd = ['/start', '/dashboard', '/menu', '🏠 back to menu', '🏠 return to dashboard'].includes(clean) || text === '🏠 Main Menu';
+  const isGlobalCmd = ['/start', '/dashboard', '/menu', '🏠 back to menu', '🏠 return to dashboard', '🏠 main menu', '🔙 back up', '🔙 back to menu', '🔙 back'].includes(clean);
   if (isGlobalCmd) {
     await setCache(`${COMPLAINT_STATE_PREFIX}${chatId}`, null);
     await setCache(`${EMERGENCY_STATE_PREFIX}${chatId}`, null);
@@ -592,6 +592,11 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
     await setCache(`track:${chatId}`, null);
 
     if (!user || !user.verified) return await handleVerificationFlow(chatId, text, message);
+
+    // If it's a sub-menu return, give the menu without the greeting to avoid annoyance
+    if (clean.includes('dashboard') || clean.includes('menu')) {
+        return MAIN_MENU;
+    }
 
     const greeting = getHumanGreeting(user);
     return { ...MAIN_MENU, text: `${greeting}\n\n${MAIN_MENU.text}` };
@@ -672,8 +677,51 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
     };
   }
 
-  // 6. FAQ & KNOWLEDGE HUB
-  const isKnowledgeHub = clean.includes('faq') || clean.includes('help center') || clean.includes('hub');
+  // 6. TRANSPORT HUB (Promoted higher to avoid 'hub' keyword collision)
+  if (clean.includes('bus') || clean.includes('transport hub') || clean.match(/ar\d+|r-\d+|r\d+/)) {
+      const busDetails = {
+          'ar3': { driver: 'Mr. Sathish K', phone: '97899 70304', route: 'T. Nagar ↔ Campus', time: '06:20 AM' },
+          'ar4': { driver: 'TBA', phone: '98408 86992', route: 'Moolakadai ↔ Campus', time: '06:10 AM' },
+          'ar5': { driver: 'Mr. Murugan / Velu', phone: '99622 54425', route: 'MMDA School ↔ Campus', time: '06:15 AM' },
+          'ar6': { driver: 'TBA', phone: '98408 86992', route: 'ICF ↔ Campus', time: '06:15 AM' },
+          'ar7': { driver: 'TBA', phone: '98408 86992', route: 'Chunambedu ↔ Campus', time: '05:25 AM' },
+          'ar8': { driver: 'Mr. Raju', phone: '97907 50906', route: 'Manjambakkam ↔ Campus', time: '07:10 AM' },
+          'ar9': { driver: 'TBA', phone: '98408 86992', route: 'Ennore ↔ Campus', time: '06:15 AM' },
+          'ar10': { driver: 'TBA', phone: '98408 86992', route: 'Porur ↔ Campus', time: '06:25 AM' },
+          'r21': { driver: 'TBA', phone: '98408 86992', route: 'Contact Admin', time: 'Check Schedule' },
+          'r22': { driver: 'Mr. Panneerselvam', phone: '98404 28612', route: 'Nemilichery ↔ Campus', time: '06:00 AM' }
+      };
+
+      const match = clean.match(/(ar|r|r-)([3-9]|10|21|22)/);
+      if (match) {
+          const prefix = match[1].toLowerCase();
+          const num = match[2];
+          const key = prefix.startsWith('ar') ? `ar${num}` : (num === '21' ? 'r21' : 'r22');
+          const bus = busDetails[key];
+          if (bus) {
+            return {
+                text: `🚌 **Bus ${key.toUpperCase()}**\n\n**Route:** ${bus.route}\n**Driver:** ${bus.driver}\n**Contact:** ${bus.phone}\n**Pickup:** ${bus.time}\n\n**Notice:** Please reach the stop 5 mins early. For real-time updates, contact the driver directly.`,
+                keyboard: { keyboard: [['🚌 Transport Hub'], ['🔙 Back to Admin', '🏠 Return to Dashboard']], resize_keyboard: true }
+            };
+          }
+      }
+      return {
+          text: "🚌 **MSAJCE Transport Hub**\n\nSelect a bus route to view driver and schedule details:",
+          keyboard: { 
+              keyboard: [
+                  ['AR3', 'AR4', 'AR5'], 
+                  ['AR6', 'AR7', 'AR8'], 
+                  ['AR9', 'AR10'],
+                  ['R-21', 'R-22'],
+                  ['🏠 Return to Dashboard']
+              ], 
+              resize_keyboard: true 
+          }
+      };
+  }
+
+  // 7. FAQ & KNOWLEDGE HUB
+  const isKnowledgeHub = clean.includes('faq') || clean.includes('help center') || clean === '💡 faq & help' || clean === '🔙 back to faq';
   
   // Rules Category
   if (clean.includes('grievance resolution rules') || (isKnowledgeHub && (clean.includes('grievance') || clean.includes('rule'))) || clean === '📌 grievance rules') {
@@ -726,12 +774,12 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
   // Base Knowledge Hub Entry
   if (isKnowledgeHub) {
       return {
-          text: "💡 **MSAJCE Institutional Knowledge Hub**\n\nExplore our facilities and procedural details:",
-          keyboard: { keyboard: [['📌 Grievance Rules', '📍 Campus Locations'], ['🏫 Departments', '🚌 Transport Hub'], ['🏠 Return to Dashboard']], resize_keyboard: true }
+          text: FAQ_DATA.text,
+          keyboard: { keyboard: [['📌 Grievance Rules', '📍 Campus Locations'], ['🏫 Departments', '🏠 Return to Dashboard']], resize_keyboard: true }
       };
   }
 
-  // 7. ADMINISTRATION DIRECTORY
+  // 8. ADMINISTRATION DIRECTORY
   if (/contact|admin|support|📞|principal|admission|hostel|account|office/.test(clean)) {
       if (clean.includes('principal')) {
           return {
@@ -772,49 +820,6 @@ export const handleGrievanceFlow = async (chatId, text, message) => {
       return {
           text: "📞 **Institutional Directory**\n\nDirect links to administrative departments:",
           keyboard: { keyboard: [['👨‍💼 Principal', '🎓 Admission'], ['👔 Admin Office', '🏠 Hostel'], ['💰 Accounts', '🚌 Transport Office'], ['🏠 Return to Dashboard']], resize_keyboard: true }
-      };
-  }
-
-  // 7. TRANSPORT HUB (Shared)
-  if (clean.includes('bus') || clean.includes('transport hub') || clean.match(/ar\d+|r-\d+|r\d+/)) {
-      const busDetails = {
-          'ar3': { driver: 'Mr. Sathish K', phone: '97899 70304', route: 'T. Nagar ↔ Campus', time: '06:20 AM' },
-          'ar4': { driver: 'TBA', phone: '98408 86992', route: 'Moolakadai ↔ Campus', time: '06:10 AM' },
-          'ar5': { driver: 'Mr. Murugan / Velu', phone: '99622 54425', route: 'MMDA School ↔ Campus', time: '06:15 AM' },
-          'ar6': { driver: 'TBA', phone: '98408 86992', route: 'ICF ↔ Campus', time: '06:15 AM' },
-          'ar7': { driver: 'TBA', phone: '98408 86992', route: 'Chunambedu ↔ Campus', time: '05:25 AM' },
-          'ar8': { driver: 'Mr. Raju', phone: '97907 50906', route: 'Manjambakkam ↔ Campus', time: '07:10 AM' },
-          'ar9': { driver: 'TBA', phone: '98408 86992', route: 'Ennore ↔ Campus', time: '06:15 AM' },
-          'ar10': { driver: 'TBA', phone: '98408 86992', route: 'Porur ↔ Campus', time: '06:25 AM' },
-          'r21': { driver: 'TBA', phone: '98408 86992', route: 'Contact Admin', time: 'Check Schedule' },
-          'r22': { driver: 'Mr. Panneerselvam', phone: '98404 28612', route: 'Nemilichery ↔ Campus', time: '06:00 AM' }
-      };
-
-      const match = clean.match(/(ar|r|r-)([3-9]|10|21|22)/);
-      if (match) {
-          const prefix = match[1].toLowerCase();
-          const num = match[2];
-          const key = prefix.startsWith('ar') ? `ar${num}` : (num === '21' ? 'r21' : 'r22');
-          const bus = busDetails[key];
-          if (bus) {
-            return {
-                text: `🚌 **Bus ${key.toUpperCase()}**\n\n**Route:** ${bus.route}\n**Driver:** ${bus.driver}\n**Contact:** ${bus.phone}\n**Pickup:** ${bus.time}\n\n**Notice:** Please reach the stop 5 mins early. For real-time updates, contact the driver directly.`,
-                keyboard: { keyboard: [['🚌 Transport Hub'], ['🔙 Back to Admin', '🏠 Return to Dashboard']], resize_keyboard: true }
-            };
-          }
-      }
-      return {
-          text: "🚌 **MSAJCE Transport Hub**\n\nSelect a bus route to view driver and schedule details:",
-          keyboard: { 
-              keyboard: [
-                  ['AR3', 'AR4', 'AR5'], 
-                  ['AR6', 'AR7', 'AR8'], 
-                  ['AR9', 'AR10'],
-                  ['R-21', 'R-22'],
-                  ['🏠 Return to Dashboard']
-              ], 
-              resize_keyboard: true 
-          }
       };
   }
 
