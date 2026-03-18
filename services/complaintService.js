@@ -96,15 +96,54 @@ const HELP_MESSAGE = {
 };
 
 const generateComplaintId = async (isEmergency = false) => {
-  const count = await Complaint.countDocuments({ is_emergency: isEmergency });
   const prefix = isEmergency ? 'EMG' : 'GRV';
-  return `${prefix}-${(count + 2043).toString().padStart(4, '0')}`;
+  
+  // Find the highest existing complaint ID for this prefix
+  const lastComplaint = await Complaint.findOne({ 
+    complaint_id: new RegExp(`^${prefix}-`) 
+  })
+  .sort({ complaint_id: -1 })
+  .limit(1);
+
+  let nextNum = 2043;
+  if (lastComplaint && lastComplaint.complaint_id) {
+    const lastId = lastComplaint.complaint_id;
+    const parts = lastId.split('-');
+    if (parts.length === 2) {
+      const lastNum = parseInt(parts[1]);
+      if (!isNaN(lastNum)) {
+        nextNum = lastNum + 1;
+      }
+    }
+  }
+
+  return `${prefix}-${nextNum.toString().padStart(4, '0')}`;
 };
 
+
 const generateUserId = async () => {
-  const count = await User.countDocuments({ verified: true });
-  return `USR-${(count + 1001).toString()}`;
+  // Find the highest existing USR ID
+  const lastUser = await User.findOne({ 
+    user_id: new RegExp('^USR-') 
+  })
+  .sort({ user_id: -1 })
+  .limit(1);
+
+  let nextNum = 1001;
+  if (lastUser && lastUser.user_id) {
+    const lastId = lastUser.user_id;
+    const parts = lastId.split('-');
+    if (parts.length === 2) {
+      const lastNum = parseInt(parts[1]);
+      if (!isNaN(lastNum)) {
+        nextNum = lastNum + 1;
+      }
+    }
+  }
+
+  return `USR-${nextNum.toString()}`;
 };
+
 
 /**
  * REDESIGNED PROFESSIONAL EMAIL TEMPLATE
