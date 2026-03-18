@@ -1,4 +1,4 @@
-/* VERSION 10.2.0 - MSAJCE TERMINAL - HIGH VISIBILITY IDS */
+/* VERSION 11.0.0 - MSAJCE TERMINAL - PRECISION TELEMETRY */
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { 
@@ -6,14 +6,15 @@ import {
     UserCircle, Users, Bell, AlertCircle, Clock, Terminal, 
     BarChart3, MapPin, User, ChevronRight, AlertOctagon, Zap,
     MoreHorizontal, CheckCircle, XCircle, Globe, Layers, Command,
-    ExternalLink, Filter, Search, Terminal as TerminalIcon, Mail, Briefcase
+    ExternalLink, Filter, Search, Terminal as TerminalIcon, Mail, Briefcase,
+    Calendar, Watch
 } from 'lucide-react';
 
 const MetricCard = ({ label, value, icon: Icon, color = "slate", unit = "" }) => {
     const colors = {
         indigo: 'text-indigo-600',
         emerald: 'text-emerald-500',
-        rose: 'text-rose-500',
+        rose: 'text-rose-600',
         amber: 'text-amber-500',
         slate: 'text-slate-500'
     };
@@ -95,7 +96,7 @@ const App = () => {
         try { await axios.post(`/api/admin/complaints/${id}/action`, { action }); pull(); } catch (e) {}
     };
 
-    if (loading && !stats) return <div className="min-h-screen bg-white flex items-center justify-center text-[11px] font-bold text-slate-300 uppercase tracking-widest">Synchronising terminal kernel...</div>;
+    if (loading && !stats) return <div className="min-h-screen bg-white flex items-center justify-center text-[11px] font-bold text-slate-300 uppercase tracking-widest">Initialising telemetry node...</div>;
 
     const botLogs = (monitorData.logs || []).filter(l => l.bot === activeBot);
 
@@ -125,10 +126,10 @@ const App = () => {
                 <div className="p-8">
                     <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 italic">
                         <div className="flex items-center gap-2 text-[10px] text-slate-500 font-bold lowercase mb-1">
-                            <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                            secure_gateway_online
+                            <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></div>
+                            node-gateway-active
                         </div>
-                        <div className="text-[9px] text-slate-400 font-bold tracking-tight uppercase">v10.2 / {lastSync}</div>
+                        <div className="text-[9px] text-slate-400 font-bold tracking-tight uppercase">v11.0 / {lastSync}</div>
                     </div>
                 </div>
             </aside>
@@ -164,7 +165,7 @@ const App = () => {
                             <div className="bg-white border border-slate-100 rounded-[2rem] shadow-sm overflow-hidden">
                                 <div className="px-10 py-6 border-b border-slate-50 bg-slate-50/20 flex items-center justify-between">
                                     <h3 className="text-xs text-slate-500 font-bold lowercase tracking-widest flex items-center gap-3">
-                                        <TerminalIcon size={16} strokeWidth={2} className="text-indigo-400" /> Recent activity logs
+                                        <TerminalIcon size={16} strokeWidth={2} className="text-indigo-400" /> Recent events feed
                                     </h3>
                                 </div>
                                 <div className="divide-y divide-slate-50 max-h-[400px] overflow-y-auto custom-scrollbar">
@@ -182,24 +183,24 @@ const App = () => {
                     )}
 
                     {activePanel === 'analytics' && (
-                        <div className="space-y-6 max-w-[1600px] mx-auto animate-in fade-in duration-500">
-                             <div className="bg-white border border-slate-100 rounded-[2rem] shadow-sm p-10">
-                                <h3 className="text-sm font-bold text-slate-900 lowercase tracking-widest mb-8 flex items-center gap-3 border-b border-slate-50 pb-6">
-                                    <AlertOctagon size={18} className="text-rose-500" /> System diagnostics & error logs
-                                </h3>
-                                <div className="space-y-4">
-                                    {botLogs.filter(l => l.level === 'error' || l.message.toLowerCase().includes('fail') || l.message.toLowerCase().includes('crash')).map((log, i) => (
-                                        <div key={i} className="flex flex-col gap-2 p-6 bg-rose-50/50 border border-rose-100 rounded-2xl">
-                                            <div className="flex justify-between items-center text-[10px] font-black uppercase text-rose-400">
-                                                <span>{new Date(log.timestamp).toLocaleString()}</span>
-                                                <span className="bg-rose-500 text-white px-2 py-0.5 rounded-lg">critical</span>
-                                            </div>
-                                            <p className="text-sm text-rose-700 font-medium font-mono">{log.message}</p>
+                        <div className="space-y-4 max-w-5xl mx-auto animate-in fade-in duration-500">
+                             {botLogs.map((log, i) => (
+                                <div key={i} className="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm hover:border-indigo-100 transition-all flex items-center gap-8 group">
+                                    <div className={`w-12 h-12 flex items-center justify-center rounded-2xl ${log.level === 'error' ? 'bg-rose-50 text-rose-500' : 'bg-slate-50 text-slate-400'}`}>
+                                        {log.level === 'error' ? <AlertOctagon size={20} /> : <TerminalIcon size={20} />}
+                                    </div>
+                                    <div className="flex flex-col gap-1 flex-1">
+                                        <div className="flex items-center gap-3 text-[10px] text-slate-400 font-black uppercase tracking-widest">
+                                            <span className="flex items-center gap-1"><Calendar size={12} /> {new Date(log.timestamp).toLocaleDateString()}</span>
+                                            <span className="flex items-center gap-1"><Watch size={12} /> {new Date(log.timestamp).toLocaleTimeString([], { hour12:false })}</span>
+                                            <span className={`px-2 py-0.5 rounded-lg border ${log.level === 'error' ? 'border-rose-100 bg-rose-50 text-rose-600' : 'border-slate-100 bg-slate-50 text-slate-400'}`}>{log.level || 'trace'}</span>
                                         </div>
-                                    ))}
-                                    {botLogs.filter(l => l.level === 'error').length === 0 && <div className="py-10 text-center text-slate-300 font-bold text-xs lowercase tracking-widest italic border-2 border-dashed border-slate-50 rounded-3xl">No system errors detected in node bridge</div>}
+                                        <p className={`text-sm font-medium tracking-tight ${log.level === 'error' ? 'text-rose-700' : 'text-slate-600'}`}>{log.message}</p>
+                                    </div>
+                                    <div className="text-[10px] text-slate-200 font-black font-mono">NODE_#{i}</div>
                                 </div>
-                             </div>
+                             ))}
+                             {botLogs.length === 0 && <div className="py-40 text-center text-xs text-slate-300 font-black lowercase tracking-[0.5em] italic">Telemetry_Stream_Empty</div>}
                         </div>
                     )}
 
