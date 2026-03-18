@@ -1,20 +1,21 @@
-/* VERSION 3.0.0 - MSAJCE TERMINAL DASHBOARD - FULL MODULES */
+/* VERSION 4.0.0 - MSAJCE TERMINAL DASHBOARD - ELEGANT MINIMALIST */
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import * as Lucide from 'lucide-react';
 
-const StatCard = ({ label, value, icon: Icon, trend, color = "blue", unit = "" }) => {
-    const iconColor = color === 'red' ? 'text-red-500' : 'text-emerald-500';
+const StatCard = ({ label, value, icon: Icon, color = "blue", unit = "" }) => {
     return (
-        <div className="bg-white p-6 rounded-xl border border-[#e2e8f0] shadow-sm flex flex-col gap-2 h-full">
-            <div className={`flex items-center gap-2 ${iconColor} text-[10px] font-semibold mb-2`}>
-                {Icon && <Icon size={12} />}
-                <span>{trend}</span>
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col gap-1 h-full animate-in fade-in slide-in-from-bottom-2 duration-700">
+            <div className="flex items-center justify-between mb-4">
+               <div className="p-2 bg-slate-50 rounded-xl text-slate-400">
+                   {Icon && <Icon size={18} strokeWidth={1.5} />}
+               </div>
+               <span className="text-[10px] text-slate-300 tracking-wider uppercase font-medium">Metrics Hub</span>
             </div>
-            <div className="text-[32px] font-bold text-slate-800 tracking-tight leading-tight">
-                {value ?? 0}<span className="text-xl font-normal ml-0.5">{unit}</span>
+            <div className="text-3xl text-slate-800 tracking-tight font-light transition-all">
+                {value ?? 0}<span className="text-sm ml-0.5 text-slate-400">{unit}</span>
             </div>
-            <span className="text-[11px] font-semibold text-[#6b7280]">{label}</span>
+            <span className="text-xs text-slate-400 font-normal">{label}</span>
         </div>
     );
 };
@@ -41,10 +42,10 @@ const App = () => {
             setStats(statsRes.data);
             setMonitorData(monRes.data || { logs: [], metrics: {} });
             setUsers(usersRes.data || []);
-            setLastSync(new Date().toLocaleTimeString([], { hour12: true, hour: '2-digit', minute: '2-digit' }));
+            setLastSync(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
             setLoading(false);
         } catch (e) {
-            console.error("Fetch failed", e);
+            console.error(e);
             setLoading(false);
         }
     };
@@ -68,35 +69,42 @@ const App = () => {
 
     const navItems = useMemo(() => {
         const common = [
-            { id: 'overview', label: 'Overview Dashboard', icon: Lucide.LayoutDashboard },
-            { id: 'analytics', label: 'System Analytics', icon: Lucide.BarChart3 },
+            { id: 'overview', label: 'Overview Dashboard', icon: Lucide.Home },
+            { id: 'analytics', label: 'System Analytics', icon: Lucide.Activity },
             { id: 'settings', label: 'Admin Settings', icon: Lucide.Settings },
         ];
         
         if (activeBot === 'assistant') {
             return [
-                common[0], // Overview
-                { id: 'assistant', label: 'Academic AI Assistant', icon: Lucide.GraduationCap },
-                common[1], // Analytics
-                common[2], // Settings
+                common[0], 
+                { id: 'assistant', label: 'Academic Assistant', icon: Lucide.Cpu },
+                common[1], 
+                common[2], 
             ];
         } else {
             return [
-                common[0], // Overview
-                { id: 'tickets', label: 'Operational Tickets', icon: Lucide.Ticket },
-                { id: 'grievance', label: 'Grievance Portal', icon: Lucide.ShieldCheck, badge: activeEmergencies.length },
-                { id: 'users', label: 'User Registration', icon: Lucide.Users },
-                common[1], // Analytics
-                common[2], // Settings
+                common[0], 
+                { id: 'tickets', label: 'Active Tickets', icon: Lucide.Inbox },
+                { id: 'grievance', label: 'Grievance Portal', icon: Lucide.Shield, badge: activeEmergencies.length },
+                { id: 'users', label: 'User Registration', icon: Lucide.UserCircle },
+                { id: 'history', label: 'Complaints History', icon: Lucide.History },
+                common[1], 
+                common[2], 
             ];
         }
     }, [activeBot, activeEmergencies.length]);
 
+    useEffect(() => {
+        if (!navItems.find(i => i.id === activePanel)) {
+            setActivePanel('overview');
+        }
+    }, [activeBot, navItems]);
+
     if (loading && !stats) {
         return (
-            <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-4">
-                <div className="w-12 h-12 border-[3px] border-blue-600/10 border-t-blue-600 rounded-full animate-spin"></div>
-                <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">Initializing Terminal v3.0...</p>
+            <div className="min-h-screen bg-white flex flex-col items-center justify-center gap-6">
+                <div className="w-10 h-10 border-2 border-slate-100 border-t-slate-800 rounded-full animate-spin"></div>
+                <p className="text-[11px] text-slate-400 tracking-[0.2em] font-light">ELEGANCE LOADING...</p>
             </div>
         );
     }
@@ -105,56 +113,43 @@ const App = () => {
         switch (activePanel) {
             case 'overview':
                 return (
-                    <div className="space-y-6">
-                        {/* Stat Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+                    <div className="space-y-8 animate-in fade-in duration-500">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                             <StatCard 
-                                label={activeBot === 'grievance' ? 'Total Users' : 'Total Queries'}
+                                label={activeBot === 'grievance' ? 'total users' : 'total queries'}
                                 value={activeBot === 'grievance' ? stats?.users?.total : monitorData?.metrics?.assistant?.total_requests}
                                 icon={Lucide.Users}
-                                trend="System Base"
-                                color="blue"
                             />
                             <StatCard 
-                                label={activeBot === 'grievance' ? 'Tickets (Today)' : 'Success Rate'}
+                                label={activeBot === 'grievance' ? 'tickets active' : 'success rate'}
                                 value={activeBot === 'grievance' ? stats?.complaints?.total : `${monitorData?.metrics?.assistant?.success_rate || 100}%`}
-                                icon={Lucide.Activity}
-                                trend="Live Session"
-                                color="blue"
+                                icon={Lucide.BarChart}
                             />
                             <StatCard 
-                                label={activeBot === 'grievance' ? 'Emergencies' : 'Errors Detected'}
+                                label={activeBot === 'grievance' ? 'emergencies' : 'sys errors'}
                                 value={activeBot === 'grievance' ? stats?.complaints?.emergency : monitorData?.metrics?.assistant?.total_errors}
-                                icon={Lucide.AlertTriangle}
-                                trend="Review Needed"
-                                color="red"
+                                icon={Lucide.AlertCircle}
                             />
                             <StatCard 
-                                label={activeBot === 'grievance' ? 'Avg Resolution' : 'Avg Latency'}
+                                label="resolution avg"
                                 value={activeBot === 'grievance' ? stats?.complaints?.avg_resolution : (monitorData?.metrics?.assistant?.avg_latency || 0).toFixed(0)}
                                 unit={activeBot === 'grievance' ? 'h' : 'ms'}
-                                icon={Lucide.CheckCircle}
-                                trend="Target Perf"
-                                color="green"
+                                icon={Lucide.Clock}
                             />
                         </div>
 
-                        {/* Realtime logs and Pulse */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div className="bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-sm">
-                                <h3 className="text-sm font-bold text-slate-800 mb-4 border-b pb-3 uppercase tracking-tighter">Live System Pulse</h3>
-                                <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
-                                    {(monitorData.logs || []).slice(0, 20).map((log, i) => (
-                                        <div key={i} className="flex gap-4 text-[11px] p-2 hover:bg-slate-50 rounded-lg border-l-2 border-blue-500 transition-colors">
-                                            <span className="text-slate-400 shrink-0 font-bold">{new Date(log.timestamp).toLocaleTimeString()}</span>
-                                            <span className="text-slate-700 font-semibold">{log.message}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-sm flex flex-col items-center justify-center text-slate-300 min-h-[300px]">
-                                <Lucide.BarChart3 size={48} className="opacity-20 mb-4" />
-                                <span className="font-bold uppercase tracking-widest text-[10px]">Analytics Matrix Initializing...</span>
+                        <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col min-h-[400px]">
+                            <h3 className="text-xs text-slate-400 font-light mb-6 uppercase tracking-widest flex items-center gap-2">
+                                <Lucide.Terminal size={12} strokeWidth={1} /> live system telemetry
+                            </h3>
+                            <div className="space-y-4 max-h-[350px] overflow-y-auto custom-scrollbar">
+                                {(monitorData.logs || []).slice(0, 30).map((log, i) => (
+                                    <div key={i} className="flex gap-6 text-[11px] items-center p-3 hover:bg-slate-50 rounded-2xl transition-colors border border-transparent hover:border-slate-50">
+                                        <span className="text-slate-300 shrink-0 font-light w-16">{new Date(log.timestamp).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit' })}</span>
+                                        <div className={`w-1 h-1 rounded-full ${log.bot === 'assistant' ? 'bg-slate-400' : 'bg-slate-300'}`}></div>
+                                        <span className="text-slate-500 font-light leading-relaxed">{log.message}</span>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>
@@ -162,39 +157,23 @@ const App = () => {
             case 'grievance':
                 return (
                     <div className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                            <div className="bg-red-50 border border-red-100 p-6 rounded-2xl flex flex-col">
-                                <span className="text-[10px] font-black text-red-600 uppercase mb-1">Emergency Alerts</span>
-                                <span className="text-3xl font-black text-red-900">{activeEmergencies.length}</span>
-                            </div>
-                            <div className="bg-white border border-slate-100 p-6 rounded-2xl flex flex-col shadow-sm">
-                                <span className="text-[10px] font-black text-slate-400 uppercase mb-1">Avg Resolution (hrs)</span>
-                                <span className="text-3xl font-black text-slate-900">{stats?.complaints?.avg_resolution || '0.0'}</span>
-                            </div>
-                        </div>
-                        <div className="p-6 space-y-6 bg-white border border-slate-100 rounded-3xl shadow-sm">
-                            <h3 className="font-black text-slate-900 uppercase tracking-tighter text-sm">Active Incident Feed</h3>
-                            {activeEmergencies.length === 0 && <p className="text-center py-20 text-slate-300 font-bold uppercase text-xs">No active emergency alerts detected</p>}
+                        <div className="p-8 space-y-8 bg-white border border-slate-100 rounded-3xl shadow-sm">
+                            <h3 className="text-xs text-slate-400 font-light uppercase tracking-widest flex items-center gap-2">
+                                <Lucide.AlertTriangle size={14} strokeWidth={1.5} /> emergency incident feed
+                            </h3>
+                            {activeEmergencies.length === 0 && <p className="text-center py-20 text-slate-300 text-xs font-light">No active emergency alerts detected</p>}
                             {activeEmergencies.map(c => (
-                                <div key={c.complaint_id} className="border border-slate-100 rounded-2xl p-6 bg-[#fcfdfe] relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 p-4 font-mono text-[9px] text-slate-300">{c.complaint_id}</div>
-                                    <h4 className="font-bold text-red-600 flex items-center gap-2 mb-2">🚨 {c.category}</h4>
-                                    <p className="text-sm font-medium text-slate-700 bg-white p-4 rounded-xl border border-slate-100 mb-4">{c.description}</p>
-                                    <div className="flex flex-wrap gap-4 text-[10px] uppercase font-bold text-slate-400 mb-4">
-                                        <span>📍 {c.location || 'College Campus'}</span>
-                                        <span>🕒 {new Date(c.created_at).toLocaleTimeString()}</span>
-                                        <span>👤 {c.is_anonymous ? 'ANONYMOUS' : (c.student_id?.name || 'STUDENT')}</span>
+                                <div key={c.complaint_id} className="border border-slate-50 rounded-3xl p-8 bg-slate-50/20 shadow-sm transition-all hover:shadow-md">
+                                    <h4 className="text-xs text-slate-600 mb-4 flex items-center gap-2 font-normal">
+                                        incident: {c.category}
+                                    </h4>
+                                    <p className="text-sm font-light text-slate-600 mb-6 leading-relaxed border-l border-slate-200 pl-6">{c.description}</p>
+                                    <div className="flex flex-wrap gap-8 text-[10px] text-slate-400 mb-6 font-light">
+                                        <span>location: {c.location || 'campus'}</span>
+                                        <span>timestamp: {new Date(c.created_at).toLocaleTimeString()}</span>
+                                        <span>report: {c.is_anonymous ? 'anonymous' : (c.student_id?.name || 'student')}</span>
                                     </div>
-                                    {c.evidence_urls && c.evidence_urls.length > 0 && (
-                                        <div className="flex flex-wrap gap-3 mb-4">
-                                            {c.evidence_urls.map((url, i) => (
-                                                <a key={i} href={url} target="_blank" rel="noreferrer" className="w-20 h-20 rounded-xl border-2 border-white shadow-sm overflow-hidden hover:scale-105 transition-transform bg-slate-100">
-                                                    <img src={url} alt="Artifact" className="w-full h-full object-cover" />
-                                                </a>
-                                            ))}
-                                        </div>
-                                    )}
-                                    <button onClick={() => handleAction(c.complaint_id, 'resolve')} className="w-full bg-red-600 text-white py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-black transition-all">RESOLVE INCIDENT</button>
+                                    <button onClick={() => handleAction(c.complaint_id, 'resolve')} className="w-full bg-slate-800 text-white py-4 rounded-2xl text-[10px] tracking-[0.2em] font-light hover:bg-black transition-all shadow-lg hover:shadow-xl">MARK AS RESOLVED</button>
                                 </div>
                             ))}
                         </div>
@@ -203,81 +182,104 @@ const App = () => {
             case 'tickets':
                 return (
                     <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-                        <div className="p-6 border-b border-slate-50 bg-slate-50/50 flex justify-between items-center">
-                            <h3 className="font-black text-slate-900 uppercase tracking-tighter text-sm">Operational Queue</h3>
-                            <button onClick={fetchAllData} className="p-2 hover:bg-white rounded-lg transition-all text-slate-400"><Lucide.Activity size={16} /></button>
+                        <div className="p-8 border-b border-slate-50 bg-slate-50/20 flex justify-between items-center">
+                            <h3 className="text-xs text-slate-400 font-light uppercase tracking-widest">operational queue</h3>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
-                                <thead className="bg-white text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">
+                                <thead className="text-[10px] text-slate-400 uppercase tracking-widest border-b border-slate-50">
                                     <tr>
-                                        <th className="px-6 py-5">Ticket</th>
-                                        <th className="px-6 py-5">Status</th>
-                                        <th className="px-6 py-5">Category</th>
-                                        <th className="px-6 py-5">Initiator</th>
-                                        <th className="px-6 py-5">Evidence</th>
-                                        <th className="px-6 py-5 text-right">Action</th>
+                                        <th className="px-8 py-6 font-normal">ticket id</th>
+                                        <th className="px-8 py-6 font-normal">status</th>
+                                        <th className="px-8 py-6 font-normal">department</th>
+                                        <th className="px-8 py-6 font-normal">initiator</th>
+                                        <th className="px-8 py-6 font-normal text-right">actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-50">
-                                    {(complaints || []).filter(c => !c.is_emergency && c.status !== 'resolved').map(c => (
-                                        <tr key={c.complaint_id} className="hover:bg-slate-50/50 transition-colors">
-                                            <td className="px-6 py-4 font-bold text-blue-600">{c.complaint_id}</td>
-                                            <td className="px-6 py-4">
-                                                <span className={`px-2 py-1 rounded-md text-[9px] font-black uppercase ${c.status === 'in_progress' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>
-                                                    {c.status}
+                                    {(complaints || []).filter(c => !c.is_emergency && c.status !== 'resolved' && c.status !== 'rejected').map(c => (
+                                        <tr key={c.complaint_id} className="hover:bg-slate-50/30 transition-colors">
+                                            <td className="px-8 py-5 text-xs text-slate-500 font-light">{c.complaint_id}</td>
+                                            <td className="px-8 py-5 text-xs">
+                                                <span className="text-[9px] text-slate-400 font-light lowercase">
+                                                    {c.status.replace('_', ' ')}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 font-bold text-slate-700 text-sm">{c.category}</td>
-                                            <td className="px-6 py-4 text-xs font-semibold text-slate-500">{c.is_anonymous ? 'Anonymous' : (c.student_id?.name || 'User')}</td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex -space-x-2">
-                                                    {(c.evidence_urls || []).slice(0, 3).map((u, i) => (
-                                                        <div key={i} className="w-8 h-8 rounded-lg border-2 border-white bg-slate-200 shadow-sm overflow-hidden">
-                                                            <img src={u} className="w-full h-full object-cover" alt="" />
-                                                        </div>
-                                                    ))}
-                                                    {(c.evidence_urls?.length > 3) && <div className="w-8 h-8 rounded-lg border-2 border-white bg-slate-900 text-[10px] flex items-center justify-center text-white font-bold">+{c.evidence_urls.length - 3}</div>}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <button onClick={() => handleAction(c.complaint_id, 'resolve')} className="bg-slate-900 text-white px-4 py-2 rounded-xl font-bold text-[10px] hover:bg-blue-600 transition-all">RESOLVE</button>
+                                            <td className="px-8 py-5 text-xs text-slate-500 font-light">{c.category}</td>
+                                            <td className="px-8 py-5 text-xs text-slate-400 font-light">{c.is_anonymous ? 'anonymous' : (c.student_id?.name || 'user')}</td>
+                                            <td className="px-8 py-5 text-right flex gap-3 justify-end items-center">
+                                                <button onClick={() => handleAction(c.complaint_id, 'resolve')} className="text-emerald-500 text-[10px] tracking-wider font-normal hover:bg-emerald-50 px-4 py-2 rounded-xl transition-all">APPROVE</button>
+                                                <button onClick={() => handleAction(c.complaint_id, 'reject')} className="text-red-400 text-[10px] tracking-wider font-normal hover:bg-red-50 px-4 py-2 rounded-xl transition-all">REJECT</button>
                                             </td>
                                         </tr>
                                     ))}
                                 </tbody>
                             </table>
-                            {complaints.filter(c => !c.is_emergency && c.status !== 'resolved').length === 0 && <div className="py-20 text-center text-slate-300 font-bold uppercase text-xs">No pending operational tickets</div>}
+                            {complaints.filter(c => !c.is_emergency && c.status !== 'resolved' && c.status !== 'rejected').length === 0 && <div className="py-20 text-center text-slate-300 text-xs font-light">No active operational tickets found.</div>}
+                        </div>
+                    </div>
+                );
+            case 'history':
+                return (
+                    <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+                        <div className="p-8 border-b border-slate-50 bg-slate-50/20 flex justify-between items-center">
+                            <h3 className="text-xs text-slate-400 font-light uppercase tracking-widest">historical records</h3>
+                        </div>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left">
+                                <thead className="text-[10px] text-slate-400 uppercase tracking-widest border-b border-slate-50">
+                                    <tr>
+                                        <th className="px-8 py-6 font-normal">complaint id</th>
+                                        <th className="px-8 py-6 font-normal">result</th>
+                                        <th className="px-8 py-6 font-normal">category</th>
+                                        <th className="px-8 py-6 font-normal">closed date</th>
+                                        <th className="px-8 py-6 font-normal text-right">details</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-50">
+                                    {(complaints || []).filter(c => c.status === 'resolved' || c.status === 'rejected').map(c => (
+                                        <tr key={c.complaint_id} className="hover:bg-slate-50/30 transition-colors">
+                                            <td className="px-8 py-5 text-xs text-slate-500 font-light">{c.complaint_id}</td>
+                                            <td className="px-8 py-5 text-xs">
+                                                <span className={`text-[9px] font-light lowercase ${c.status === 'resolved' ? 'text-emerald-500' : 'text-red-400'}`}>
+                                                    {c.status}
+                                                </span>
+                                            </td>
+                                            <td className="px-8 py-5 text-xs text-slate-500 font-light">{c.category}</td>
+                                            <td className="px-8 py-5 text-xs text-slate-400 font-light">{new Date(c.updated_at).toLocaleDateString()}</td>
+                                            <td className="px-8 py-5 text-right font-light text-[10px] text-slate-400">Archived</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 );
             case 'users':
                 return (
                     <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-                        <div className="p-6 border-b border-slate-50 bg-slate-50/50">
-                            <h3 className="font-black text-slate-900 uppercase tracking-tighter text-sm">Institutional Population</h3>
+                        <div className="p-8 border-b border-slate-50 bg-slate-50/20">
+                            <h3 className="text-xs text-slate-400 font-light uppercase tracking-widest">institutional population</h3>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
-                                <thead className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">
+                                <thead className="text-[10px] text-slate-400 uppercase tracking-widest border-b border-slate-50">
                                     <tr>
-                                        <th className="px-6 py-5">Verified User</th>
-                                        <th className="px-6 py-5">Register / ID</th>
-                                        <th className="px-6 py-5">Department</th>
-                                        <th className="px-6 py-5">Communication</th>
-                                        <th className="px-6 py-5">Verification</th>
+                                        <th className="px-8 py-6 font-normal">identity</th>
+                                        <th className="px-8 py-6 font-normal">register num</th>
+                                        <th className="px-8 py-6 font-normal">department</th>
+                                        <th className="px-8 py-6 font-normal">verification</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-50">
                                     {(users || []).map(u => (
                                         <tr key={u._id} className="hover:bg-slate-50/50 transition-colors">
-                                            <td className="px-6 py-4 font-bold text-slate-800">{u.name || "UNREGISTERED USER"}</td>
-                                            <td className="px-6 py-4 text-xs font-mono text-blue-500 font-bold">{u.register_number || u.employee_id || 'EXT-TELE'}</td>
-                                            <td className="px-6 py-4 text-sm font-semibold">{u.department || 'N/A'}</td>
-                                            <td className="px-6 py-4 text-[11px] font-bold text-slate-500">{u.phoneNumber || 'NO PHONE'}</td>
-                                            <td className="px-6 py-4">
-                                                <span className={`px-2 py-1 rounded text-[9px] font-black ${u.verified ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-400'}`}>
-                                                    {u.verified ? 'VERIFIED' : 'PENDING'}
+                                            <td className="px-8 py-5 text-xs text-slate-700 font-light">{u.name || "sys user"}</td>
+                                            <td className="px-8 py-5 text-xs font-light text-slate-400">{u.register_number || u.employee_id || 'ext'}</td>
+                                            <td className="px-8 py-5 text-xs font-light text-slate-500">{u.department || 'general'}</td>
+                                            <td className="px-8 py-5">
+                                                <span className={`text-[9px] font-light lowercase ${u.verified ? 'text-emerald-500' : 'text-slate-300'}`}>
+                                                    {u.verified ? 'verified' : 'pending'}
                                                 </span>
                                             </td>
                                         </tr>
@@ -290,49 +292,44 @@ const App = () => {
             case 'analytics':
                  return (
                     <div className="space-y-6">
-                        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-8 flex flex-col items-center justify-center text-center">
-                            <Lucide.Activity size={64} className="text-blue-500 opacity-20 mb-6 animate-pulse" />
-                            <h3 className="font-bold text-slate-800 text-lg mb-2">Advanced Analytics System</h3>
-                            <p className="text-sm text-slate-500 max-w-md">The analytic matrix is processing institutional data streams. High-resolution charts and trend predictions will appear here once the baseline data reaches 100 entries.</p>
+                        <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-12 flex flex-col items-center justify-center text-center">
+                            <Lucide.ShieldCheck size={48} strokeWidth={1} className="text-slate-200 mb-6" />
+                            <h3 className="font-light text-slate-800 text-base mb-4 tracking-widest uppercase">Analytics Matrix</h3>
+                            <p className="text-sm text-slate-400 font-light max-w-sm leading-relaxed">System logs and error data are currently being indexed for visual mapping. Real-time telemetry is active in the overview dashboard.</p>
                         </div>
                     </div>
                  );
             default:
-                return (
-                    <div className="flex flex-col items-center justify-center py-40 bg-white rounded-3xl border border-dashed border-slate-200">
-                        <Lucide.Monitor size={48} className="text-slate-200 mb-4" />
-                        <p className="text-slate-300 font-bold uppercase tracking-widest text-[11px]">Module Initialization Required</p>
-                    </div>
-                );
+                return null;
         }
     };
 
     return (
-        <div className="flex min-h-screen bg-[#f9fafb] text-[#111827] font-sans selection:bg-blue-100 overflow-x-hidden">
+        <div className="flex min-h-screen bg-[#fafbfc] text-[#111827] font-['Inter',sans-serif] selection:bg-slate-200 overflow-x-hidden antialiased">
             {/* Sidebar */}
-            <aside className="w-64 bg-white border-r border-[#e2e8f0] flex flex-col fixed inset-y-0 z-50 shadow-sm">
-                <div className="p-6 flex items-center gap-3 border-b border-[#f1f5f9]">
-                    <div className="bg-[#2563eb] text-white w-8 h-8 rounded-lg flex items-center justify-center font-black text-lg">M</div>
-                    <span className="font-bold text-sm tracking-tight text-[#111827] uppercase">MSAJCE Terminal</span>
+            <aside className="w-64 bg-white border-r border-slate-50 flex flex-col fixed inset-y-0 z-50 transition-all duration-500">
+                <div className="p-8 pb-10 flex items-center gap-4">
+                    <div className="w-8 h-8 rounded-2xl bg-slate-800 text-white flex items-center justify-center font-light text-sm">M</div>
+                    <span className="text-[13px] tracking-[0.1em] text-slate-600 font-normal uppercase">MSAJCE TERMINAL</span>
                 </div>
                 
-                <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+                <nav className="flex-1 px-4 space-y-2 overflow-y-auto custom-scrollbar pt-4">
                     {navItems.map(item => (
                         <button
                             key={item.id}
                             onClick={() => setActivePanel(item.id)}
-                            className={`w-full flex items-center justify-between px-3 py-3 rounded-xl text-sm font-bold transition-all ${
+                            className={`w-full flex items-center justify-between px-5 py-3 rounded-2xl text-xs font-normal transition-all duration-300 ${
                                 activePanel === item.id 
-                                ? 'bg-[#f0f7ff] text-[#2563eb]' 
-                                : 'text-slate-500 hover:bg-[#f8fafc] hover:text-slate-800'
+                                ? 'bg-slate-800 text-white shadow-xl shadow-slate-200/50' 
+                                : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'
                             }`}
                         >
-                            <div className="flex items-center gap-3">
-                                {item.icon && <item.icon size={18} className={activePanel === item.id ? "text-blue-600" : "text-slate-300"} />}
-                                {item.label}
+                            <div className="flex items-center gap-4">
+                                {item.icon && <item.icon size={16} strokeWidth={1.5} className={activePanel === item.id ? "text-white" : "text-slate-300"} />}
+                                <span className={activePanel === item.id ? "font-normal" : "font-light"}>{item.label.toLowerCase()}</span>
                             </div>
                             {item.badge > 0 && (
-                                <span className="bg-[#ef4444] text-white text-[9px] font-black px-1.5 py-0.5 rounded-md shadow-sm">
+                                <span className="bg-red-400 text-white text-[9px] px-2 py-0.5 rounded-full shadow-sm animate-pulse">
                                     {item.badge}
                                 </span>
                             )}
@@ -340,60 +337,57 @@ const App = () => {
                     ))}
                 </nav>
 
-                <div className="p-6 border-t border-slate-50">
-                    <div className="flex items-center gap-2 text-[10px] font-black text-emerald-500 uppercase tracking-widest">
-                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981] animate-pulse"></div>
-                        System Online
+                <div className="p-8 border-t border-slate-50 group">
+                    <div className="flex items-center gap-3 text-[10px] text-slate-400 font-light lowercase tracking-wider hover:text-emerald-500 transition-colors cursor-default">
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]"></div>
+                        system online
                     </div>
                 </div>
             </aside>
 
-            {/* Main Content Area */}
+            {/* Main Area */}
             <main className="flex-1 ml-64 flex flex-col min-h-screen relative">
-                {/* Global Header */}
-                <header className="h-20 bg-white/80 backdrop-blur-md border-b border-[#e2e8f0] px-8 flex items-center justify-between sticky top-0 z-40">
-                    <div>
-                        <h2 className="font-black text-[#111827] text-xl tracking-tighter uppercase">
-                            {navItems.find(i => i.id === activePanel)?.label || 'Dashboard'}
+                <header className="h-20 bg-white/60 backdrop-blur-xl border-b border-slate-100 flex items-center justify-between px-10 sticky top-0 z-40">
+                    <div className="flex flex-col">
+                        <h2 className="text-[14px] text-slate-800 tracking-[0.1em] uppercase font-normal">
+                            {navItems.find(i => i.id === activePanel)?.label.toLowerCase() || 'dashboard'}
                         </h2>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                           Institutional Administration Access
-                        </span>
+                        <span className="text-[9px] text-slate-300 uppercase tracking-widest font-normal">administrator terminal v4.0</span>
                     </div>
 
-                    {/* Bot Selector Hub */}
-                    <div className="bg-slate-100 p-1 rounded-2xl flex gap-1 border border-slate-200">
+                    <div className="bg-slate-50/50 p-1 rounded-2xl flex gap-1 border border-slate-100 shadow-inner">
                         <button 
                             onClick={() => setActiveBot('assistant')}
-                            className={`flex items-center gap-2 px-6 py-2 rounded-xl text-[11px] font-black transition-all ${
-                                activeBot === 'assistant' ? 'bg-[#2563eb] text-white shadow-lg' : 'text-slate-500 hover:text-[#2563eb]'
+                            className={`flex items-center gap-3 px-6 py-2 rounded-xl text-[10px] tracking-widest font-normal transition-all duration-500 ${
+                                activeBot === 'assistant' ? 'bg-white text-slate-800 shadow-sm border border-slate-100' : 'text-slate-300 hover:text-slate-600'
                             }`}
                         >
-                            <Lucide.Bot size={14} /> ASSISTANT
+                            <Lucide.Cpu size={12} strokeWidth={1.5} /> ASSISTANT
                         </button>
                         <button 
                             onClick={() => setActiveBot('grievance')}
-                            className={`flex items-center gap-2 px-6 py-2 rounded-xl text-[11px] font-black transition-all ${
-                                activeBot === 'grievance' ? 'bg-white text-slate-900 shadow-md border border-slate-200' : 'text-slate-500 hover:text-[#2563eb]'
+                            className={`flex items-center gap-3 px-6 py-2 rounded-xl text-[10px] tracking-widest font-normal transition-all duration-500 ${
+                                activeBot === 'grievance' ? 'bg-white text-slate-800 shadow-sm border border-slate-100' : 'text-slate-300 hover:text-slate-600'
                             }`}
                         >
-                            <Lucide.ShieldCheck size={14} /> GRIEVANCE
+                            <Lucide.Shield size={12} strokeWidth={1.5} /> GRIEVANCE
                         </button>
                     </div>
 
-                    <div className="flex items-center gap-6">
-                         <div className="hidden xl:flex flex-col items-end">
-                            <span className="text-[11px] font-black text-slate-800">{lastSync || 'SYNCING'}</span>
-                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Cloud Latency: 4ms</span>
+                    <div className="flex items-center gap-8">
+                         <div className="flex flex-col items-end">
+                            <span className="text-[10px] text-slate-400 font-light mb-0.5">{lastSync || 'syncing'}</span>
+                            <div className="flex gap-1">
+                                {[1, 2, 3].map(i => <div key={i} className="w-3 h-0.5 bg-slate-100 rounded-full"></div>)}
+                            </div>
                         </div>
-                        <div className="w-10 h-10 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 hover:text-blue-600 transition-colors cursor-pointer">
-                            <Lucide.User size={20} />
+                        <div className="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-300 hover:text-slate-800 transition-all cursor-pointer">
+                            <Lucide.User size={18} strokeWidth={1} />
                         </div>
                     </div>
                 </header>
 
-                {/* Scrolled Content */}
-                <div className="p-8 pb-20">
+                <div className="p-10 max-w-7xl mx-auto w-full">
                     {renderPanelContent()}
                 </div>
             </main>
