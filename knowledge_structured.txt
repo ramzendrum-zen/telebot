@@ -1094,3 +1094,245 @@ QUERY_VARIATIONS:
  - What is the formula for calculating qualifying marks for admissions?
  - How do Mathematics, Physics, and Chemistry marks contribute to the overall qualifying score for candidate selection?
 
+--- DOCUMENT_ID: 69bb8ffc0c142506c80c11d5 ---
+TIMESTAMP: 2026-03-19T05:56:12.992Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: 
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: (Mathematics / 2) + ((Physics + Chemistry) / 4), where M.P. and C represent the percentage marks in Mathematics, Physics and Chemistry, respectively. For Admission (Students from Other States): For assistance, students can contact Dr. Vamsi Naga Mohan .A, Who can communicate in Telugu, Tamil, Malayalam and Hindi.
+KEYWORDS: 
+ENTITIES: 
+QUERY_VARIATIONS:
+
+
+--- DOCUMENT_ID: 69bb90200c142506c80c11d8 ---
+TIMESTAMP: 2026-03-19T05:56:49.034Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The Mohamed Sathak A.J. College of Engineering provides admission contact information, including names, phone numbers, and email addresses of key personnel.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Who can communicate in Telugu, Tamil, Malayalam, and Hindi. Contact numbers are 9043358674 and 9502687344. Email is cse.vamsi@msajce-edu.in. Admission contact details are as follows: 1. Dr. K.S. Srinivasan, Principal, MSAJCE, Chennai, phone number 9150575066, email principal@msajce-edu.in. 2. Mr. A.Abdul Gafoor, Administrative Officer, MSAJCE, Chennai.
+KEYWORDS: education, admission, contact, MSAJCE, Chennai, engineering
+ENTITIES: Dr. K.S. Srinivasan, Mr. A.Abdul Gafoor, MSAJCE, Chennai
+QUERY_VARIATIONS:
+ - How can I contact MSAJCE for admission inquiries?
+ - What are the contact details of the administrative officer at MSAJCE?
+ - Who is the principal of MSAJCE, and how can I reach them?
+
+--- DOCUMENT_ID: 69bb90390c142506c80c11db ---
+TIMESTAMP: 2026-03-19T05:57:13.849Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: This content lists faculty members of MSAJCE, including their positions and contact information.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Mr. A. Abdul Gafoor, Administrative Officer, MSAJCE, Chennai, 9940319629, abdulgafoor@msajce-edu.in. Dr. K.P. Santhosh Nathan, Physical Education Director & Head-Admission, MSAJCE, Chennai, 9840886992, ped.santhosh@msajce-edu.in. Mr. S. Syed Abuthahir, Assistant Professor, MSAJCE, Chennai, 9944127339, mech@msajce-edu.in.
+KEYWORDS: MSAJCE, Faculty, Administrative Officer, Physical Education Director, Assistant Professor, Chennai
+ENTITIES: Mr. A. Abdul Gafoor, Dr. K.P. Santhosh Nathan, Mr. S. Syed Abuthahir, MSAJCE, Chennai
+QUERY_VARIATIONS:
+ - Who are the key faculty members at MSAJCE?
+ - What are the contact details of the Administrative Officer at MSAJCE?
+ - Who is the Physical Education Director at MSAJCE?
+
+--- DOCUMENT_ID: 69bb90460c142506c80c11de ---
+TIMESTAMP: 2026-03-19T05:57:26.428Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: A list of faculty members at MSAJCE, including their names, positions, contact information, and departments.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Ahir, Assistant Professor, MSAJCE, Chennai, 9944127339, mech.syedabuthahir@msajce-edu.in. Mr. B. Rizha Ur Rahman, Assistant Professor, MSAJCE, Chennai, 9790836981, civil.rizha@msajce-edu.in. Mrs. I.S. Suganthi, Assistant Professor, MSAJCE, Chennai, 7299772958, ece.suganthi@msajce-edu.
+KEYWORDS: faculty, MSAJCE, Chennai, engineering, education
+ENTITIES: Ahir, Mr. B. Rizha Ur Rahman, Mrs. I.S. Suganthi, MSAJCE, Chennai
+QUERY_VARIATIONS:
+ - Who are the faculty members at MSAJCE in Chennai?
+ - What are the contact details of the professors at Mohamed Sathak A.J. College of Engineering?
+ - Which departments do Ahir, Mr. B. Rizha Ur Rahman, and Mrs. I.S. Suganthi teach in at MSAJCE?
+
+--- DOCUMENT_ID: 69bb906d0c142506c80c11e1 ---
+TIMESTAMP: 2026-03-19T05:58:05.530Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: MSAJCE in Chennai provides educational services with specified opening hours.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: MSAJCE, Chennai, offers educational services. Lorem ipsum dolor sit amet, consectetur adipiscing elit, commodi molestiae autem fugit consectetur dolor ullam illo ipsa numquam quod iusto enim ipsum amet iusto amet consec.
+KEYWORDS: Education, MSAJCE, Chennai, Engineering College
+ENTITIES: MSAJCE, Chennai
+QUERY_VARIATIONS:
+ - What are the opening hours of MSAJCE in Chennai?
+ - How to contact MSAJCE for admission queries?
+ - What educational services does MSAJCE offer?
+
+--- DOCUMENT_ID: 69bb907e0c142506c80c11e4 ---
+TIMESTAMP: 2026-03-19T05:58:22.700Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: 
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: ning Hours Monday - Friday 9.00 - 20.00 Saturday 10.00 - 16.00 Sunday 9.30 - 18.00 Contact Info (+01) – 234 567 890 www.yourdomain.com contact@yourdomain.com Copyright ©2016 ThemeMascot
+KEYWORDS: 
+ENTITIES: 
+QUERY_VARIATIONS:
+
+
+--- DOCUMENT_ID: 69bb908c0c142506c80c11e7 ---
+TIMESTAMP: 2026-03-19T05:58:36.869Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: 
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: omain.com contact@yourdomain.com Copyright ©2016 ThemeMascot
+KEYWORDS: 
+ENTITIES: 
+QUERY_VARIATIONS:
+
+
+--- DOCUMENT_ID: 69bb90970c142506c80c11ea ---
+TIMESTAMP: 2026-03-19T05:58:47.846Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The curriculum and syllabus for undergraduate programs in various engineering disciplines for the year 2024.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Curriculum and Syllabus for Regulations 2024 - UG. Departments include: 1. Civil Engineering, 2. Computer Science and Engineering, 3. Computer Science and Engineering with specialization in Artificial Intelligence and Machine Learning, 4. Computer Science and Engineering with specialization in Cyber Security.
+KEYWORDS: Curriculum, Syllabus, Regulations 2024, UG, Civil Engineering, Computer Science, Artificial Intelligence, Machine Learning, Cyber Security
+ENTITIES: Mohamed Sathak A. J. College of Engineering, Chennai, 2024
+QUERY_VARIATIONS:
+ - What are the undergraduate engineering programs offered by MSAJCE for the 2024 regulations?
+ - Where can I find the curriculum and syllabus for the 2024 UG engineering programs at MSAJCE?
+ - What specializations are available in Computer Science and Engineering for the 2024 batch at MSAJCE?
+
+--- DOCUMENT_ID: 69bb90a10c142506c80c11ed ---
+TIMESTAMP: 2026-03-19T05:58:57.475Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: This list encompasses various engineering disciplines and specializations offered, including Computer Science, Electrical, Electronic, Mechanical, and Artificial Intelligence fields.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Computer Science and Engineering with specialization in Cyber Security, Electrical and Electronic Engineering, Electronic and Communication Engineering, Mechanical Engineering, Artificial Intelligence and Data Science, Computer Science and Business Systems, Electronic and Communication Engineering with specialization in Advanced Communication.
+KEYWORDS: Computer Science, Cyber Security, Electrical Engineering, Electronic Engineering, Mechanical Engineering, Artificial Intelligence, Data Science, Business Systems, Communication Engineering
+ENTITIES: Mohamed Sathak A.J. College of Engineering, Chennai
+QUERY_VARIATIONS:
+ - What engineering programs are available at Mohamed Sathak A.J. College of Engineering?
+ - Can you list the specializations offered in engineering at MSAJCE?
+ - What are the different fields of study in engineering and technology at this college?
+
+--- DOCUMENT_ID: 69bb90b10c142506c80c11f0 ---
+TIMESTAMP: 2026-03-19T05:59:13.350Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The curriculum includes specializations in Advanced Communication Technology, VLSI Design and Technology, and Information Technology Regulations for postgraduate studies.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Electronics and Communication Engineering with specialization in Advanced Communication Technology 11 Electronics Engineering with specialization in VLSI Design and Technology 12 Information Technology for Regulations 2024 - Postgraduate Studies
+KEYWORDS: Electronics, Communication Engineering, Advanced Communication Technology, VLSI Design, Information Technology, Regulations
+ENTITIES: 2024
+QUERY_VARIATIONS:
+ - What specializations are offered in the postgraduate program for Electronics and Communication Engineering?
+ - What are the key areas of focus in the Information Technology curriculum for postgraduate studies?
+ - Are there any regulations or technology-focused specializations available in the postgraduate program?
+
+--- DOCUMENT_ID: 69bb90ba0c142506c80c11f3 ---
+TIMESTAMP: 2026-03-19T05:59:22.965Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: This pertains to the Information Technology regulations for the year 2024, specifically for postgraduate studies, covering departments such as Computer Science and Engineering, and Structural Engineering.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Information Technology for Regulations 2024 - PG. The departments include Computer Science and Engineering, and Structural Engineering.
+KEYWORDS: Information Technology, Regulations, Computer Science, Engineering, Postgraduate
+ENTITIES: Computer Science and Engineering, Structural Engineering, 2024
+QUERY_VARIATIONS:
+ - What are the regulations for Information Technology postgraduate studies in 2024?
+ - Which engineering departments are covered under the 2024 IT regulations for PG?
+ - What does the 2024 curriculum for IT regulations include for Computer Science and Structural Engineering students?
+
+--- DOCUMENT_ID: 69bb90cc0c142506c80c11f6 ---
+TIMESTAMP: 2026-03-19T05:59:40.548Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: A discussion on justice and truth.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: o ipsa numquam quod iusto enim ipsum amet iusto amet consec
+KEYWORDS: justice, truth, ethics
+ENTITIES: 
+QUERY_VARIATIONS:
+ - What does the Latin phrase "o ipsa numquam quod iusto enim ipsum amet iusto amet consec" mean?
+ - How do concepts of justice relate to truth in philosophical discussions?
+ - What role does ethics play in understanding justice and truth?
+
+--- DOCUMENT_ID: 69bb90d50c142506c80c11f9 ---
+TIMESTAMP: 2026-03-19T05:59:49.104Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Contact information for a domain, including email and copyright notice.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: omain.com contact@yourdomain.com Copyright 2016 ThemeMascot
+KEYWORDS: contact, email, copyright, domain
+ENTITIES: omain.com, ThemeMascot, 2016
+QUERY_VARIATIONS:
+ - What is the contact email for this domain?
+ - Who owns the copyright for omain.com?
+ - What year was the copyright for ThemeMascot established?
+
+--- DOCUMENT_ID: 69bb90e30c142506c80c11fc ---
+TIMESTAMP: 2026-03-19T06:00:03.674Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The academic institution offers various programmes supported by different departments with specified operating hours.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Academic programmes are supported by various departments. Useful Links: Opening Hours - Monday to Friday 9:00 - 20:00, Saturday 10:00 - 16:00, Sunday 9:00.
+KEYWORDS: Academics, Programmes, Departments, Operating Hours
+ENTITIES: Academic Institution, Departments
+QUERY_VARIATIONS:
+ - What programmes are offered by the academic institution?
+ - What are the operating hours of the institution?
+ - How are academic programmes supported within the institution?
+
+--- DOCUMENT_ID: 69bb90ed0c142506c80c11ff ---
+TIMESTAMP: 2026-03-19T06:00:13.661Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: 
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: onday - Friday 9.00 - 20.00 Saturday 10.00 - 16.00 Sunday 9.30 - 18.00 Contact Info (+01) – 234 567 890 www.yourdomain.com contact@yourdomain.com Copyright ©2016 ThemeMascot
+KEYWORDS: 
+ENTITIES: 
+QUERY_VARIATIONS:
+
+
+--- DOCUMENT_ID: 69bb91110c142506c80c1202 ---
+TIMESTAMP: 2026-03-19T06:00:49.157Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: 
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: omain.com contact@yourdomain.com Copyright ©2016 ThemeMascot
+KEYWORDS: 
+ENTITIES: 
+QUERY_VARIATIONS:
+
+
+--- DOCUMENT_ID: 69bb911b0c142506c80c1205 ---
+TIMESTAMP: 2026-03-19T06:00:59.690Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The Research and Development Cell at the College aims to foster a research culture by promoting studies in emerging and challenging engineering areas.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The Research and Development Cell aims to nurture research culture in the College by promoting research in newly emerging and challenging areas of Engineering
+KEYWORDS: Research and Development, Engineering, Research Culture, Emerging Technologies
+ENTITIES: Mohamed Sathak A. J. College of Engineering, Chennai
+QUERY_VARIATIONS:
+ - What are the objectives of the Research and Development Cell at MSAJCE?
+ - How does MSAJCE promote research in engineering?
+ - What are the focus areas of the Research and Development Cell at Mohamed Sathak A. J. College of Engineering?
+
+--- DOCUMENT_ID: 69bb913c0c142506c80c1208 ---
+TIMESTAMP: 2026-03-19T06:01:32.821Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The institution aims to foster research in emerging areas of Engineering, Technology, Science, and Humanities among students and faculty by providing necessary resources.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The institution aims to foster research in emerging areas of Engineering, Technology, Science, and Humanities among students and faculty by providing necessary resources.
+KEYWORDS: Engineering, Technology, Science, Humanities, Research, Facilities, Infrastructures
+ENTITIES: 
+QUERY_VARIATIONS:
+ - What research opportunities are available in Engineering, Technology, Science, and Humanities?
+ - How does the institution support research among students and faculty?
+ - What facilities are provided for research in emerging areas of study?
+
