@@ -39,6 +39,7 @@ export const normalizeQueryBasic = (query) => {
     'blue star': 'Anna Nagar', 'thirumangalam': 'Anna Nagar',
     'skywalk': 'Anna Nagar', 'ramachandra': 'Porur',
     'vijaya nagar': 'Velachery', 'kasi': 'Kasi Theatre',
+    'camp road': 'Tambaram Medavakkam',
   };
 
   let words = q.split(/\s+/);
