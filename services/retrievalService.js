@@ -43,7 +43,13 @@ export const performHybridSearch = async (queryText, category = 'general', filte
       // Apply metadata filters (e.g. metadata.route: "AR-8")
       if (filters && Object.keys(filters).length > 0) {
           for (const [key, val] of Object.entries(filters)) {
-              searchFilter[`metadata.${key}`] = { $regex: val, $options: 'i' };
+              // Priority mapping for common entity fields
+              if (key === 'subject') {
+                  searchFilter.$or.push({ "metadata.name": { $regex: val, $options: 'i' } });
+                  searchFilter.$or.push({ "title": { $regex: val, $options: 'i' } });
+              } else {
+                  searchFilter[`metadata.${key}`] = { $regex: val, $options: 'i' };
+              }
           }
       }
 

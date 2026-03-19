@@ -11,6 +11,8 @@ const masterAdmin = [
   { id: 'admin_transport_convener', title: 'Transport Convener', name: 'Dr. K. P. SANTHOSH NATHAN', role: 'Transport Convener (Dir. PD)', phone: '98408 86992', email: 'ped.santhosh@msajce-edu.in' },
   { id: 'admin_asst_transport_convener', title: 'Assistant Transport Convener', name: 'Mr. A. ABDUL GAFOOR', role: 'Asst. Transport Convener', phone: '99403 19629' },
   { id: 'hod_it', title: 'HOD of IT Department', name: 'Dr. D. WESLIN', role: 'Associate Professor & HOD', phone: '9715202533', email: 'it.weslin@msajce-edu.in' },
+  { id: 'faculty_yogesh', title: 'Professor in IT', name: 'Dr. Elliss Yogesh R', role: 'Professor', department: 'Information Technology' },
+  { id: 'student_yogesh', title: 'CSI President', name: 'Yogesh R', role: 'President of Computer Society of India (CSI)', department: 'Information Technology', batch: '2022-2026' },
   { id: 'admin_contact', title: 'College Contact Information', role: 'MSAJCE Office', phone: '+91 99400 04500', email: 'contact@msajce-edu.in', address: 'Mohamed Sathak A. J. College of Engineering, Egattur, Old Mahabalipuram Rd, Chennai, Tamil Nadu 603103' },
 ];
 
