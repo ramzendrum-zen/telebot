@@ -1650,3 +1650,185 @@ QUERY_VARIATIONS:
  - Manjambakkam college bus schedule for AR-8
  - When does the AR-8 bus from Manjambakkam college depart?
 
+--- DOCUMENT_ID: 69bb9fd8769fddbb0c7e685a ---
+TIMESTAMP: 2026-03-19T07:03:52.975Z
+TITLE: Mohamed Sathak Trust Overview
+SUMMARY: The Mohamed Sathak Trust provides quality education to rural and disadvantaged students.
+CATEGORY: general
+SOURCE: verified_trust
+CONTENT: The Mohamed Sathak Trust provides quality education to rural and disadvantaged students, established in 1973 by the philanthropic Mohamed Sathak Family of Kilakarai.
+KEYWORDS: education, philanthropy, rural students, disadvantaged students
+ENTITIES: Mohamed Sathak Trust, Mohamed Sathak Family, Kilakarai, 1973
+QUERY_VARIATIONS:
+ - What is the Mohamed Sathak Trust?
+ - How does the Mohamed Sathak Family contribute to education?
+ - What organizations provide educational support to disadvantaged students in rural areas?
+
+--- DOCUMENT_ID: 69bba007769fddbb0c7e685d ---
+TIMESTAMP: 2026-03-19T07:04:39.272Z
+TITLE: Trust Leadership
+SUMMARY: The Mohamed Sathak Trust is led by key individuals including Mr. Mohamed Yousuf S.M., Janaba S.M.H. Sharmila, and Janab P.R.L. Hamid Ibrahim.
+CATEGORY: general
+SOURCE: verified_trust
+CONTENT: The Mohamed Sathak Trust is led by Mr. Mohamed Yousuf S.M. (Chairman), Janaba. S.M.H. Sharmila (Secretary), and Janab. P.R.L. Hamid Ibrahim (Executive Director).
+KEYWORDS: Trust leadership, Mohamed Sathak Trust, executive director, chairman, secretary
+ENTITIES: Mohamed Yousuf S.M., Janaba S.M.H. Sharmila, Janab P.R.L. Hamid Ibrahim, Mohamed Sathak Trust
+QUERY_VARIATIONS:
+ - Who are the leaders of the Mohamed Sathak Trust?
+ - What are the roles of Mr. Mohamed Yousuf S.M., Janaba S.M.H. Sharmila, and Janab P.R.L. Hamid Ibrahim in the trust?
+ - Who holds the positions of Chairman, Secretary, and Executive Director in the Mohamed Sathak Trust?
+
+--- DOCUMENT_ID: 69bba05b1ccb92c8daa1508a ---
+TIMESTAMP: 2026-03-19T07:06:04.067Z
+TITLE: Bus Route AR-3
+SUMMARY: The driver for bus route AR-3 is Mr. Sathish K.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: The driver for bus route AR-3 is Mr. Sathish K (+91-9789970304).
+KEYWORDS: bus route, driver, contact information
+ENTITIES: Mr. Sathish K, AR-3, +91-9789970304
+QUERY_VARIATIONS:
+ - Who is the driver for bus route AR-3?
+ - What is the contact number of the driver for AR-3 bus route?
+ - Who drives the AR-3 bus route and how can I contact them?
+
+--- DOCUMENT_ID: 69bba08a1ccb92c8daa1508d ---
+TIMESTAMP: 2026-03-19T07:06:50.181Z
+TITLE: Bus Route AR-3
+SUMMARY: The AR-3 bus route connects T. Nagar to College with several stops in between.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: The AR-3 bus route includes stops at T. Nagar, Saidapet, Guindy, Velachery, Medavakkam, Camp Road, Mambakkam, and College.
+KEYWORDS: bus route, AR-3, Chennai, transportation, public transit
+ENTITIES: T. Nagar, Saidapet, Guindy, Velachery, Medavakkam, Camp Road, Mambakkam, College
+QUERY_VARIATIONS:
+ - What are the stops on the AR-3 bus route?
+ - How do I get from T. Nagar to College by bus?
+ - What bus route goes from T. Nagar to College with stops at Saidapet and Guindy?
+
+--- DOCUMENT_ID: 69bba0941ccb92c8daa15090 ---
+TIMESTAMP: 2026-03-19T07:07:00.759Z
+TITLE: Bus Route AR-3
+SUMMARY: T. Nagar college bus schedule for route AR-3.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: The T. Nagar college bus for route AR-3 starts at 06:20 AM.
+KEYWORDS: college, bus, route, AR-3, schedule
+ENTITIES: T. Nagar, AR-3
+QUERY_VARIATIONS:
+ - What time does the T. Nagar college bus start for route AR-3?
+ - T. Nagar college bus schedule for AR-3 route
+ - When does the bus for route AR-3 leave from T. Nagar college?
+
+--- DOCUMENT_ID: 69bba09d1ccb92c8daa15093 ---
+TIMESTAMP: 2026-03-19T07:07:09.591Z
+TITLE: Bus Route AR-5
+SUMMARY: The drivers for bus route AR-5 are Mr. Murugan and Mr. Velu, reachable at +91-9962254425 and +91-9940050685, respectively.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: The driver for bus route AR-5 is Mr. Murugan (+91-9962254425) or Mr. Velu (+91-9940050685).
+KEYWORDS: bus route, driver, contact information
+ENTITIES: Mr. Murugan, Mr. Velu, AR-5
+QUERY_VARIATIONS:
+ - Who are the drivers for bus route AR-5 and how can I contact them?
+ - What are the contact details of the drivers for the AR-5 bus route?
+ - Can I get the names and phone numbers of the drivers assigned to bus route AR-5?
+
+--- DOCUMENT_ID: 69bba0b71ccb92c8daa15096 ---
+TIMESTAMP: 2026-03-19T07:07:35.096Z
+TITLE: Bus Route AR-5
+SUMMARY: The AR-5 bus route starts at MMDA School and stops at various locations before ending at College
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: Bus route AR-5 path: MMDA School, Anna Nagar, Skywalk, Saidapet, Velachery, OMR, Ladies Hostel, College
+KEYWORDS: bus route, AR-5, transportation, college, MMDA School
+ENTITIES: MMDA School, Anna Nagar, Skywalk, Saidapet, Velachery, OMR, Ladies Hostel, College
+QUERY_VARIATIONS:
+ - What are the stops on the AR-5 bus route?
+ - How do I get to College using the AR-5 bus?
+ - What is the path of the AR-5 bus starting from MMDA School?
+
+--- DOCUMENT_ID: 69bba0c01ccb92c8daa15099 ---
+TIMESTAMP: 2026-03-19T07:07:44.443Z
+TITLE: Bus Route AR-5
+SUMMARY: The MMDA school bus for route AR-5 begins its service at 06:15 AM.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: MMDA school bus starts at 06:15 AM for route AR-5.
+KEYWORDS: school bus, MMDA, route AR-5, transportation
+ENTITIES: MMDA, AR-5
+QUERY_VARIATIONS:
+ - What time does the MMDA school bus start for route AR-5?
+ - When does the school bus service for route AR-5 commence?
+ - At what time can I catch the AR-5 school bus operated by MMDA?
+
+--- DOCUMENT_ID: 69bba0c71ccb92c8daa1509c ---
+TIMESTAMP: 2026-03-19T07:07:51.178Z
+TITLE: Bus Route AR-8
+SUMMARY: The driver for bus route AR-8 is Mr. Raju.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: The driver for bus route AR-8 is Mr. Raju (+91-9790750906).
+KEYWORDS: bus route, driver, contact information
+ENTITIES: Mr. Raju, AR-8, +91-9790750906
+QUERY_VARIATIONS:
+ - Who is the driver for bus route AR-8?
+ - What is the contact number of the driver for AR-8 bus route?
+ - Can I get the details of the driver for bus route AR-8?
+
+--- DOCUMENT_ID: 69bba0f31ccb92c8daa1509f ---
+TIMESTAMP: 2026-03-19T07:08:35.550Z
+TITLE: Bus Route AR-8
+SUMMARY: Bus route AR-8 runs from Manjambakkam to College with stops at Retteri, Senthil Nagar, Anna Nagar, Porur, and Perungalathur.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: Bus route AR-8 path: Manjambakkam (7:10 AM) → Retteri → Senthil Nagar → Anna Nagar (7:25 AM) → Porur (7:45 AM) → Perungalathur → College.
+KEYWORDS: bus route, AR-8, Manjambakkam, Retteri, Senthil Nagar, Anna Nagar, Porur, Perungalathur, College, transportation, schedule
+ENTITIES: Manjambakkam, Retteri, Senthil Nagar, Anna Nagar, Porur, Perungalathur, College, AR-8
+QUERY_VARIATIONS:
+ - What is the path of bus route AR-8?
+ - How do I get to College from Manjambakkam using bus route AR-8?
+ - What are the stops and timings for bus route AR-8 from Manjambakkam to College?
+
+--- DOCUMENT_ID: 69bba0fb1ccb92c8daa150a2 ---
+TIMESTAMP: 2026-03-19T07:08:44.001Z
+TITLE: Bus Route AR-8
+SUMMARY: Manjambakkam college bus operates on route AR-8, starting at 07:10 AM.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: Manjambakkam college bus starts at 07:10 AM for route AR-8.
+KEYWORDS: college bus, route AR-8, Manjambakkam, transportation
+ENTITIES: Manjambakkam, AR-8
+QUERY_VARIATIONS:
+ - What time does the Manjambakkam college bus start for route AR-8?
+ - When does the bus for route AR-8 depart from Manjambakkam college?
+ - What is the starting time of the AR-8 bus route from Manjambakkam college?
+
+--- DOCUMENT_ID: 69bba1081ccb92c8daa150a5 ---
+TIMESTAMP: 2026-03-19T07:08:56.798Z
+TITLE: Mohamed Sathak Trust Overview
+SUMMARY: The Mohamed Sathak Trust provides quality education to rural and disadvantaged students, established in 1973.
+CATEGORY: general
+SOURCE: verified_trust
+CONTENT: The Mohamed Sathak Trust was established in 1973 by the philanthropic Mohamed Sathak Family of Kilakarai. It aims to provide quality education to rural and disadvantaged students.
+KEYWORDS: education, philanthropy, rural development, disadvantaged students
+ENTITIES: Mohamed Sathak Trust, Mohamed Sathak Family, Kilakarai, 1973
+QUERY_VARIATIONS:
+ - What is the Mohamed Sathak Trust and its mission?
+ - How does the Mohamed Sathak Trust support rural education?
+ - What are the goals of the Mohamed Sathak Family in establishing the trust?
+
+--- DOCUMENT_ID: 69bba1151ccb92c8daa150a8 ---
+TIMESTAMP: 2026-03-19T07:09:10.032Z
+TITLE: Trust Leadership
+SUMMARY: The Mohamed Sathak Trust is led by key individuals including Mr. Mohamed Yousuf S.M., Janaba S.M.H. Sharmila, and Janab P.R.L. Hamid Ibrahim.
+CATEGORY: general
+SOURCE: verified_trust
+CONTENT: The Mohamed Sathak Trust is led by Mr. Mohamed Yousuf S.M. (Chairman), Janaba. S.M.H. Sharmila (Secretary), and Janab. P.R.L. Hamid Ibrahim (Executive Director).
+KEYWORDS: leadership, trust, management, Mohamed Sathak Trust
+ENTITIES: Mohamed Yousuf S.M., Janaba S.M.H. Sharmila, Janab P.R.L. Hamid Ibrahim, Mohamed Sathak Trust
+QUERY_VARIATIONS:
+ - Who are the leaders of the Mohamed Sathak Trust?
+ - What are the key positions in the Mohamed Sathak Trust and who holds them?
+ - Can you list the management team of the Mohamed Sathak Trust?
+
