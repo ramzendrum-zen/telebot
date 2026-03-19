@@ -746,3 +746,351 @@ QUERY_VARIATIONS:
  - List the colleges and schools under Mohamed Sathak in Chennai.
  - What are the educational options available in Chennai under the Mohamed Sathak group?
 
+--- DOCUMENT_ID: 69bb8e840c142506c80c118a ---
+TIMESTAMP: 2026-03-19T05:49:56.629Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Mohamed Sathak institutions include colleges for engineering, architecture, arts and science, nursing, pharmacy, physiotherapy, and a teacher training college.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Mohamed Sathak institutions include Mohamed Sathak A.J. College of Engineering, Mohamed Sathak A.J. Academy of Architecture, Mohamed Sathak College of Arts And Science, Mohamed Sathak A.J. College of Nursing, Mohamed Sathak A.J. College of Pharmacy, Mohamed Sathak A.J. College of Physiotherapy, Mohamed Sathak Teacher Training College, and Mohamed Sathak Matric & Hr. Sec.
+KEYWORDS: education, colleges, engineering, architecture, nursing, pharmacy, physiotherapy, teacher training
+ENTITIES: Mohamed Sathak A.J. College of Engineering, Mohamed Sathak A.J. Academy of Architecture, Mohamed Sathak College of Arts And Science, Mohamed Sathak A.J. College of Nursing, Mohamed Sathak A.J. College of Pharmacy, Mohamed Sathak A.J. College of Physiotherapy, Mohamed Sathak Teacher Training College, Mohamed Sathak Matric & Hr. Sec.
+QUERY_VARIATIONS:
+ - What colleges are under the Mohamed Sathak group of institutions?
+ - How many colleges does Mohamed Sathak have in Chennai?
+ - What programs are offered by Mohamed Sathak institutions?
+
+--- DOCUMENT_ID: 69bb8e8e0c142506c80c118d ---
+TIMESTAMP: 2026-03-19T05:50:06.412Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Mohamed Sathak institutions include a teacher training college, matric and higher secondary school, with various committees for management and student welfare.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: ak Teacher Training College Mohamed Sathak Matric & Hr. Sec. School Overview Vision & Mission Management Principal Message Statutory body Governing Council Planning & Monitoring Board Academic Advisory Committee Grievance and Redressal Committee Anti-Ragging Committee & Squad Womens Empowerment Cell Functional Committees MSA
+KEYWORDS: Teacher Training, Matric School, Higher Secondary School, Management, Principal, Governing Council, Academic Advisory, Grievance Redressal, Anti-Ragging, Womens Empowerment
+ENTITIES: Mohamed Sathak, MSA
+QUERY_VARIATIONS:
+ - What are the different institutions under Mohamed Sathak?
+ - How is Mohamed Sathak College managed?
+ - What committees are present in Mohamed Sathak for student welfare?
+
+--- DOCUMENT_ID: 69bb8e9a0c142506c80c1190 ---
+TIMESTAMP: 2026-03-19T05:50:18.317Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: MSAJCE's institutional components and policies.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: MSAJCE's ee and Squad, Womens Empowerment Cell, Functional Committees, Policies, Mandatory Disclosure, and Group of Institutions
+KEYWORDS: Womens Empowerment, MSAJCE, Institutional Policies, Mandatory Disclosure
+ENTITIES: MSAJCE, Womens Empowerment Cell
+QUERY_VARIATIONS:
+ - What are the different cells and committees under MSAJCE?
+ - How does MSAJCE support women's empowerment?
+ - What policies does MSAJCE have in place for disclosure?
+
+--- DOCUMENT_ID: 69bb8ead0c142506c80c1193 ---
+TIMESTAMP: 2026-03-19T05:50:37.220Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: An entity operates from Monday to Friday (9:00-20:00), Saturday (10:00-16:00), and Sunday (9:30-18:00), and can be contacted via phone or email.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: An entity operates from Monday to Friday (9:00-20:00), Saturday (10:00-16:00), and Sunday (9:30-18:00), and can be contacted via phone (+01) – 234 567 890 or email contact@yourdomain.com.
+KEYWORDS: operational hours, contact information, business hours, customer service
+ENTITIES: ThemeMascot, (+01) – 234 567 890, www.yourdomain.com, contact@yourdomain.com, 2016
+QUERY_VARIATIONS:
+ - What are the operational hours of your institution?
+ - How can I contact your customer service team?
+ - What are your business hours and how can I reach you?
+
+--- DOCUMENT_ID: 69bb8eb50c142506c80c1196 ---
+TIMESTAMP: 2026-03-19T05:50:45.181Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: This text contains contact information and copyright details for ThemeMascot.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: omain.com and contact@yourdomain.com are associated with ThemeMascot, copyrighted in 2016.
+KEYWORDS: copyright, contact information, ThemeMascot
+ENTITIES: ThemeMascot, 2016
+QUERY_VARIATIONS:
+ - What is the copyright information for ThemeMascot?
+ - How can I contact ThemeMascot?
+ - What year was ThemeMascot copyrighted?
+
+--- DOCUMENT_ID: 69bb8ec20c142506c80c1199 ---
+TIMESTAMP: 2026-03-19T05:50:58.478Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The principal expresses admiration for the institution's commitment to providing excellent education and facilities.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: principal message home principal message dear parents and prospective students as principal i am impressed by the commitment of our management and the faculty for the provision of an excellent all round education with state of the art facilities to our students so that they become multidimensional rather than uni dimensional
+KEYWORDS: education, facilities, multidimensional, students
+ENTITIES: 
+QUERY_VARIATIONS:
+ - What does the principal say about the college's educational commitment?
+ - How does the principal describe the college's approach to student development?
+ - What kind of education does the principal believe the college provides?
+
+--- DOCUMENT_ID: 69bb8ec90c142506c80c119c ---
+TIMESTAMP: 2026-03-19T05:51:05.959Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Education should focus on developing human capabilities rather than just acquiring information.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: that they become multidimensional rather than uni-dimensional. Acquiring information is no longer the main focus of education; instead the main aim of education is to build the powers of human mind and spirit.
+KEYWORDS: multidimensional education, human development, educational focus
+ENTITIES: 
+QUERY_VARIATIONS:
+ - What is the main aim of education in terms of human development?
+ - How should education focus on developing human capabilities?
+ - What is the shift in focus from traditional education to multidimensional education?
+
+--- DOCUMENT_ID: 69bb8ed20c142506c80c119f ---
+TIMESTAMP: 2026-03-19T05:51:14.953Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: MSAJCE provides a supportive environment for students' holistic development, focusing on knowledge and extracurricular activities.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Education is to build the powers of the human mind and spirit. MSAJCE believes in providing our students with an environment that is rich in knowledge and supportive of their extracurricular interests. We evaluate our students based on their physical, mental, social, emotional, and intellectual development.
+KEYWORDS: education, holistic development, extracurricular activities, knowledge, student support
+ENTITIES: MSAJCE
+QUERY_VARIATIONS:
+ - What kind of environment does MSAJCE offer its students?
+ - How does MSAJCE support the development of its students?
+ - What values does MSAJCE prioritize in educating its students?
+
+--- DOCUMENT_ID: 69bb8ee40c142506c80c11a2 ---
+TIMESTAMP: 2026-03-19T05:51:33.058Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: MSAJCE is committed to fostering holistic development in students, preparing them for success in Industry 4.0.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The college focuses on cal, mental, social, emotional, and intellectual development. MSAJCE is dedicated to developing skilled and outstanding students who can pursue their interests and strengths to the best of their ability, enabling them to actively face the challenges of Industry 4.0.
+KEYWORDS: holistic development, student success, Industry 4.0, education, skill development
+ENTITIES: MSAJCE, Mohamed Sathak A. J. College of Engineering, Chennai
+QUERY_VARIATIONS:
+ - What is MSAJCE's approach to student development?
+ - How does Mohamed Sathak A. J. College of Engineering prepare students for Industry 4.0?
+ - What values does MSAJCE prioritize in educating its students?
+
+--- DOCUMENT_ID: 69bb8eed0c142506c80c11a5 ---
+TIMESTAMP: 2026-03-19T05:51:41.740Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The institution aims to equip students with the skills to face Industry 4.0 challenges and contribute to a better society through holistic education and innovative thinking.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Enriched students will be able to actively face Industry 4.0 challenges as well as build a strong society for a better world. To meet these needs, we practice a holistic approach with enabled new structure that stimulates the young minds in terms of innovative and creative thinking with great freedom to learn.
+KEYWORDS: Industry 4.0, holistic education, innovative thinking, creative thinking, better society
+ENTITIES: 
+QUERY_VARIATIONS:
+ - How can education prepare students for Industry 4.0 challenges?
+ - What role does holistic education play in fostering innovative thinking?
+ - How can academic institutions contribute to building a better society through education?
+
+--- DOCUMENT_ID: 69bb8ef70c142506c80c11a8 ---
+TIMESTAMP: 2026-03-19T05:51:51.647Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Dr. K.S. Srinivasan welcomes students, wishing them a memorable experience and hoping they achieve great heights.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Creative thinking with great freedom to learn with different perceptiveness. I welcome you all and wish a memorable studentship. I hope you will be able to achieve greater heights and bring laurels to our institute. Best wishes, Dr. K.S. Srinivasan Ph.D.
+KEYWORDS: creative thinking, freedom to learn, perceptiveness, memorable studentship, greater heights, laurels
+ENTITIES: Dr. K.S. Srinivasan, Mohamed Sathak A.J. College of Engineering
+QUERY_VARIATIONS:
+ - What message does Dr. K.S. Srinivasan have for incoming students?
+ - How does Dr. K.S. Srinivasan envision the students' experience at the institute?
+ - What are Dr. K.S. Srinivasan's wishes for the students of Mohamed Sathak A.J. College of Engineering?
+
+--- DOCUMENT_ID: 69bb8f050c142506c80c11ab ---
+TIMESTAMP: 2026-03-19T05:52:05.227Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The structure and committees of an educational institution led by Dr. K.S. Srinivasan.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Our Institute. Best Wishes, Dr. K.S. Srinivasan, Ph.D., Principal. Overview, Vision & Mission, Management, Principal Message, Statutory body, Governing Council, Planning & Monitoring Board, Academic Advisory Committee, Grievance and Redressal Committee, Anti-Ragging Committee & Squad, Women's Empowerment Cell, Functional Committees.
+KEYWORDS: education, institution, management, committees, empowerment
+ENTITIES: Dr. K.S. Srinivasan, Mohamed Sathak A.J. College of Engineering
+QUERY_VARIATIONS:
+ - What are the different committees in MSAJCE?
+ - Who is the principal of Mohamed Sathak A.J. College of Engineering?
+ - What are the empowerment initiatives at MSAJCE?
+
+--- DOCUMENT_ID: 69bb8f0f0c142506c80c11ae ---
+TIMESTAMP: 2026-03-19T05:52:16.009Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Mohamed Sathak AJ College of Engineering has various committees and policies for empowerment and disclosure.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Committee and Squad for Womens Empowerment Cell, Functional Committees MSAJCE Policies, Mandatory Disclosure, Group of Institutions, Mohamed Sathak AJ College of Engineering
+KEYWORDS: Womens Empowerment, Functional Committees, MSAJCE Policies, Mandatory Disclosure
+ENTITIES: Mohamed Sathak AJ College of Engineering
+QUERY_VARIATIONS:
+ - What committees are available at MSAJCE?
+ - What are the policies for women's empowerment at Mohamed Sathak AJ College?
+ - How does MSAJCE ensure mandatory disclosure?
+
+--- DOCUMENT_ID: 69bb8f1c0c142506c80c11b1 ---
+TIMESTAMP: 2026-03-19T05:52:28.737Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Opening hours and contact information for a specific entity.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The entity is open Monday through Friday from 9:00 to 20:00, Saturday from 10:00 to 16:00, and Sunday from 9:30 to 18:00. Contact can be made through (+01) 234 567 890 or www.yourdomain.com and contact@yourdomain.com.
+KEYWORDS: opening hours, contact information
+ENTITIES: yourdomain.com
+QUERY_VARIATIONS:
+ - What are the opening hours of your institution?
+ - How can I contact your office?
+ - What is your email address and phone number for inquiries?
+
+--- DOCUMENT_ID: 69bb8f250c142506c80c11b4 ---
+TIMESTAMP: 2026-03-19T05:52:37.965Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: 
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: omain.com contact@yourdomain.com Copyright ©2016 ThemeMascot
+KEYWORDS: 
+ENTITIES: 
+QUERY_VARIATIONS:
+
+
+--- DOCUMENT_ID: 69bb8f3f0c142506c80c11b7 ---
+TIMESTAMP: 2026-03-19T05:53:03.944Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: This section provides admission details for various academic programs, including undergraduate and postgraduate degrees, along with information on skill development and scholarships.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Admission information for B.E., B.Tech, M.E., M.Tech, and Ph.D. programs, including skill development courses and scholarships. Details on undergraduate programs, total sanctioned intake, and government regulations are provided.
+KEYWORDS: admission, B.E., B.Tech, M.E., M.Tech, Ph.D., scholarships, skill development, undergraduate programs
+ENTITIES: Mohamed Sathak A.J. College of Engineering, Chennai
+QUERY_VARIATIONS:
+ - What are the admission procedures for B.E. and B.Tech programs at MSAJCE?
+ - How can I apply for scholarships for postgraduate programs like M.E. or M.Tech at a top engineering college in Chennai?
+ - What undergraduate programs are offered by Mohamed Sathak A.J. College of Engineering, and what are their sanctioned intakes?
+
+--- DOCUMENT_ID: 69bb8f510c142506c80c11ba ---
+TIMESTAMP: 2026-03-19T05:53:21.943Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: MSAJCE engineering program intake capacities, including government and management quotas.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The intake capacities for engineering programs at MSAJCE are as follows: Civil Engineering (30), Computer Science & Engineering (60), Electronics & Communication Engineering (60), Electrical & Electronics Engineering (30), and Mechanical Engineering (3), with specified government and management quotas.
+KEYWORDS: Engineering programs, college intake, government quota, management quota
+ENTITIES: Mohamed Sathak A. J. College of Engineering, Civil Engineering, Computer Science & Engineering, Electronics & Communication Engineering, Electrical & Electronics Engineering, Mechanical Engineering
+QUERY_VARIATIONS:
+ - What are the intake capacities for engineering programs at MSAJCE?
+ - How many seats are available in government and management quotas for engineering courses?
+ - What engineering programs are offered at Mohamed Sathak A. J. College of Engineering, and what are their intake capacities?
+
+--- DOCUMENT_ID: 69bb8f5b0c142506c80c11bd ---
+TIMESTAMP: 2026-03-19T05:53:31.170Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: This data pertains to various engineering and technology disciplines offered by an educational institution.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Mechanical Engineering, Information Technology, Artificial Intelligence & Data Science, Computer Science & Business Systems, Computer Science & Engineering (Cyber Security), Artificial Intelligence & Machine Learning, Electronics Engineering
+KEYWORDS: Mechanical Engineering, Information Technology, Artificial Intelligence, Data Science, Computer Science, Cyber Security, Electronics Engineering
+ENTITIES: Mohamed Sathak A. J. College of Engineering
+QUERY_VARIATIONS:
+ - What engineering programs are available at MSAJCE?
+ - Can I study Artificial Intelligence and Data Science at this college?
+ - What are the technology and engineering courses offered by this institution?
+
+--- DOCUMENT_ID: 69bb8f660c142506c80c11c0 ---
+TIMESTAMP: 2026-03-19T05:53:43.014Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The college offers various engineering programs with specializations, including Intelligence and Machine Learning, VLSI Design and Technology, and Advanced Communication Technology, with a reserved quota for NRI admissions.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Intelligence and Machine Learning 60 30 30 Electronics Engineering with specialization in VLSI Design and Technology 30 15 15 ECE with specialization in Advanced Communication Technology 30 15 15. Five percent (5%) of seats within the approved intake shall be allowed for admission under the NRI category.
+KEYWORDS: Intelligence, Machine Learning, Electronics Engineering, VLSI Design, Technology, ECE, Advanced Communication Technology, NRI category
+ENTITIES: 
+QUERY_VARIATIONS:
+ - What engineering programs are offered at MSAJCE?
+ - How many seats are reserved for NRI students in the engineering programs?
+ - What are the specializations available in Electronics Engineering at the college?
+
+--- DOCUMENT_ID: 69bb8f720c142506c80c11c3 ---
+TIMESTAMP: 2026-03-19T05:53:55.006Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Admissions under the NRI category shall be allowed, with unused seats allocated to general candidates based on merit.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Admission intake shall be allowed for admission under NRI category. In the event of non-availability of students in NRI seats, the seats shall be given to general candidates as per merit.
+KEYWORDS: NRI category, admission, merit-based allocation
+ENTITIES: 
+QUERY_VARIATIONS:
+ - How are NRI category seats allocated in admissions?
+ - What happens to unused NRI seats in the admission process?
+ - Can general candidates get NRI seats if there are no NRI applicants?
+
+--- DOCUMENT_ID: 69bb8f7d0c142506c80c11c6 ---
+TIMESTAMP: 2026-03-19T05:54:05.568Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The seats for postgraduate programs will be allocated based on merit, with specific quotas for government and management seats.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The seats shall be given to general candidates as per merit. Postgraduate programmes include Computer Science & Engineering and Structural Engineering with specified government and management quotas.
+KEYWORDS: postgraduate programmes, merit-based allocation, government quota, management quota, Computer Science & Engineering, Structural Engineering
+ENTITIES: Computer Science & Engineering, Structural Engineering, NR
+QUERY_VARIATIONS:
+ - How are seats allocated for postgraduate programs?
+ - What are the quotas for government and management seats in postgraduate engineering programs?
+ - How do I apply for postgraduate programs under the NR category?
+
+--- DOCUMENT_ID: 69bb8f8e0c142506c80c11c9 ---
+TIMESTAMP: 2026-03-19T05:54:22.537Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Admission under NRI category allows approved intake, with unused seats allocated to general candidates based on merit, alongside information on research programs.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Approved intake shall be allowed for admission under NRI category. In the event of non-availability of students in NRI seats, the seats shall be given to general candidates as per merit. Research Programs (Ph.D.)
+KEYWORDS: NRI category, admission, research programs, merit-based allocation
+ENTITIES: 
+QUERY_VARIATIONS:
+ - How do NRI category admissions work at your institution?
+ - What happens to unused NRI seats in the admission process?
+ - Can general candidates apply for seats initially reserved for NRI students?
+
+--- DOCUMENT_ID: 69bb8fa60c142506c80c11cc ---
+TIMESTAMP: 2026-03-19T05:54:46.504Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Admissions for Mechanical Engineering Ph.D. and B.E./B.Tech. programs are open through TNEA Counselling for eligible candidates.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Admission is open to general candidates as per merit. The research program offered is Ph.D. in Mechanical Engineering. Admission is through TNEA Counselling. Students who have completed Plus 2 or Diploma may apply for Tamil Nadu Engineering Admissions (TNEA Counselling) for B.E. or B.Tech.
+KEYWORDS: Mechanical Engineering, Ph.D., TNEA Counselling, B.E., B.Tech., Admissions
+ENTITIES: Tamil Nadu, Mechanical Engineering, TNEA Counselling
+QUERY_VARIATIONS:
+ - How can I apply for a Ph.D. in Mechanical Engineering through TNEA Counselling?
+ - What are the eligibility criteria for B.E./B.Tech. admissions in Tamil Nadu through TNEA Counselling?
+ - What programs are available for students who have completed Plus 2 or Diploma in Tamil Nadu?
+
+--- DOCUMENT_ID: 69bb8fb30c142506c80c11cf ---
+TIMESTAMP: 2026-03-19T05:54:59.268Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The Directorate of Technical Education (DoTE), Chennai, conducts admissions for B.E/B.Tech programmes through TNEA Counselling, with specific eligibility criteria for students from other states.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The Directorate of Technical Education (DoTE), Chennai, conducts admissions for B.E/B.Tech programmes through TNEA Counselling, with specific eligibility criteria for students from other states, including Andhra Pradesh, Telangana, Kerala, and all Northern States.
+KEYWORDS: TNEA Counselling, B.E, B.Tech, admissions, Directorate of Technical Education, DoTE, Chennai, Anna University, eligibility criteria
+ENTITIES: Directorate of Technical Education (DoTE), Chennai, Anna University, Andhra Pradesh, Telangana, Kerala, Northern States
+QUERY_VARIATIONS:
+ - How do I apply for B.E/B.Tech programmes through TNEA Counselling?
+ - What are the eligibility criteria for students from other states applying to Anna University through TNEA?
+ - What is the process for admissions to B.E/B.Tech programmes conducted by the Directorate of Technical Education in Chennai?
+
+--- DOCUMENT_ID: 69bb8fbf0c142506c80c11d2 ---
+TIMESTAMP: 2026-03-19T05:55:12.070Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Candidate selection is based on qualifying marks from Mathematics, Physics, and Chemistry.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The selection of candidates is based on qualifying marks (Q) obtained in Mathematics, Physics, and Chemistry, calculated as Q = (Mathematics / 2) + ((Physics + Chemistry) / 4).
+KEYWORDS: Qualifying marks, Mathematics, Physics, Chemistry, Candidate selection
+ENTITIES: Telangana, Kerala, Northern States
+QUERY_VARIATIONS:
+ - How are candidates selected for admission based on their marks in Mathematics, Physics, and Chemistry?
+ - What is the formula for calculating qualifying marks for admissions?
+ - How do Mathematics, Physics, and Chemistry marks contribute to the overall qualifying score for candidate selection?
+
