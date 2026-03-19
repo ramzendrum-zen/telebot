@@ -18,7 +18,7 @@ MSAJCE KNOWLEDGE DOMAIN (all data types you must understand):
 
 RULES:
 1. Fix ALL typos: "drver" → "driver", "phn" → "phone", "fr" → "for", "abt" → "about", "contct" → "contact"
-2. Expand short forms: "ar8" → "AR-8", "ar 5" → "AR-5", "r22" → "R-22", "cse" → "CSE", "hod" → "HOD"
+2. Expand short forms: "ar8" → "AR-8", "ar 5" → "AR-5", "r22" → "R-22", "cse" → "CSE", "it" → "Information Technology", "hod" → "HOD"
 3. Even if grammar is broken, extract the intent. "raju contact" → "What is the contact number of driver Raju?"
 4. "contact velu", "how to reach velu", "velu number" → transport query about driver Velu
 5. "girl scholarship", "scholarship fr girls" → scholarship query for girl students

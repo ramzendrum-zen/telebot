@@ -82,22 +82,20 @@ export const rewriteQuery = (query, memory) => {
     }
   }
 
-  // 6. PRONOUN/HOOK DETECTION: he/his/contact/timing/more/list
-  const pronouns = /\b(him|her|it|them|they|he|she|his|hers|that|this|the timing|phone|contact|more|detail|list)\b/i;
+  // 6. PRONOUN/HOOK DETECTION: him/her/them/they/more/detail
+  // NOTE: "it" is removed to avoid clash with "IT department" (Information Technology)
+  const pronouns = /\b(him|her|them|they|he|she|his|hers|that|this|the timing|phone|contact|more|detail|list)\b/i;
   const hasPronoun = pronouns.test(q);
 
-  // 5. NOUN CLASH: user asks about transport but last entity was admin person (or vice versa)
-  const transportKeywords = /\b(bus|route|ar-|van|driver|ar5|ar8|ar6|ar7|r-)\b/i;
-  const adminKeywords = /\b(principal|srinivasan|head|hod|office|admissions)\b/i;
-  const currentTopicIsTransport = transportKeywords.test(q);
-  const lastTopicWasAdmin = adminKeywords.test((last_entity || last_topic || '').toLowerCase());
-  if (currentTopicIsTransport && lastTopicWasAdmin) return query;
+  // 7. TOPIC OVERRIDE: If the current query already names a core topic, do NOT bind context.
+  const topicKeywords = /\b(cse|it|ece|eee|mech|civil|scholarship|hostel|fee|placement|club|event)\b/i;
+  const hasTopicInQuery = topicKeywords.test(q);
 
-  // 6. SHORT VAGUE FOLLOW-UPS ONLY: "timing?", "contact?", "fees?"
-  // EXCLUDE "who is", "what is" — those are handled above as resets.
-  const isShortFollowUp = words.length <= 3 && !/who|what|which|bus|principal|fee|hostel/i.test(q);
+  // 8. SHORT VAGUE FOLLOW-UPS ONLY: "timing?", "contact?", "fees?"
+  // EXCLUDE words that are likely to be fresh queries.
+  const isShortFollowUp = words.length <= 3 && !/who|what|which|bus|principal|fee|hostel|scholarship|admission/i.test(q);
 
-  if (hasPronoun || isShortFollowUp) {
+  if ((hasPronoun || isShortFollowUp) && !hasTopicInQuery) {
     const context = last_entity || last_topic;
     logger.info(`Context Bound: "${query}" -> "${query} about ${context}"`);
     return `${query} about ${context}`;
