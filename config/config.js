@@ -26,6 +26,11 @@ const config = {
     apiKey: process.env.OPENROUTER_API_KEY,
   },
 
+  gemini: {
+    apiKey: process.env.GEMINI_API_KEY,
+    embeddingModel: 'text-embedding-004' // Free, supports 1536-dim
+  },
+
   // NVIDIA NIM — free-tier models via build.nvidia.com
   nvidia: {
     apiKey: process.env.NVIDIA_API_KEY,
@@ -34,7 +39,6 @@ const config = {
     models: {
       cheap: 'meta/llama-3.3-70b-instruct',   // Free, fast, high-quality
       advanced: 'nvidia/llama-3.3-nemotron-super-49b-v1', // Free, advanced reasoning
-      embedding: 'nvidia/nv-embedqa-e5-v5',   // Free, 1024-dim embeddings
       reranker: 'nv-rerank-qa-mistral-4b:1'  // Free NVIDIA reranker
     }
   },

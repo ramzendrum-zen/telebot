@@ -105,19 +105,19 @@ Rules:
 - Return ONLY valid JSON`;
 
   try {
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const response = await fetch(`${config.nvidia.baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${config.openRouter.apiKey}`,
+        'Authorization': `Bearer ${config.nvidia.apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: config.openRouter.models.cheap,
+        model: config.nvidia.models.cheap,
         messages: [{ role: 'user', content: prompt }],
         max_tokens: 400,
         temperature: 0.2
       }),
-      signal: AbortSignal.timeout(15000)
+      signal: AbortSignal.timeout(20000)
     });
 
     if (!response.ok) throw new Error(`API ${response.status}`);

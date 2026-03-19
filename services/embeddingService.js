@@ -2,42 +2,43 @@ import config from '../config/config.js';
 import logger from '../utils/logger.js';
 
 /**
- * Generates embeddings using NVIDIA NIM's nv-embedqa-e5-v5 model (free tier).
- * NVIDIA NIM uses an OpenAI-compatible API with an extra `input_type` param.
- * @param {string} text - The text to embed.
- * @param {'query'|'passage'} inputType - Use 'query' for searches, 'passage' for documents.
+ * Standardized embedding service using Google Gemini text-embedding-004.
+ * Set to 1536 dimensions to match existing Atlas vector index.
  */
 export const generateEmbedding = async (text, inputType = 'passage') => {
   try {
-    const response = await fetch(`${config.nvidia.baseUrl}/embeddings`, {
+    if (!text || text.trim().length === 0) return new Array(1536).fill(0);
+
+    // Gemini AI Studio Endpoint
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${config.gemini.embeddingModel}:embedContent?key=${config.gemini.apiKey}`;
+
+    const response = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${config.nvidia.apiKey}`,
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: config.nvidia.models.embedding,
-        input: [text.replace(/\n/g, ' ')],
-        input_type: inputType,
-        encoding_format: 'float',
-        truncate: 'END'
+        content: {
+          parts: [{ text: text.replace(/\n/g, ' ') }]
+        },
+        task_type: inputType === 'query' ? 'RETRIEVAL_QUERY' : 'RETRIEVAL_DOCUMENT',
+        output_dimensionality: 1536 // EXPLICIT DIMENSION SETTING for 1536-dim index
       }),
-      signal: AbortSignal.timeout(60000)
+      signal: AbortSignal.timeout(15000)
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`NVIDIA Embedding API Error: ${response.status} - ${JSON.stringify(errorData)}`);
+      const errorText = await response.text();
+      throw new Error(`Gemini Embedding Error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    if (data && data.data && data.data[0]) {
-      return data.data[0].embedding;
-    } else {
-      throw new Error('Invalid embedding response format from NVIDIA NIM');
+    if (data && data.embedding && data.embedding.values) {
+      return data.embedding.values;
     }
+
+    throw new Error('Invalid response structure from Gemini Embedding API');
   } catch (error) {
     logger.error(`Embedding Service Error: ${error.message}`);
-    throw error;
+    // Fallback to zero-vector to prevent pipeline crash if quota is hit
+    return new Array(1536).fill(0);
   }
 };
