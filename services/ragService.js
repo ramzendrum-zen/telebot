@@ -5,7 +5,7 @@ import { getUserMemory, setUserMemory, rewriteQuery } from './historyService.js'
 import { normalizeQueryBasic } from './normalizationService.js';
 import { checkSemanticCache, storeInSemanticCache } from './faqLearningService.js';
 import { decomposeAndSelfQuery } from './selfQueryService.js';
-import { rerankChunks } from './rerankService.js';
+// Reranker removed — hybrid search scores are sufficient
 import { generateEmbedding } from './embeddingService.js';
 import { getCache, setCache } from './cacheService.js';
 import { pushLog } from './monitorService.js';
@@ -49,17 +49,16 @@ export async function processRAGQuery(chatId, rawText) {
     });
   }
 
-  const mergedTop20 = Array.from(allChunks.values())
+  // Take top 5 directly from hybrid search (no reranker)
+  let top5Chunks = Array.from(allChunks.values())
     .sort((a, b) => (b.score || 0) - (a.score || 0))
-    .slice(0, 20);
+    .slice(0, 5);
 
-  // 6. Cross-Encoder Reranking
-  let top5Chunks = await rerankChunks(contextualQuery, mergedTop20);
-  await pushLog('assistant', 'rag_step', `Reranking complete. Top score: ${top5Chunks[0]?.rerankScore || 0}`).catch(()=>null);
+  await pushLog('assistant', 'rag_step', `Top ${top5Chunks.length} chunks selected. Top score: ${top5Chunks[0]?.score || 0}`).catch(()=>null);
 
-  // --- SAFETY NET: Catch-All Search if advanced path found NOTHING ---
+  // SAFETY NET: if nothing found, retry with raw query
   if (top5Chunks.length === 0) {
-      await pushLog('assistant', 'rag_step', 'Advanced search yielded zero. Retrying with raw catch-all...').catch(()=>null);
+      await pushLog('assistant', 'rag_step', 'No results. Retrying catch-all...').catch(()=>null);
       const fallbackChunks = await performHybridSearch(normalizedText, 'general');
       top5Chunks = fallbackChunks.slice(0, 3);
   }
