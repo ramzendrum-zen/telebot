@@ -5,9 +5,9 @@ import logger from '../utils/logger.js';
  * Cross-Encoder Reranking using NVIDIA NIM (free tier).
  * Falls back to heuristic if API unavailable.
  */
-export const rerankChunks = async (query, chunks) => {
+export const rerankChunks = async (query, chunks, limit = config.rag.finalTopK) => {
   if (!chunks || chunks.length === 0) return [];
-  if (chunks.length <= config.rag.finalTopK) return chunks;
+  if (chunks.length <= limit) return chunks;
 
   try {
     const passages = chunks.map(c => ({
@@ -33,7 +33,7 @@ export const rerankChunks = async (query, chunks) => {
       const rankings = data.rankings || [];
       const sorted = rankings
         .sort((a, b) => b.logit - a.logit)
-        .slice(0, config.rag.finalTopK);
+        .slice(0, limit);
 
       logger.info(`Reranker: success, top logit=${sorted[0]?.logit}`);
       return sorted.map(r => ({ ...chunks[r.index], rerankScore: r.logit }));
@@ -46,8 +46,8 @@ export const rerankChunks = async (query, chunks) => {
   }
 
   // FALLBACK heuristic
-  logger.info('Reranker: using heuristic fallback');
-  return fallbackRerank(query, chunks).slice(0, config.rag.finalTopK);
+  logger.info('Reranker: using fallback with limit ' + limit);
+  return fallbackRerank(query, chunks).slice(0, limit);
 };
 
 const fallbackRerank = (query, chunks) => {

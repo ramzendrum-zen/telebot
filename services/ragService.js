@@ -62,7 +62,7 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 6: NORMALIZE QUERY ─────────────────────────────────────────────
   const { normalizedText, cacheKey } = normalizeQueryBasic(rawText);
-  const redisKey = `v47:rag:${cacheKey}`;
+  const redisKey = `v48:rag:${cacheKey}`;
   log('STEP-6', `Normalized: "${normalizedText}" | CacheKey: ${cacheKey}`);
   const totalTokens = { prompt: 0, completion: 0, total: 0 };
 
@@ -122,36 +122,48 @@ export async function processRAGQuery(chatId, rawText) {
   }
 
   // ─── STEP 8: RERANKING ENFORCEMENT ───────────────────────────────────────
-  let mergedTop20 = Array.from(allChunks.values())
-    .sort((a, b) => (b.score || 0) - (a.score || 0))
-    .slice(0, 20);
-
-  log('STEP-8', `Sending ${mergedTop20.length} chunks to Reranker`);
-  let top5Chunks = await rerankChunks(contextualQuery, mergedTop20);
-  
-  log('STEP-8', `Reranker completed. Top score: ${top5Chunks[0]?.rerankScore || top5Chunks[0]?.score || 0}`, 
-      top5Chunks.slice(0,3).map(c => ({ title: c.title, score: c.rerankScore || c.score })));
-
-  // ─── STEP 9: CONFIDENCE SCORING — targeted retry ─────────────────────────
-  const topScore = top5Chunks[0]?.rerankScore || top5Chunks[0]?.score || 0;
   const isTransportQuery = /\b(bus|route|ar-?\d+|r-?\d+|van|driver|stop|timing)\b/i.test(contextualQuery);
-  const isListRequest = /\b(list|all|every)\b/i.test(contextualQuery) && isTransportQuery;
+  const isListRequest = /\b(list|all|every|how many|available|count|buses|departments|scholarships)\b/i.test(contextualQuery);
+  const initialLimit = isListRequest ? 40 : 20;
 
-  if ((topScore < 5 && top5Chunks.length < 3) || isListRequest) {
-    // Only search transport category if it's a transport query
+  let mergedTopChunks = Array.from(allChunks.values())
+    .sort((a, b) => (b.score || 0) - (a.score || 0))
+    .slice(0, initialLimit);
+
+  log('STEP-8', `Sending ${mergedTopChunks.length} chunks to Reranker. List mode: ${isListRequest}`);
+  let top5Chunks = await rerankChunks(contextualQuery, mergedTopChunks, isListRequest ? 40 : 5);
+  
+  log('STEP-8', `Reranker completed. Top score: ${top5Chunks[0]?.rerankScore || top5Chunks[0]?.score || 0}`);
+
+  // ─── STEP 9: CONFIDENCE SCORING & RECURSIVE RECALL ───────────────────────
+  const topScore = top5Chunks[0]?.rerankScore || top5Chunks[0]?.score || 0;
+
+  // If answer appears incomplete (low score or list query BUT few results) → RECURSIVE SEARCH
+  if ((topScore < 5 && top5Chunks.length < 3) || (isListRequest && top5Chunks.length < 10)) {
     const retryCategory = isTransportQuery ? 'transport' : 'general';
-    log('STEP-9', `Confidence check (Score: ${topScore}, Transport: ${isTransportQuery}, List: ${isListRequest}). Scanning category: ${retryCategory}...`);
+    log('STEP-9', `Recursive Search Loop triggered (List: ${isListRequest}). Expanding recall...`);
+    
+    // Tier 1: Pull 100 more chunks with broad keyword criteria (Exclusionary Logic)
     const broadChunks = await performHybridSearch(contextualQuery, retryCategory, {});
     broadChunks.forEach(c => {
-      const id = c._id?.toString() || c.content?.slice(0, 30);
-      if (!allChunks.has(id)) allChunks.set(id, c);
+      const id = c._id?.toString() || (c.content || '').slice(0, 30);
+      if (!allChunks.has(id)) {
+        allChunks.set(id, { ...c, expandedMatch: true });
+      }
     });
+
+    // Re-rank from the expanded pool
+    const expandedPool = Array.from(allChunks.values());
+    log('STEP-9', `Reranking expanded pool of ${expandedPool.length} chunks...`);
     
-    mergedTop20 = Array.from(allChunks.values())
+    // For list requests, we keep a MUCH larger slice (top 40) for the LLM
+    const topK = isListRequest ? 40 : 20;
+    const finalSelection = expandedPool
       .sort((a, b) => (b.score || 0) - (a.score || 0))
-      .slice(0, isListRequest ? 30 : 20);
-    top5Chunks = await rerankChunks(contextualQuery, mergedTop20);
-    log('STEP-9', `Retry done. Found ${top5Chunks.length} chunks.`);
+      .slice(0, topK);
+    
+    top5Chunks = await rerankChunks(contextualQuery, finalSelection, topK);
+    log('STEP-9', `Recursive Loop Complete. Found ${top5Chunks.length} chunks. Top score: ${top5Chunks[0]?.score || 0}`);
   }
 
   // ─── STEP 10: CONTEXT VALIDATION ─────────────────────────────────────────
