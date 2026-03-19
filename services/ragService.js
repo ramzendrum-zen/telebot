@@ -72,7 +72,7 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 6: NORMALIZE QUERY ─────────────────────────────────────────────
   const { normalizedText, cacheKey } = normalizeQueryBasic(rawText);
-  const redisKey = `v61:rag:${cacheKey}`;
+  const redisKey = `v62:rag:${cacheKey}`;
   log('STEP-6', `Normalized: "${normalizedText}" | CacheKey: ${cacheKey}`);
   const totalTokens = { prompt: 0, completion: 0, total: 0 };
 
@@ -119,11 +119,13 @@ export async function processRAGQuery(chatId, rawText) {
   
   let subject = null;
   let subQueries = [{ query: contextualQuery, category: 'general', filters: {} }];
+  let intent = { type: 'general', category: 'general', filters: {} };
 
   if (normalizedText.length > 40 || normalizedText.includes(' and ')) {
     const decomposition = await decomposeAndSelfQuery(contextualQuery);
     subject = decomposition.subject;
     subQueries = decomposition.subQueries;
+    intent = decomposition.intent || intent;
     log('STEP-7', `Decomposed into ${subQueries.length} sub-queries. Subject: ${subject || 'None'}`);
   } else {
     log('STEP-7', 'Short query mode: skipping decomposition.');
