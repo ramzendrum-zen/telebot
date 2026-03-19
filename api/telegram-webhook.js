@@ -71,7 +71,7 @@ export default async function handler(req, res) {
         source: ragResult.source,
         chunks: ragResult.chunkCount 
     });
-    await updateMetrics('assistant', latency, true);
+    await updateMetrics('assistant', latency, true, ragResult.totalTokens?.total || 0);
 
     return res.status(200).json({ status: 'success' });
   } catch (error) {

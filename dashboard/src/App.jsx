@@ -181,7 +181,7 @@ const Dashboard = () => {
                         <div className="space-y-6 max-w-[1400px] mx-auto">
                             <div className="flex gap-5">
                                 <MetricCard label={activeBot === 'grievance' ? 'total users' : 'processed'} value={activeBot === 'grievance' ? stats?.users?.total : monitorData?.metrics?.assistant?.total_requests} icon={Users} color="indigo" />
-                                <MetricCard label={activeBot === 'grievance' ? 'tickets' : 'throughput'} value={activeBot === 'grievance' ? complaints.length : `${monitorData?.metrics?.assistant?.success_rate || 100}%`} icon={BarChart3} color="emerald" />
+                                <MetricCard label={activeBot === 'grievance' ? 'tickets' : 'total tokens'} value={activeBot === 'grievance' ? complaints.length : (monitorData?.metrics?.assistant?.total_tokens_used || 0).toLocaleString()} icon={BarChart3} color="emerald" />
                                 <MetricCard label={activeBot === 'grievance' ? 'alerts' : 'errors'} value={activeBot === 'grievance' ? emergencyList.length : monitorData?.metrics?.assistant?.total_errors} icon={AlertCircle} color="rose" />
                                 <MetricCard label="latency" value={activeBot === 'grievance' ? stats?.complaints?.avg_resolution : (monitorData?.metrics?.assistant?.avg_latency || 0).toFixed(0)} unit={activeBot === 'grievance' ? 'h' : 'ms'} icon={Clock} color="amber" />
                             </div>
@@ -240,18 +240,16 @@ const Dashboard = () => {
                                                             <div className={`text-[12px] font-bold tracking-tight ${log.type === 'error' ? 'text-rose-600' : log.type === 'rag_step' ? 'text-indigo-600' : 'text-slate-800'}`}>
                                                                 {log.message}
                                                             </div>
-                                                            {log.metadata && Object.keys(log.metadata).length > 0 && (
-                                                                <div className="bg-slate-50 p-3 rounded-xl border border-slate-100/50">
-                                                                    <div className="grid grid-cols-1 gap-2">
-                                                                        {Object.entries(log.metadata).map(([k, v]) => (
-                                                                            <div key={k} className="flex gap-2 text-[10px]">
-                                                                                <span className="text-slate-400 font-black uppercase tracking-tighter w-20 shrink-0">{k}:</span>
-                                                                                <span className="text-slate-600 truncate break-all overflow-hidden" title={typeof v === 'object' ? JSON.stringify(v) : v}>
-                                                                                    {typeof v === 'object' ? JSON.stringify(v) : v}
-                                                                                </span>
-                                                                            </div>
-                                                                        ))}
-                                                                    </div>
+                                                            {log.metadata?.query && (
+                                                                <div className="text-[10px] text-slate-400 font-mono truncate">
+                                                                    <span className="text-slate-300 font-black mr-1">Q:</span>{log.metadata.query}
+                                                                </div>
+                                                            )}
+                                                            {log.metadata?.tokens && (
+                                                                <div className="flex gap-3 text-[9px] font-black mt-0.5">
+                                                                    <span className="text-indigo-400">P: {log.metadata.tokens.prompt}</span>
+                                                                    <span className="text-emerald-400">C: {log.metadata.tokens.completion}</span>
+                                                                    <span className="text-amber-400">Total: {log.metadata.tokens.total}</span>
                                                                 </div>
                                                             )}
                                                         </div>

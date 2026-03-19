@@ -64,8 +64,9 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 6: NORMALIZE QUERY ─────────────────────────────────────────────
   const { normalizedText, cacheKey } = normalizeQueryBasic(rawText);
-  const redisKey = `v29:rag:${cacheKey}`;
+  const redisKey = `v30:rag:${cacheKey}`;
   log('STEP-6', `Normalized: "${normalizedText}" | CacheKey: ${cacheKey}`);
+  const totalTokens = { prompt: 0, completion: 0, total: 0 };
 
   // ─── STEP 5: DIRECT ENTITY LOOKUP (before cache — always fresh) ──────────
   const entityDocId = detectEntityLookup(normalizedText);
@@ -76,10 +77,13 @@ export async function processRAGQuery(chatId, rawText) {
       const memory = await getUserMemory(chatId);
       const finalPrompt = buildPrompt(normalizedText, entityChunks);
       const { content: aiReply, usage } = await getAIReponse(finalPrompt);
-      log('TOKENS', `Prompt: ${usage.prompt_tokens} | Completion: ${usage.completion_tokens} | Total: ${usage.total_tokens}`);
+      totalTokens.prompt += usage.prompt_tokens;
+      totalTokens.completion += usage.completion_tokens;
+      totalTokens.total += usage.total_tokens;
+      log('TOKENS', `Direct | P: ${usage.prompt_tokens} | C: ${usage.completion_tokens} | T: ${usage.total_tokens}`);
       await setUserMemory(chatId, normalizedText, 'admin', rawText).catch(() => null);
       await setCache(redisKey, aiReply);
-      log('STEP-5', `Answered via direct entity lookup. Latency: ${Date.now() - startTime}ms`);
+      await pushLog('assistant', 'info', `Direct: ${rawText.slice(0, 50)}`, { query: rawText, tokens: totalTokens });
       return { aiReply, source: 'direct_entity', latency: Date.now() - startTime };
     }
   }
@@ -163,6 +167,9 @@ export async function processRAGQuery(chatId, rawText) {
   // ─── LLM GENERATION — STRICT CONTEXT MODE ────────────────────────────────
   const finalPrompt = buildPrompt(contextualQuery, top5Chunks);
   let { content: aiReply, usage } = await getAIReponse(finalPrompt);
+  totalTokens.prompt += usage.prompt_tokens;
+  totalTokens.completion += usage.completion_tokens;
+  totalTokens.total += usage.total_tokens;
   log('TOKENS', `Pass-1 | P: ${usage.prompt_tokens} | C: ${usage.completion_tokens} | T: ${usage.total_tokens}`);
 
   // ─── STEP 11: RESPONSE VALIDATION — re-generate if LLM ignored context ───
@@ -174,6 +181,9 @@ Analyze and infer the answer. Do NOT fallback.
 ${finalPrompt}`;
     const retry = await getAIReponse(analyticalPrompt);
     aiReply = retry.content;
+    totalTokens.prompt += retry.usage.prompt_tokens;
+    totalTokens.completion += retry.usage.completion_tokens;
+    totalTokens.total += retry.usage.total_tokens;
     log('TOKENS', `Pass-2 (Retry) | P: ${retry.usage.prompt_tokens} | C: ${retry.usage.completion_tokens} | T: ${retry.usage.total_tokens}`);
   }
 
@@ -183,6 +193,9 @@ ${finalPrompt}`;
     const bulletPrompt = `Rewrite this information into exactly 3-6 clean, structured bullet-point format like a Professional Assistant:\n\n${aiReply}`;
     const guard = await getAIReponse(bulletPrompt, 'cheap');
     aiReply = guard.content;
+    totalTokens.prompt += guard.usage.prompt_tokens;
+    totalTokens.completion += guard.usage.completion_tokens;
+    totalTokens.total += guard.usage.total_tokens;
     log('TOKENS', `Formatting Guard | P: ${guard.usage.prompt_tokens} | C: ${guard.usage.completion_tokens} | T: ${guard.usage.total_tokens}`);
   }
 
@@ -190,12 +203,18 @@ ${finalPrompt}`;
   await setCache(redisKey, aiReply);
   storeInSemanticCache(normalizedText, queryEmbedding, aiReply).catch(() => null);
   await setUserMemory(chatId, subject || memory.last_entity, subQueries[0]?.category || 'general', rawText).catch(() => null);
-  await pushLog('assistant', 'rag_step', `Done. ${logs.length} steps. Latency: ${Date.now() - startTime}ms`).catch(() => null);
+  await pushLog('assistant', 'info', `RAG: ${rawText.slice(0, 50)}`, { 
+    query: rawText, 
+    tokens: totalTokens,
+    latency: Date.now() - startTime,
+    shards: top5Chunks.length 
+  }).catch(() => null);
 
   return {
     aiReply,
     source: 'rag_generated',
     latency: Date.now() - startTime,
-    chunkCount: top5Chunks.length
+    chunkCount: top5Chunks.length,
+    totalTokens
   };
 }

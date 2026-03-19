@@ -26,12 +26,13 @@ export const pushLog = async (bot, type, message, metadata = {}) => {
   }
 };
 
-export const updateMetrics = async (bot, latency, success = true) => {
+export const updateMetrics = async (bot, latency, success = true, tokensUsed = 0) => {
   try {
     const key = `${METRICS_PREFIX}${bot}`;
-    const metrics = await redis.get(key) || { avg_latency: 0, total_requests: 0, total_errors: 0, total_success: 0, success_rate: 100 };
+    const metrics = await redis.get(key) || { avg_latency: 0, total_requests: 0, total_errors: 0, total_success: 0, success_rate: 100, total_tokens_used: 0 };
     
     metrics.total_requests += 1;
+    metrics.total_tokens_used = (metrics.total_tokens_used || 0) + tokensUsed;
     if (success) {
         metrics.total_success = (metrics.total_success || 0) + 1;
     } else {
