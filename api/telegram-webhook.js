@@ -34,6 +34,16 @@ export default async function handler(req, res) {
       return res.status(200).send('ok');
     }
 
+    // ─── SMART GREETING HANDLER ──────────────────────────────────────────────
+    const greetings = /\b(hi|hello|hey|hlo|good morning|morning|namaste|evening|greetings)\b/i;
+    if (greetings.test(rawText) && rawText.split(/\s+/).length <= 2) {
+      const firstName = message.from?.first_name || 'there';
+      const greetingResponse = `• Hello, ${firstName} 👋\n• How can I help you today?\n\n*Quick access topics:*\n• 🚌 Bus Routes\n• 🎓 Departments\n• 👨‍🏫 Faculty\n• 📞 Contact Details`;
+      
+      await sendTelegramMessage(chatId, greetingResponse);
+      return res.status(200).send('ok');
+    }
+
     // ──────────────────────────────────────────────
     // PRODUCTION RAG PIPELINE (Unified)
     // ──────────────────────────────────────────────
