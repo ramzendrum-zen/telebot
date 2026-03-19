@@ -34,10 +34,10 @@ export const performHybridSearch = async (queryText, category = 'general', filte
           { entities: { $elemMatch: { $regex: simplePatterns.join('|'), $options: 'i' } } }
       ];
 
-      // Add category constraint if specific
+      // Add category constraint if specific (but allow 'general' as fallback)
       const searchFilter = { $or: baseOr };
       if (category && category !== 'general') {
-          searchFilter.category = category;
+          searchFilter.category = { $in: [category, 'general'] };
       }
 
       // Apply metadata filters (e.g. metadata.route: "AR-8")
