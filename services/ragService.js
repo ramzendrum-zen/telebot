@@ -64,7 +64,7 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 6: NORMALIZE QUERY ─────────────────────────────────────────────
   const { normalizedText, cacheKey } = normalizeQueryBasic(rawText);
-  const redisKey = `v26:rag:${cacheKey}`;
+  const redisKey = `v27:rag:${cacheKey}`;
   log('STEP-6', `Normalized: "${normalizedText}" | CacheKey: ${cacheKey}`);
 
   // ─── STEP 5: DIRECT ENTITY LOOKUP (before cache — always fresh) ──────────
@@ -163,9 +163,12 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 11: RESPONSE VALIDATION — re-generate if LLM ignored context ───
   if (detectContextIgnored(aiReply, top5Chunks)) {
-    log('STEP-11', 'LLM CONTEXT IGNORE ERROR detected. Forcing re-generation with stricter prompt.');
-    const stricterPrompt = `You MUST answer using ONLY the information below. Do NOT say you lack information.\n\n${finalPrompt}`;
-    aiReply = await getAIReponse(stricterPrompt);
+    log('STEP-11', 'LLM CONTEXT IGNORE ERROR detected. Forcing re-generation with ANALYTICAL REASONING prompt.');
+    const analyticalPrompt = `REASONING ERROR: You said information is not available, but RELEVANT DATA is present below. 
+Analyze and infer the answer. Do NOT fallback.
+
+${finalPrompt}`;
+    aiReply = await getAIReponse(analyticalPrompt);
   }
 
   // ─── STEP 12: BULLET FORMAT GUARD ─────────────────────────────────────────
