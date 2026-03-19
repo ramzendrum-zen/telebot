@@ -54,7 +54,7 @@ const config = {
   
   rag: {
     topK: 30, // Initial hybrid retrieval — wider net
-    finalTopK: 5, // Top 5 for LLM context
+    finalTopK: 7, // Top 7 for LLM context (as per user request)
     maxContextTokens: 3000,
     similarityThreshold: 0.55, // Lowered from 0.7 — prevents false 'no data' (audit step 7)
     faqSimilarityThreshold: 0.9, // Semantic cache threshold
