@@ -100,8 +100,18 @@ async function ingestVerifiedKnowledge(col) {
         parent_doc_id: new mongoose.Types.ObjectId().toString(),
         ...item.metadata
     };
-    const rich = await cleanAndEnrichChunk(item.content, metadata);
-    const embedding = await generateEmbedding(rich.content);
+    let rich, embedding;
+    let retryCount = 0;
+    while (retryCount < 3) {
+      try {
+        rich = await cleanAndEnrichChunk(item.content, metadata);
+        embedding = await generateEmbedding(rich.content);
+        if (embedding && embedding.length === 1536) break;
+      } catch (e) {
+        retryCount++;
+        await new Promise(r => setTimeout(r, 2000));
+      }
+    }
     
     const doc = {
       document_id: new mongoose.Types.ObjectId().toString(),
@@ -156,10 +166,27 @@ async function run() {
             parent_doc_id: new mongoose.Types.ObjectId().toString()
         };
 
-        const rich = await cleanAndEnrichChunk(chunkText, metadata);
+        // Step 1, 3 & 4 with retry
+        let rich, embedding;
+        let retryCount = 0;
+        const maxRetries = 3;
         
-        // Step 4: Embed (3072 dimension)
-        const embedding = await generateEmbedding(rich.content);
+        while (retryCount < maxRetries) {
+            try {
+                rich = await cleanAndEnrichChunk(chunkText, metadata);
+                embedding = await generateEmbedding(rich.content);
+                if (embedding && embedding.length === 1536) break;
+            } catch (e) {
+                retryCount++;
+                console.log(` ⚠️ Retry ${retryCount}/${maxRetries} for chunk ${i+1}...`);
+                await new Promise(r => setTimeout(r, 2000));
+            }
+        }
+
+        if (!embedding || embedding.every(v => v === 0)) {
+            console.log(` ❌ Skipping chunk ${i+1} due to persistent error.`);
+            continue;
+        }
         
         const doc = {
            document_id: new mongoose.Types.ObjectId().toString(),
