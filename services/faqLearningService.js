@@ -62,44 +62,27 @@ export const storeInSemanticCache = async (normalizedQuery, embedding, answer) =
   }
 };
 
+import { getAIReponse } from './aiService.js';
+
 async function generateVariations(canonical, answer) {
-    // LLM call to get variations and store them pointing to the same answer
-    // For large scale, we add them to FAQCache using the same answer but different embeddings.
     const prompt = `Generate 3 completely different variations of this question that a student might ask.
-Only output the variations, one per line.
+Only output the variations, one per line. No numbers.
 Question: "${canonical}"`;
     
     try {
-        const response = await fetch(`${config.nvidia.baseUrl}/chat/completions`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${config.nvidia.apiKey}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                model: config.nvidia.models.cheap,
-                messages: [{ role: 'user', content: prompt }],
-                max_tokens: 150,
-                temperature: 0.6
-            }),
-            signal: AbortSignal.timeout(10000)
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            const text = data.choices?.[0]?.message?.content || '';
-            const vars = text.split('\n').map(v => v.trim()).filter(v => v.length > 5).slice(0, 3);
-            
-            for (let v of vars) {
-                // Ensure variation is somewhat different
-                if (v.toLowerCase() !== canonical.toLowerCase()) {
-                    const emb = await generateEmbedding(v);
+        const text = await getAIReponse(prompt, 'cheap');
+        const vars = text.split('\n').map(v => v.trim()).filter(v => v.length > 5).slice(0, 3);
+        
+        for (let v of vars) {
+            if (v.toLowerCase() !== canonical.toLowerCase()) {
+                const emb = await generateEmbedding(v);
+                if (emb) {
                     const vDoc = new FAQCache({ normalized_question: v, embedding: emb, answer });
-                    await vDoc.save().catch(()=>null); // ignore dup keys
+                    await vDoc.save().catch(()=>null);
                 }
             }
         }
     } catch (e) {
-        // Silent failure for background variation generation
+        logger.warn(`Variation gen failed: ${e.message}`);
     }
 }

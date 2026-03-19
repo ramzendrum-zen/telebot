@@ -36,7 +36,11 @@ export const normalizeQueryBasic = (query) => {
   
   // Apply abbreviation expansion, but don't strictly remove stopwords yet if they change the meaning.
   // The goal is just spelling alignment and standardizing formats.
-  words = words.map(w => abbreviations[w] || w);
+  words = words.map(w => {
+    // Standardize ar1, ar3, r22 -> ar-1, ar-3, r-22 using regex
+    if (/^[ar]+\d+$/i.test(w)) return w.replace(/^([a-z]+)(\d+)$/i, '$1-$2');
+    return abbreviations[w] || w;
+  });
   
   // For caching, create a strictly normalized string omitting filler words
   const strictWords = words.filter(w => !stopWords.includes(w) && w.length > 0);

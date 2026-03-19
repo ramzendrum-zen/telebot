@@ -298,3 +298,801 @@ QUERY_VARIATIONS:
  - How does MSAJCE promote physical health through sports?
  - What are the benefits of sports activities emphasized by MSAJCE's Department of Physical Education?
 
+--- DOCUMENT_ID: 69bb98960c142506c80c1331 ---
+TIMESTAMP: 2026-03-19T06:32:54.422Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: MSAJCE provides sports facilities to enhance students' physical strength and character through sports and games.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Students can become physically strong and increase their stamina and strength. MSAJCE has created necessary sports and games facilities to strengthen students' physical education. As sports and games play an integral role in shaping and refining an individual's character.
+KEYWORDS: physical education, sports facilities, character development, stamina, strength
+ENTITIES: MSAJCE
+QUERY_VARIATIONS:
+ - How does MSAJCE support physical education?
+ - What sports facilities are available at MSAJCE for character development?
+ - How can students improve their physical strength at MSAJCE?
+
+--- DOCUMENT_ID: 69bb98b80c142506c80c1334 ---
+TIMESTAMP: 2026-03-19T06:33:29.014Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Exercise and sports activities play a crucial role in enhancing cognitive functions and personal development.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Exercise and sports activities are part in molding and refining the character of an individual. Studies have shown that these activities increase the blood flow to the brain and help in increased concentration, stimulate creativity, develop better problem solving methods and enable quick learning methods.
+KEYWORDS: exercise, sports, cognitive function, personal development, concentration, creativity, problem solving, learning methods
+ENTITIES: 
+QUERY_VARIATIONS:
+ - How does exercise impact cognitive development?
+ - What role do sports play in enhancing personal character?
+ - Can physical activity improve learning and problem-solving skills?
+
+--- DOCUMENT_ID: 69bb98cc0c142506c80c1337 ---
+TIMESTAMP: 2026-03-19T06:33:48.584Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The Physical Education department is led by Dr. K. P. Santhosh Nathan and assisted by Mr. M. Janakiraman, with qualifications in physical education and related fields.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The Physical Education department is led by Dr. K. P. Santhosh Nathan and assisted by Mr. M. Janakiraman, with qualifications in physical education and related fields. Dr. K. P. Santhosh Nathan can be contacted at ped.santhosh@msajce-edu.in.
+KEYWORDS: Physical Education, Problem Solving, Learning Methods, B.P.E.S., B.P.Ed., M.P.Ed., M.Phil., Ph.D.
+ENTITIES: Dr. K. P. Santhosh Nathan, Mr. M. Janakiraman, MSAJCE
+QUERY_VARIATIONS:
+ - Who leads the Physical Education department at MSAJCE?
+ - What are the qualifications of the Director and Assistant Director of Physical Education?
+ - How can I contact the Director of Physical Education at MSAJCE?
+
+--- DOCUMENT_ID: 69bb98d60c142506c80c133a ---
+TIMESTAMP: 2026-03-19T06:33:58.691Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: MSAJCE aims to identify and develop talent in sports, promoting physical fitness and a unique culture.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Name: Mr. M. Janakiraman. Qualification: B.Sc., M.P.Ed., NSNIS (Cricket). Objectives: Provide opportunities through talent identification, develop identified talent to excel at inter-collegiate, university, and inter-university levels, and foster a unique culture at MSAJCE to promote physical fitness.
+KEYWORDS: sports, talent identification, physical fitness, MSAJCE, inter-collegiate sports, university sports
+ENTITIES: Mr. M. Janakiraman, MSAJCE, NSNIS
+QUERY_VARIATIONS:
+ - What are the sports objectives of MSAJCE?
+ - How does MSAJCE promote physical fitness among students?
+ - What initiatives does MSAJCE have for talent identification in sports?
+
+--- DOCUMENT_ID: 69bb99110c142506c80c133d ---
+TIMESTAMP: 2026-03-19T06:34:57.738Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The MSAJCE offers a Sports Quota Scholarship to promote physical fitness and talent among students, providing admission and financial support to participants at various levels.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The MSAJCE promotes physical fitness, talent identification, competitiveness, and brotherhood through its Sports Quota Scholarship. The college encourages sports enthusiasts by offering admission through the sports quota and scholarships to district, state, and national level participants.
+KEYWORDS: sports quota scholarship, physical fitness, talent identification, competitiveness, brotherhood, sports enthusiasts
+ENTITIES: MSAJCE, Mohamed Sathak A. J. College of Engineering
+QUERY_VARIATIONS:
+ - How does MSAJCE support students with athletic talents?
+ - What scholarships are available for sports participants at MSAJCE?
+ - Can I get admission to MSAJCE through a sports quota?
+
+--- DOCUMENT_ID: 69bb99240c142506c80c1340 ---
+TIMESTAMP: 2026-03-19T06:35:16.132Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The college offers scholarships and has excellent sports infrastructure for student development.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Scholarship opportunities are available to participants at the district, state, and national levels. Our college boasts excellent infrastructure for the development of sports skills in students, including basketball, football, cricket, cricket nets, yoga, kabaddi, volleyball, table tennis, carrom, chess, track and field, kho kho, and a fitness center with a well-equipped gymnasium.
+KEYWORDS: sports infrastructure, scholarship, student development, college facilities
+ENTITIES: Mohamed Sathak A. J. College of Engineering, Chennai
+QUERY_VARIATIONS:
+ - What sports facilities are available at MSAJCE?
+ - How can I get a scholarship for sports at Mohamed Sathak A. J. College of Engineering?
+ - What kind of infrastructure does MSAJCE offer for student sports development?
+
+--- DOCUMENT_ID: 69bb992f0c142506c80c1343 ---
+TIMESTAMP: 2026-03-19T06:35:27.248Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The fitness center at FIELD KHO KHO is equipped with modern gym equipment, catering to students, faculty, and fitness enthusiasts.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The FIELD KHO KHO Fitness Center features a well-equipped gymnasium for students and faculty, complete with the latest equipment in a well-laid-out indoor gym. This setup encourages weightlifters, bodybuilders, and fitness seekers by providing necessary equipment.
+KEYWORDS: fitness center, gym equipment, weightlifting, bodybuilding, fitness
+ENTITIES: FIELD KHO KHO Fitness Center
+QUERY_VARIATIONS:
+ - What fitness facilities are available at FIELD KHO KHO?
+ - Does FIELD KHO KHO have a gym for students and faculty?
+ - What kind of equipment does the FIELD KHO KHO Fitness Center offer for weightlifting and bodybuilding?
+
+--- DOCUMENT_ID: 69bb99370c142506c80c1346 ---
+TIMESTAMP: 2026-03-19T06:35:35.469Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: A list of gym equipment made available for fitness purposes.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Following equipment for the above purpose are made available. List of equipment: Multi Gym, Leg Extension, Preacher Curl Bench, Multi Adjustable Bench Press, Cable Cross Over Machine, Sitting and Standing Twister, Leg Press, Spin Bike, Round Dumbbells (Rubberised), Rubber Weight Plates, Olympic Curl Bar, Olympic Weight Lifting Bar, Chrome.
+KEYWORDS: gym, equipment, fitness, workout, machines
+ENTITIES: 
+QUERY_VARIATIONS:
+ - What gym equipment is available?
+ - List the fitness machines provided.
+ - What are the workout equipment options?
+
+--- DOCUMENT_ID: 69bb99410c142506c80c1349 ---
+TIMESTAMP: 2026-03-19T06:35:45.662Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Participation in annual sports activities at Anna University involves the use of various weightlifting equipment.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Weight Plates, Olympic Curl Bar, Olympic Weightlifting Bar, Chrome Push Bar, and Triceps Rope are used in Annual Sports Activities, including participation in Anna University, South Zone, and Invitation Tournaments.
+KEYWORDS: weightlifting, sports equipment, Anna University, annual sports activities
+ENTITIES: Anna University, South Zone, Invitation Tournaments
+QUERY_VARIATIONS:
+ - What sports equipment is used in annual sports activities at Anna University?
+ - How does Anna University participate in weightlifting competitions?
+ - What are the annual sports activities involving weightlifting equipment at Anna University?
+
+--- DOCUMENT_ID: 69bb99560c142506c80c134c ---
+TIMESTAMP: 2026-03-19T06:36:06.433Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Anna University participates in and conducts various sports tournaments and events.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Anna University participates in South Zone and Invitation Tournaments. The university conducts zonal and inter-zonal tournaments, Annual Sports Day, Mohamed Sathak Trophy for football, BSM Trophy for cricket, and Fit India Cyclothon.
+KEYWORDS: sports tournaments, Anna University, South Zone, Invitation Tournaments, Annual Sports Day, Mohamed Sathak Trophy, BSM Trophy, Fit India Cyclothon
+ENTITIES: Anna University, South Zone, Mohamed Sathak Trophy, BSM Trophy, Fit India Cyclothon
+QUERY_VARIATIONS:
+ - What sports events does Anna University participate in?
+ - How does Anna University promote sports among its students?
+ - What are the notable sports tournaments conducted by Anna University?
+
+--- DOCUMENT_ID: 69bb995e0c142506c80c134f ---
+TIMESTAMP: 2026-03-19T06:36:14.527Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Contact information and operational hours for an establishment.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The establishment is open Monday to Friday from 9.00 to 20.00, Saturday from 10.00 to 16.00, and Sunday from 9.30 to 18.00. You can contact them at (+01) – 234 567 890 or visit www.yourdomain.
+KEYWORDS: operation hours, contact info, establishment
+ENTITIES: Monday, Friday, Saturday, Sunday, (+01) – 234 567 890, www.yourdomain
+QUERY_VARIATIONS:
+ - What are the operation hours and how can I contact this establishment?
+ - How can I get in touch with the establishment and what are its working hours?
+ - What are the hours of operation and contact details for this place?
+
+--- DOCUMENT_ID: 69bb99690c142506c80c1352 ---
+TIMESTAMP: 2026-03-19T06:36:25.091Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: This text provides contact information and copyright details for ThemeMascot.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Contact information is available from 30 to 18:00 at (+01) 234 567 890 or via www.yourdomain.com and contact@yourdomain.com, with ThemeMascot copyright in 2016.
+KEYWORDS: contact information, copyright, ThemeMascot
+ENTITIES: ThemeMascot, 2016
+QUERY_VARIATIONS:
+ - How can I contact ThemeMascot?
+ - What is the copyright information for ThemeMascot?
+ - What are the contact details and copyright year for ThemeMascot?
+
+--- DOCUMENT_ID: 69bb99710c142506c80c1355 ---
+TIMESTAMP: 2026-03-19T06:36:33.268Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: 
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: omain.com contact@yourdomain.com Copyright ©2016 ThemeMascot
+KEYWORDS: 
+ENTITIES: 
+QUERY_VARIATIONS:
+
+
+--- DOCUMENT_ID: 69bb997f0c142506c80c1358 ---
+TIMESTAMP: 2026-03-19T06:36:47.214Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: MSAJCE's NSS and YRC clubs participate in Unnat Bharat Abiyan for social service and community development.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: NSS and YRC are involved in Unnat Bharat Abiyan activities at MSAJCE, focusing on selfless service, social service to serve the downtrodden, and personality development through community work.
+KEYWORDS: NSS, YRC, Unnat Bharat Abiyan, social service, community development, MSAJCE
+ENTITIES: MSAJCE, NSS, YRC, Unnat Bharat Abiyan
+QUERY_VARIATIONS:
+ - What social service activities does MSAJCE offer through NSS and YRC?
+ - How is Unnat Bharat Abiyan implemented at MSAJCE?
+ - What community development programs are available at MSAJCE through NSS and YRC?
+
+--- DOCUMENT_ID: 69bb998b0c142506c80c135b ---
+TIMESTAMP: 2026-03-19T06:36:59.086Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Mohamed Sathak AJ College of Engineering established the National Service Scheme to promote community service and personality development among students.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Personality Development through Community Service in the society among young students, facilitated by Mohamed Sathak AJ College of Engineering (MSAJCE) in Chennai, which established the National Service Scheme (NSS) at the institute level in 2001.
+KEYWORDS: community service, personality development, National Service Scheme, student development, social responsibility
+ENTITIES: Mohamed Sathak AJ College of Engineering, Chennai, National Service Scheme, 2001
+QUERY_VARIATIONS:
+ - What community service initiatives does MSAJCE offer for student personality development?
+ - How does the National Service Scheme at MSAJCE contribute to student growth?
+ - What year did MSAJCE establish its National Service Scheme for community service and student development?
+
+--- DOCUMENT_ID: 69bb99960c142506c80c135e ---
+TIMESTAMP: 2026-03-19T06:37:10.628Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The NSS unit of MSAJCE, initiated in 2001, comprises over 100 members working towards societal betterment in Chennai.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: National Service Scheme (NSS) at the institute level was initiated in the year 2001. Presently, the NSS unit of MSAJCE has over 100 active members from various disciplines of 1st year and 2nd year, working rigorously for the betterment of society in and around Chennai.
+KEYWORDS: National Service Scheme, NSS, MSAJCE, societal betterment, community service
+ENTITIES: MSAJCE, Chennai, 2001
+QUERY_VARIATIONS:
+ - What is the National Service Scheme at MSAJCE?
+ - How does MSAJCE contribute to community service in Chennai?
+ - What is the history of the NSS unit at MSAJCE?
+
+--- DOCUMENT_ID: 69bb99a60c142506c80c1361 ---
+TIMESTAMP: 2026-03-19T06:37:26.981Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The NSS unit of a college in Chennai has conducted various social service activities including blood donation camps and awareness programs on health, consumer rights, environmental protection, and AIDS.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Seriously for the betterment of society in and around Chennai. Our NSS unit has carried out blood donation camps, Awareness programmes on 'Health and Hygiene', Consumer Rights, Environmental Protection, AIDS awareness programme etc.
+KEYWORDS: blood donation, health and hygiene, consumer rights, environmental protection, AIDS awareness
+ENTITIES: Chennai
+QUERY_VARIATIONS:
+ - What social services does the NSS unit in Chennai offer?
+ - What kind of awareness programs are conducted by the college in Chennai?
+ - What community development activities are undertaken by the college's NSS unit?
+
+--- DOCUMENT_ID: 69bb99af0c142506c80c1364 ---
+TIMESTAMP: 2026-03-19T06:37:35.519Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The program focuses on community development through environmental protection, AIDS awareness, and skill enhancement in democratic leadership.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Environmental Protection, AIDS awareness programs, and other community services. The objectives include working among people, enhancing self and community knowledge, applying studies to practical use, justifying difficulties, gaining democratic leadership skills, and acquiring program skills.
+KEYWORDS: Environmental Protection, AIDS awareness, community development, democratic leadership
+ENTITIES: 
+QUERY_VARIATIONS:
+ - What community development programs are available?
+ - How can I get involved in environmental protection and AIDS awareness?
+ - What skills can I gain from community service programs?
+
+--- DOCUMENT_ID: 69bb99bc0c142506c80c1367 ---
+TIMESTAMP: 2026-03-19T06:37:48.856Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The text outlines the objectives and duties of NSS Volunteers, focusing on democratic leadership, skill development, community service, and social responsibility.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Exercise of democratic leadership to gain skills in program development, enabling self-employment, bridging the gap between educated and uneducated masses, and promoting service to weaker community sections. Duties of NSS Volunteers include establishing societal relationships and identifying needs.
+KEYWORDS: democratic leadership, program development, self-employment, community service, social responsibility, NSS Volunteers
+ENTITIES: 
+QUERY_VARIATIONS:
+ - What are the main goals of NSS Volunteers?
+ - How do NSS Volunteers contribute to community development?
+ - What skills do NSS Volunteers aim to develop through their activities?
+
+--- DOCUMENT_ID: 69bb99d50c142506c80c136a ---
+TIMESTAMP: 2026-03-19T06:38:13.144Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The text describes the process of establishing a relationship with society to identify community needs and problems, and to plan and execute programs to address these issues.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: establish relationship with the society to identify needs, problems and resources of the community and relate his learning experience towards finding solutions to the problems identified. Plan programs and execute them. Record the activities systematically and assess the progress periodically. Code of Conduct for NSS Volunteer
+KEYWORDS: community, needs, problems, resources, learning, experience, solutions, programs, execution, assessment, progress, Code of Conduct, NSS, Volunteer
+ENTITIES: NSS, Volunteer
+QUERY_VARIATIONS:
+ - How can I get involved with my community through NSS?
+ - What are the steps to identify and solve community problems?
+ - How does the NSS Code of Conduct guide volunteer work in communities?
+
+--- DOCUMENT_ID: 69bb99de0c142506c80c136d ---
+TIMESTAMP: 2026-03-19T06:38:22.672Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Volunteers for NSS should follow a code of conduct that includes working under a group leader's guidance, earning community trust, and avoiding inappropriate behavior.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The progress periodically. Code of Conduct for NSS Volunteers: All volunteers should work under the guidance of a group leader nominated by the program officer. All volunteers should make themselves worthy of the confidence and cooperation of the group/community leadership. Volunteers should scrupulously avoid entering into.
+KEYWORDS: NSS Volunteers, Code of Conduct, Community Leadership, Volunteer Guidance
+ENTITIES: NSS, Program Officer
+QUERY_VARIATIONS:
+ - What are the guidelines for NSS volunteers?
+ - How should NSS volunteers conduct themselves in the community?
+ - What is the expected behavior of NSS volunteers under their group leader?
+
+--- DOCUMENT_ID: 69bb99f20c142506c80c1370 ---
+TIMESTAMP: 2026-03-19T06:38:42.349Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Volunteers are advised on best practices, including avoiding controversy, keeping records, and wearing identification badges during national importance days.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Leadership volunteers should scrupulously avoid entering into any controversial issues. Volunteers should keep a day-to-day record of their activities and experiences. It is obligatory for every volunteer to wear the NSS badge while on work. Following events are organized during various national importance days, including National Youth days.
+KEYWORDS: leadership, volunteers, NSS, national importance days, community service
+ENTITIES: NSS, National Youth days
+QUERY_VARIATIONS:
+ - What are the guidelines for volunteers during national events?
+ - How should NSS volunteers conduct themselves during community service?
+ - What are the best practices for leadership in volunteer work during important national days?
+
+--- DOCUMENT_ID: 69bb9a010c142506c80c1373 ---
+TIMESTAMP: 2026-03-19T06:38:57.999Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The college participates in various social service activities, including national importance days, health camps, and environmental programs.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Organized during various national importance days, including National Youth Day, Independence Day, and Republic Day, Road Safety Week, orphanage visits, polio drops programs, annual special camps, Swatch Bharath programs, orientation and inauguration of regular activities, blood donation camps, eye check-ups, dental camps, and tree plantation programs.
+KEYWORDS: social service, national importance days, health camps, environmental programs, community engagement
+ENTITIES: National Youth Day, Independence Day, Republic Day, Road Safety Week, Swatch Bharath
+QUERY_VARIATIONS:
+ - What social service activities does the college participate in?
+ - How does the college contribute to national importance days and community health?
+ - What environmental and social initiatives are undertaken by the college?
+
+--- DOCUMENT_ID: 69bb9a0a0c142506c80c1376 ---
+TIMESTAMP: 2026-03-19T06:39:06.885Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: MSAJCE conducts community service and awareness activities.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Mohamed Sathak A. J. College of Engineering has been involved in various community service activities including Tobacco Awareness Rally, Eye Screening Camp, International Yoga Day, tree plantation programs, and educational events for school students.
+KEYWORDS: Community service, Health camps, Awareness programs, Tree plantation, Educational events
+ENTITIES: Tobacco Awareness Rally, Eye Screening Camp, International Yoga Day, Mohamed Sathak A. J. College of Engineering
+QUERY_VARIATIONS:
+ - What community service activities has MSAJCE been involved in?
+ - What are the dates for the recent health and awareness camps organized by the college?
+ - Can you list the educational and environmental events hosted by Mohamed Sathak A. J. College of Engineering?
+
+--- DOCUMENT_ID: 69bb9a290c142506c80c1379 ---
+TIMESTAMP: 2026-03-19T06:39:38.028Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: 
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: reening Camp 26.06.2023 View 3 International Yoga Day 21.06.2023 View 4 Motivational Speech 09.06.2023 View 5 Cancer Awareness Rally 31.05.2023 View 6 Blood Donation Camp 17.05.2023 View 7 Kavalan SOS App Awareness Program 20.04.2023 View 8 Financial Education Program of NCFE 16.03.
+KEYWORDS: 
+ENTITIES: 
+QUERY_VARIATIONS:
+
+
+--- DOCUMENT_ID: 69bb9a370c142506c80c137c ---
+TIMESTAMP: 2026-03-19T06:39:51.855Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: 
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: 20.04.2023 View 8 Financial Education Program of NCFE 16.03.2023 View 9 Drug Awareness Program for School Students 10.2.2023 View 10 Voters Day Awareness Program 25.01.2023 View 11 Dental Health Awareness Camp 11.01.2023 View 12 Driving License Awareness Camp 12.12.2022 & 13.12.
+KEYWORDS: 
+ENTITIES: 
+QUERY_VARIATIONS:
+
+
+--- DOCUMENT_ID: 69bb9a520c142506c80c137f ---
+TIMESTAMP: 2026-03-19T06:40:18.649Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: A Driving License Awareness Camp was conducted on December 12 and 13, 2022, to educate participants about the significance of driving licenses.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Driving License Awareness Camp was held on December 12 and 13, 2022. The event aimed to raise awareness about the importance of driving licenses. The campus is open from 9:00 AM to 8:00 PM, Monday through Friday, and from 10:00 AM to 4:00 PM on Saturdays.
+KEYWORDS: Driving License, Awareness Camp, Road Safety, Automotive Education
+ENTITIES: Driving License Awareness Camp, December 12, 2022, December 13, 2022
+QUERY_VARIATIONS:
+ - What events were held for driving license awareness in December 2022?
+ - When and where was the Driving License Awareness Camp conducted?
+ - What are the dates for the upcoming driving license awareness programs?
+
+--- DOCUMENT_ID: 69bb9a790c142506c80c1382 ---
+TIMESTAMP: 2026-03-19T06:40:57.675Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The opening hours and contact information for a particular establishment are provided.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Opening Hours Monday - Friday 9.00 - 20.00 Saturday 10.00 - 16.00 Sunday 9.30 - 18.00 Contact Info (+01) - 234 567 890 www.yourdomain.com contact@yourdomain.com Copyright 2016 ThemeMascot
+KEYWORDS: opening hours, contact info, business hours
+ENTITIES: ThemeMascot, 2016
+QUERY_VARIATIONS:
+ - What are the business hours of this establishment?
+ - How can I contact this company?
+ - What are the opening times for this business?
+
+--- DOCUMENT_ID: 69bb9a870c142506c80c1385 ---
+TIMESTAMP: 2026-03-19T06:41:11.499Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Contact information and copyright notice for a domain.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: omain.com contact@yourdomain.com Copyright 2016 ThemeMascot
+KEYWORDS: contact information, copyright, domain
+ENTITIES: omain.com, 2016
+QUERY_VARIATIONS:
+ - What is the contact email for omain.com?
+ - What is the copyright year for ThemeMascot?
+ - How can I contact the owner of omain.com?
+
+--- DOCUMENT_ID: 69bb9a980c142506c80c1388 ---
+TIMESTAMP: 2026-03-19T06:41:28.501Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: MSAJCE offers various clubs and societies for students, including sports, fine arts, science, and more, to enhance their college experience.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: MSAJCE offers various clubs and societies for students, including sports, fine arts, science, and more, to enhance their college experience. The clubs include SPORTS CLUB, FINE ARTS CLUB, SCIENCE CLUB, TAMIL MANDRAM, CODING CLUB, ROBOTIC CLUB, ENERGY & ECO CLUB, and PHOTOGRAPHY CLUB. This club maintains records of sports and games events attended by students within the college, within the university and outside.
+KEYWORDS: clubs, societies, sports, fine arts, science, student life, college experience
+ENTITIES: MSAJCE, Mohamed Sathak A. J. College of Engineering
+QUERY_VARIATIONS:
+ - What clubs and societies are available at MSAJCE?
+ - How can I get involved in extracurricular activities at Mohamed Sathak A. J. College of Engineering?
+ - What are the different types of clubs offered at MSAJCE for students?
+
+--- DOCUMENT_ID: 69bb9aa20c142506c80c138b ---
+TIMESTAMP: 2026-03-19T06:41:38.506Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The organization and participation of students in sports events at various levels, including reporting and budgeting, with recognition of achievements through awards.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The organization of sports events by students within the college, university, and at regional, state, and national levels, including their achievements and awards. An annual report is submitted detailing sports events, budget allocations, and expenditures. Additionally, conducting sports events as needed by students and rewarding them with trophies and medals.
+KEYWORDS: sports events, student achievements, awards, budget allocations, university sports
+ENTITIES: 
+QUERY_VARIATIONS:
+ - How do students participate in sports events at the university and national levels?
+ - What is the process for organizing and funding sports events for students?
+ - How are student achievements in sports recognized and rewarded?
+
+--- DOCUMENT_ID: 69bb9ab00c142506c80c138e ---
+TIMESTAMP: 2026-03-19T06:41:52.313Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: A sports club that aims to foster sportsmanship, friendships, and overall well-being through various events.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The club rewards participants with trophies and medals. It hosts various sports events. The objectives include fostering sportsmanship, intimate friendships, stress reduction, health improvement, and enhancing employability skills.
+KEYWORDS: sportsmanship, friendships, stress reduction, health improvement, employability skills
+ENTITIES: 
+QUERY_VARIATIONS:
+ - What are the goals of the sports club?
+ - How does the sports club contribute to student well-being?
+ - What activities does the sports club offer to enhance employability?
+
+--- DOCUMENT_ID: 69bb9aba0c142506c80c1391 ---
+TIMESTAMP: 2026-03-19T06:42:02.272Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The objectives are to enhance personal and professional development through improved health, skills, and community engagement.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: To improve health, skills, and employability. The goals include developing a positive attitude, self-confidence, courage, and patience, as well as gaining experience in understanding human nature and its relation to the environment.
+KEYWORDS: personal development, health, skills, employability, community engagement, self-confidence, courage, patience, human nature
+ENTITIES: 
+QUERY_VARIATIONS:
+ - How can I improve my health and skills for better job opportunities?
+ - What are the benefits of community engagement for personal development?
+ - How can developing self-confidence and patience enhance my career prospects?
+
+--- DOCUMENT_ID: 69bb9ad50c142506c80c1394 ---
+TIMESTAMP: 2026-03-19T06:42:29.477Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The vision is to encourage students to participate in various sports activities, fostering experience and interaction with people from different backgrounds.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The experience of human nature in relation to their environment is valued. To avail the opportunity to meet people from different walks of life. The vision is to encourage and motivate students to involve in various sports activities at both inter and intra college levels.
+KEYWORDS: sports, activities, college, environment, human nature, interaction
+ENTITIES: 
+QUERY_VARIATIONS:
+ - How can I get involved in sports activities at college?
+ - What opportunities are there for inter and intra college sports?
+ - How does the college support student participation in sports?
+
+--- DOCUMENT_ID: 69bb9ae00c142506c80c1397 ---
+TIMESTAMP: 2026-03-19T06:42:40.651Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The college offers various sports activities at inter and intra college levels, promoting teamwork and inclusivity.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Sports activities are conducted at both inter and intra college levels. The motto is Teamwork Makes The Dream Work. Games include Outdoor Cricket, Football, Volleyball, Basketball, Rugby, Badminton, kho kho, Throughball, and Indoor games like Carrom, Table tennis, and Chess.
+KEYWORDS: sports, college, teamwork, inter college, intra college, cricket, football, volleyball, basketball, rugby, badminton, kho kho, throughball, carrom, table tennis, chess
+ENTITIES: 
+QUERY_VARIATIONS:
+ - What sports activities are available at the college?
+ - How does the college promote teamwork through sports?
+ - What are the indoor and outdoor games offered by the college?
+
+--- DOCUMENT_ID: 69bb9aeb0c142506c80c139a ---
+TIMESTAMP: 2026-03-19T06:42:51.963Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Contact information and operating hours for a specific domain.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Useful Links: Opening Hours: Monday to Friday, 9:00 - 20:00; Saturday, 10:00 - 16:00; Sunday, 9:30 - 18:00. Contact Info: Phone: (+01) 234 567 890, Website: www.yourdomain.com, Email: contact@yourdomain.com
+KEYWORDS: contact information, operating hours, customer service
+ENTITIES: yourdomain.com, (+01) 234 567 890
+QUERY_VARIATIONS:
+ - What are the operating hours and how can I contact yourdomain.com?
+ - How can I get in touch with your customer service and what are your hours of operation?
+ - What is the contact information and schedule for yourdomain.com?
+
+--- DOCUMENT_ID: 69bb9af90c142506c80c139d ---
+TIMESTAMP: 2026-03-19T06:43:05.182Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: 
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: o (+01) – 234 567 890 www.yourdomain.com contact@yourdomain.com Copyright ©2016 ThemeMascot
+KEYWORDS: 
+ENTITIES: 
+QUERY_VARIATIONS:
+
+
+--- DOCUMENT_ID: 69bb9b0d0c142506c80c13a0 ---
+TIMESTAMP: 2026-03-19T06:43:26.066Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: This text provides contact information and copyright details for a domain.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: omain.com contact@yourdomain.com Copyright 2016 ThemeMascot
+KEYWORDS: contact information, copyright notice, domain details
+ENTITIES: omain.com, ThemeMascot, 2016
+QUERY_VARIATIONS:
+ - What is the contact email for omain.com?
+ - Who owns the copyright for ThemeMascot?
+ - What year was the copyright for omain.com established?
+
+--- DOCUMENT_ID: 69bb9b160c142506c80c13a3 ---
+TIMESTAMP: 2026-03-19T06:43:34.193Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The Computer Society of India (CSI) aims to make IT professions a preferred choice among all sections of society by working in the interest of IT professionals and computer users.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The Computer Society of India (CSI) works towards making the IT profession an area of choice amongst all sections of society, keeping in mind the interest of IT professionals and computer users.
+KEYWORDS: Computer Society of India, IT professionals, computer users, professional development
+ENTITIES: Computer Society of India, CSI
+QUERY_VARIATIONS:
+ - What is the mission of the Computer Society of India?
+ - How does CSI support IT professionals and computer users?
+ - What are the goals of the Computer Society of India in terms of professional development?
+
+--- DOCUMENT_ID: 69bb9b1f0c142506c80c13a6 ---
+TIMESTAMP: 2026-03-19T06:43:43.995Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The CSI organizes various events and training for IT professionals to make the session an area of choice among all sections of society.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Session as area of choice amongst all sections of the society. To fulfill this objective, the CSI regularly organizes conferences, conventions, lectures, projects, awards. At the same time it also ensures that regular training and skill updating are organized for the IT professionals.
+KEYWORDS: CSI, IT professionals, conferences, training, skill updating
+ENTITIES: 
+QUERY_VARIATIONS:
+ - What events does the CSI organize for IT professionals?
+ - How does the CSI support the development of IT professionals?
+ - What role does the CSI play in the IT sector?
+
+--- DOCUMENT_ID: 69bb9b290c142506c80c13a9 ---
+TIMESTAMP: 2026-03-19T06:43:53.911Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: CSI offers training and support programs, including 'Punarjani' for physically challenged citizens, and seeks global alliances for collaborative activities.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Training and skill updating programs are organized for IT professionals. The Education Directorate of CSI provides support to physically challenged citizens through the 'Punarjani' training initiative. Furthermore, CSI adopts a global approach by forming alliances with international organizations to participate in such activities.
+KEYWORDS: IT professionals, skill updating, CSI, Education Directorate, Punarjani, global approach, alliances
+ENTITIES: CSI, Education Directorate, Punarjani
+QUERY_VARIATIONS:
+ - What training programs does CSI offer for IT professionals and physically challenged individuals?
+ - How does CSI support global collaboration in education and skill development?
+ - What initiatives does the Education Directorate of CSI undertake for the benefit of physically challenged citizens?
+
+--- DOCUMENT_ID: 69bb9b350c142506c80c13ac ---
+TIMESTAMP: 2026-03-19T06:44:05.720Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: CSI helps governments formulate IT strategies and plans across regions including Tamil Nadu, Pondicherry, and others.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: willing to come forward and participate in such activities. CSI also helps governments in formulating IT strategy and planning REGION – VII Tamil Nadu, Pondicherry, Andaman and Nicobar, Kerala, Lakshadweep.
+KEYWORDS: CSI, IT strategy, government planning, regional development
+ENTITIES: Tamil Nadu, Pondicherry, Andaman and Nicobar, Kerala, Lakshadweep, CSI
+QUERY_VARIATIONS:
+ - How does CSI contribute to IT strategy formulation in governments?
+ - What regions does CSI operate in for IT planning?
+ - What is CSI's role in government IT strategy and planning?
+
+--- DOCUMENT_ID: 69bb9b420c142506c80c13af ---
+TIMESTAMP: 2026-03-19T06:44:18.417Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The Society has a well-established network across the country, particularly associated with students in regions like Nadu, Pondicherry, and others.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Nadu, Pondicherry, Andaman and Nicobar, Kerala, Lakshadweep. KANCHIPURAM CHAPTER: The Society, closely associated with students, has developed a well-established network across the country.
+KEYWORDS: student network, society, education, regional presence
+ENTITIES: Nadu, Pondicherry, Andaman and Nicobar, Kerala, Lakshadweep, KANCHIPURAM CHAPTER
+QUERY_VARIATIONS:
+ - What student networks are available in Nadu and Pondicherry?
+ - How does the KANCHIPURAM CHAPTER support students across the country?
+ - What educational societies have a presence in Andaman and Nicobar, Kerala, and Lakshadweep?
+
+--- DOCUMENT_ID: 69bb9b4d0c142506c80c13b2 ---
+TIMESTAMP: 2026-03-19T06:44:29.320Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The Society offers various activities for its student members, including lectures, seminars, and industrial visits.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The Society has developed a well-established network across the country, offering activities for students including lecture meetings, seminars, conferences, training programs, programming contests, and industrial visits to installations.
+KEYWORDS: networking, education, seminars, conferences, training, programming, industrial visits
+ENTITIES: 
+QUERY_VARIATIONS:
+ - What activities does the Society offer for students?
+ - How does the Society support student development?
+ - What kind of events can I attend as a member of the Society?
+
+--- DOCUMENT_ID: 69bb9b570c142506c80c13b5 ---
+TIMESTAMP: 2026-03-19T06:44:39.496Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: CSI's Educational Directorate organizes programming contests, industrial visits, and certification activities for professionals in the latest technologies.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: CSI's Educational Directorate organizes programming contests and industrial visits, focusing on the certification of professionals in the latest technologies.
+KEYWORDS: programming contests, industrial visits, certification, latest technologies, CSI, Educational Directorate
+ENTITIES: CSI, Educational Directorate
+QUERY_VARIATIONS:
+ - What activities does CSI's Educational Directorate organize?
+ - How does CSI support professional development in technology?
+ - What role does the Educational Directorate play in CSI?
+
+--- DOCUMENT_ID: 69bb9b6e0c142506c80c13b8 ---
+TIMESTAMP: 2026-03-19T06:45:02.652Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The initiative provides distance education in business domains with technology-enabled learning and counseling support.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Education of professionals related to the latest technologies. It is a recent initiative of distance education in the Business Domain areas that offers technology-enabled learning supported by personal counseling and expert advice. In an ever-changing environment, CSI offers professional counseling, being a great need of the hour.
+KEYWORDS: distance education, technology-enabled learning, business domain, professional counseling
+ENTITIES: CSI
+QUERY_VARIATIONS:
+ - What initiatives are available for professionals in the business domain?
+ - How can I access distance education with counseling support?
+ - What are the latest technologies used in business education initiatives?
+
+--- DOCUMENT_ID: 69bb9b860c142506c80c13bb ---
+TIMESTAMP: 2026-03-19T06:45:26.549Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Mohamed Sathak A. J. College of Engineering provides professional counseling and has received awards for its support, indicating a strong commitment to student development.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Mohamed Sathak A. J. College of Engineering offers professional counseling, recognizing it as a great need of the hour. This is achieved through close contact with its young members via various events, conferences, and symposia. The college received the Best Supporting College award from the CSI Kancheepuram Chapter. One of our faculty members, Mr. D, was notably recognized.
+KEYWORDS: professional counseling, student development, awards, academic support
+ENTITIES: Mohamed Sathak A. J. College of Engineering, CSI Kancheepuram Chapter, Mr. D
+QUERY_VARIATIONS:
+ - What counseling services does Mohamed Sathak A. J. College of Engineering offer?
+ - How does MSAJCE support its students through events and conferences?
+ - What awards has the college received for its academic and student support initiatives?
+
+--- DOCUMENT_ID: 69bb9b920c142506c80c13be ---
+TIMESTAMP: 2026-03-19T06:45:38.822Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Mr. D. Weslin, a faculty member, received the Active Participant Award from the CSI Kancheepuram Chapter.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Award (SBC) from CSI Kancheepuram Chapter. Our faculty, Mr. D. Weslin, received an Active Participant Award (SBC) from CSI Kancheepuram Chapter. Details of Nomination: Authority Name - Dr. K.S. Srinivasan, Designation - Principal, Mohamed Sathak AJ College of Engineering, Phone - 9150575066, E-mail - principal@msajce-edu.in.
+KEYWORDS: Award, CSI Kancheepuram Chapter, Active Participant, Faculty, Engineering College
+ENTITIES: Mr. D. Weslin, CSI Kancheepuram Chapter, Dr. K.S. Srinivasan, Mohamed Sathak AJ College of Engineering
+QUERY_VARIATIONS:
+ - What awards have faculty members from Mohamed Sathak AJ College of Engineering received?
+ - Who received the Active Participant Award from CSI Kancheepuram Chapter?
+ - What recognition has Mr. D. Weslin received for his participation in professional societies?
+
+--- DOCUMENT_ID: 69bb9ba30c142506c80c13c1 ---
+TIMESTAMP: 2026-03-19T06:45:55.350Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: 
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: ege of Engineering 9150575066 principal@msajce-edu.in Dr. I. Manju Nominee Professor Department of ECE 9949055026 ece.manju@msajce-edu.in Dr. D. Weslin CSI Student Branch Counsellor Associate Professor Department of IT 9715202533 it.weslin@msajce-edu.
+KEYWORDS: 
+ENTITIES: 
+QUERY_VARIATIONS:
+
+
+--- DOCUMENT_ID: 69bb9bb00c142506c80c13c4 ---
+TIMESTAMP: 2026-03-19T06:46:08.192Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: 
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Professor Department of IT 9715202533 it.weslin@msajce-edu.in CSI OFFICE BEARERS NAME DEPARTMENT BATCH President Yogesh R IT 2022-2026 Vice president Saqlin Mustaq M AI&DS 2023-2027 Secretary Abu Jabar Mubarak CS&BS 2022-2026 Joint Secretary Hanuram PR CSE 2023-2027 Joint Secretary Shivam Vishwakarma CSE 2023-2027 Treassur
+KEYWORDS: 
+ENTITIES: 
+QUERY_VARIATIONS:
+
+
+--- DOCUMENT_ID: 69bb9bc50c142506c80c13c7 ---
+TIMESTAMP: 2026-03-19T06:46:29.203Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: List of society members and an activity announcement for a CSI inaugural function.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: 27 Joint Secretary Shivam Vishwakarma CSE 2023-2027 Treasurer Navadharshan CSCS 2023-2027 Executive Member Akram Bilal AI&DS 2022-2026 Executive Member Zeenath Nisha IT 2023-2027 ACTIVITIES S.NO NAME OF THE WORKSHOP RESOURCE PERSON DATE NO. OF PARTICIPANTS CO-ORDINATORS VIEW 1 CSI Inaugural Function Dr.
+KEYWORDS: CSI, Inaugural Function, Academic Society, Members, Workshop
+ENTITIES: Shivam Vishwakarma, Navadharshan, Akram Bilal, Zeenath Nisha, 2023-2027, 2022-2026
+QUERY_VARIATIONS:
+ - Current society members
+ - CSI inaugural function schedule
+ - Executive members 2023-2027
+
+--- DOCUMENT_ID: 69bb9bd90c142506c80c13ca ---
+TIMESTAMP: 2026-03-19T06:46:49.762Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The CSI Kancheepuram Chapter and Valliammai College of Engineering hosted events including the CSI Inaugural Function and a guest lecture on Voice over IP.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The CSI Kancheepuram Chapter and Valliammai College of Engineering hosted the CSI Inaugural Function, led by Dr. Murugan, and a guest lecture on Voice over IP by Mr. Anbazhagan A T.
+KEYWORDS: CSI, Inaugural Function, Voice over IP, Guest Lecture, Valliammai College of Engineering
+ENTITIES: Dr. Murugan, Mrs. Viswajaa.S, Mr. Pandiyan.G, Mr. Anbazhagan A T, Valliammai College of Engineering, Kancheepuram, 28.02.23, 22.03.23
+QUERY_VARIATIONS:
+ - What events were hosted by the CSI Kancheepuram Chapter at Valliammai College of Engineering?
+ - Who were the speakers at the recent CSI events in Kancheepuram?
+ - What was the topic of the guest lecture at Valliammai College of Engineering on 22.03.23?
+
+--- DOCUMENT_ID: 69bb9bec0c142506c80c13cd ---
+TIMESTAMP: 2026-03-19T06:47:08.877Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: 
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: cal Lead, Cognizant. 22.03.23 100 Mrs.Gayathiri, AP/CSE Mrs.Aiswarya M.S, AP/IT View 3 Guest lecture-Digital Marketing Mr. J. Mohammed Afroze Digital, CEO, Chennai 17.03.23 110 Mr. Rajasekar R, AP/CSE Mrs.Aysha Surfeen.M.A , AP/IT View 4 Interactive Session Innovation & Invention in AI Technology Ms.
+KEYWORDS: 
+ENTITIES: 
+QUERY_VARIATIONS:
+
+
+--- DOCUMENT_ID: 69bb9c110c142506c80c13d0 ---
+TIMESTAMP: 2026-03-19T06:47:46.012Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: An interactive session was held on innovation and invention in AI technology, featuring speakers from Intel Corporation and CSI Kancheepuram Chapter.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Interactive Session on Innovation and Invention in AI Technology by Ms. Anisha Udhayakumar, AI Evangelist at Intel Corporation, on 10.03.23. Also, Mr. Vigneshwaran, TPO, and Mr. Hamer Shield J M discussed the benefits of CSI membership. Dr. M. Senthil Kumar, Secretary of CSI Kancheepuram Chapter, presented on 20.02.20, with 200 attendees, including Mrs. S. Kayalvizhi.
+KEYWORDS: AI Technology, Innovation, Invention, CSI Membership, Intel Corporation
+ENTITIES: Anisha Udhayakumar, Vigneshwaran, Hamer Shield J M, M. Senthil Kumar, S. Kayalvizhi, Intel Corporation, CSI Kancheepuram Chapter, 10.03.23, 20.02.20
+QUERY_VARIATIONS:
+ - What are the benefits of CSI membership discussed by Intel Corporation?
+ - Who spoke at the interactive session on AI technology innovation?
+ - What were the key points discussed by Dr. M. Senthil Kumar at the CSI Kancheepuram Chapter event?
+
+--- DOCUMENT_ID: 69bb9c240c142506c80c13d3 ---
+TIMESTAMP: 2026-03-19T06:48:04.988Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: A CSI Kancheepuram Chapter meeting was held on 20.02.20 with notable attendees.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: CSI Kancheepuram Chapter meeting on 20.02.20 with 200 attendees, including Mrs.S.Kayalvizhi and Mrs.Bapitha Rani. Useful Links and Opening Hours: Monday to Friday 9.00 - 20.00, Saturday 10.00.
+KEYWORDS: CSI, Kancheepuram, Chapter Meeting, Attendees
+ENTITIES: CSI Kancheepuram Chapter, Mrs.S.Kayalvizhi, Mrs.Bapitha Rani, 20.02.20
+QUERY_VARIATIONS:
+ - What happened at the CSI Kancheepuram Chapter meeting on 20.02.20?
+ - Who attended the CSI meeting in Kancheepuram on 20.02.20?
+ - What are the opening hours for the CSI Kancheepuram Chapter?
+
+--- DOCUMENT_ID: 69bb9c390c142506c80c13d6 ---
+TIMESTAMP: 2026-03-19T06:48:25.688Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Inks operates from Monday to Friday 9:00-20:00, Saturday 10:00-16:00, and Sunday 9:30-18:00, with contact details available.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Inks opening hours are Monday to Friday 9:00 - 20:00, Saturday 10:00 - 16:00, and Sunday 9:30 - 18:00. Contact information: (+01) - 234 567 890, www.yourdomain.com, contact@yourdomain.com
+KEYWORDS: business hours, contact information, Inks
+ENTITIES: Inks, (+01), www.yourdomain.com, contact@yourdomain.com
+QUERY_VARIATIONS:
+ - What are the operating hours of Inks?
+ - How can I contact Inks?
+ - What is the business schedule and contact information for Inks?
+
+--- DOCUMENT_ID: 69bb9c410c142506c80c13d9 ---
+TIMESTAMP: 2026-03-19T06:48:33.545Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Contact information and copyright details for a domain.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: omain.com contact@yourdomain.com Copyright 2016 ThemeMascot
+KEYWORDS: contact, email, copyright, domain
+ENTITIES: omain.com, contact@yourdomain.com, 2016, ThemeMascot
+QUERY_VARIATIONS:
+ - How do I contact the owner of omain.com?
+ - What is the copyright information for ThemeMascot?
+ - What email can I use to reach out to the administrators of omain.com?
+
+--- DOCUMENT_ID: 69bb9c550c142506c80c13dc ---
+TIMESTAMP: 2026-03-19T06:48:53.500Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The MSAJCE Alumni Association welcomes alumni to join and participate in various activities and contributions.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: MSAJCE Alumni Association welcomes alumni to join and participate in activities and contributions.
+KEYWORDS: Alumni Association, Mohamed Sathak AJ College of Engineering, Activities, Distinguished Alumni, Scholarship, Contribution, Feedback, Alumni Meet
+ENTITIES: MSAJCE, Mohamed Sathak AJ College of Engineering
+QUERY_VARIATIONS:
+ - What is the MSAJCE Alumni Association about?
+ - How can I join the alumni association of Mohamed Sathak AJ College of Engineering?
+ - What activities and contributions can I expect from the MSAJCE Alumni Association?
+
