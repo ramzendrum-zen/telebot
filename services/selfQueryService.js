@@ -5,16 +5,22 @@ export const decomposeAndSelfQuery = async (query) => {
   try {
     const prompt = `Goal: Decompose this academic question for RAG retrieval. 
 STRICT REQUIREMENT: Preserve all specific intent keywords like "driver", "HOD", "Principal", "timing", "phone".
-Example: "Who is the driver for AR-8?" -> Output Query: "Who is the driver for bus route AR-8?"
+MULTI-PART QUERIES: If the user asks multiple things (using 'and', 'also', etc.), split them into small, independent sub-queries.
+Example: "Who is the principal and what is his phone number?" -> Output 2 separate queries.
 
 User Question: "${query}"
 
 Output EXACT ONLY JSON array (no markdown):
 [
   {
-    "query": "Full question including role/intent",
+    "query": "First independent question",
     "category": "transport|faculty|general|admin",
-    "filters": { "route": "AR-8", "name": "Principal" }
+    "filters": {}
+  },
+  {
+    "query": "Second independent question (if needed)",
+    "category": "transport|faculty|general|admin",
+    "filters": {}
   }
 ]`;
 

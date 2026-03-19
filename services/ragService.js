@@ -6,6 +6,7 @@ import { normalizeQueryBasic } from './normalizationService.js';
 import { checkSemanticCache, storeInSemanticCache } from './faqLearningService.js';
 import { decomposeAndSelfQuery } from './selfQueryService.js';
 import { generateEmbedding } from './embeddingService.js';
+import { rerankChunks } from './rerankService.js';
 import { getCache, setCache } from './cacheService.js';
 import { pushLog } from './monitorService.js';
 import logger from '../utils/logger.js';
@@ -107,6 +108,7 @@ export async function processRAGQuery(chatId, rawText) {
   // ─── STEP 4: HYBRID RETRIEVAL ─────────────────────────────────────────────
   const allChunks = new Map();
   for (const sq of subQueries) {
+    // Fetch top 20 for this subquery
     const chunks = await performHybridSearch(sq.query, sq.category, sq.filters);
     chunks.forEach(c => {
       const id = c._id?.toString() || c.content?.slice(0, 30);
@@ -116,14 +118,19 @@ export async function processRAGQuery(chatId, rawText) {
     });
   }
 
-  let top5Chunks = Array.from(allChunks.values())
+  // ─── STEP 8: RERANKING ENFORCEMENT ───────────────────────────────────────
+  let mergedTop20 = Array.from(allChunks.values())
     .sort((a, b) => (b.score || 0) - (a.score || 0))
-    .slice(0, 5);
-  log('STEP-4', `Hybrid search returned ${allChunks.size} chunks. Top score: ${top5Chunks[0]?.score || 0}`, 
-      top5Chunks.slice(0,3).map(c => ({ title: c.title, score: c.score })));
+    .slice(0, 20);
+
+  log('STEP-8', `Sending ${mergedTop20.length} chunks to Reranker`);
+  let top5Chunks = await rerankChunks(contextualQuery, mergedTop20);
+  
+  log('STEP-8', `Reranker completed. Top score: ${top5Chunks[0]?.rerankScore || top5Chunks[0]?.score || 0}`, 
+      top5Chunks.slice(0,3).map(c => ({ title: c.title, score: c.rerankScore || c.score })));
 
   // ─── STEP 9: CONFIDENCE SCORING — retry if too weak ──────────────────────
-  const topScore = top5Chunks[0]?.score || 0;
+  const topScore = top5Chunks[0]?.rerankScore || top5Chunks[0]?.score || 0;
   if (topScore < 5 && top5Chunks.length < 3) {
     log('STEP-9', `Low confidence (${topScore}). Retrying with broader keyword search...`);
     const broadChunks = await performHybridSearch(rawText, 'general', {});
@@ -131,10 +138,12 @@ export async function processRAGQuery(chatId, rawText) {
       const id = c._id?.toString() || c.content?.slice(0, 30);
       if (!allChunks.has(id)) allChunks.set(id, c);
     });
-    top5Chunks = Array.from(allChunks.values())
+    
+    mergedTop20 = Array.from(allChunks.values())
       .sort((a, b) => (b.score || 0) - (a.score || 0))
-      .slice(0, 5);
-    log('STEP-9', `After retry: ${top5Chunks.length} chunks, top score: ${top5Chunks[0]?.score || 0}`);
+      .slice(0, 20);
+    top5Chunks = await rerankChunks(contextualQuery, mergedTop20);
+    log('STEP-9', `After retry: ${top5Chunks.length} chunks, top score: ${top5Chunks[0]?.rerankScore || top5Chunks[0]?.score || 0}`);
   }
 
   // ─── STEP 10: CONTEXT VALIDATION ─────────────────────────────────────────
