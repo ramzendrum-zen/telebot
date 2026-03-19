@@ -44,7 +44,10 @@ Stay professional and concise.`;
 
     const data = await response.json();
     if (data && data.choices && data.choices[0]) {
-      return data.choices[0].message.content;
+      const content = data.choices[0].message.content;
+      const usage = data.usage || { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 };
+      
+      return { content, usage };
     }
 
     throw new Error('Invalid response structure from NVIDIA NIM');

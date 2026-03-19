@@ -81,7 +81,7 @@ Rules:
 
 Rewritten Query:`;
 
-    const rewritten = await getAIReponse(rewritePrompt, 'cheap');
+    const { content: rewritten } = await getAIReponse(rewritePrompt, 'cheap');
     const finalQuery = rewritten.replace(/["']/g, '').trim();
     
     logger.info(`Context Rewrite: "${query}" -> "${finalQuery}" (Entity: ${last_entity})`);

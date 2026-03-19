@@ -75,7 +75,8 @@ export async function processRAGQuery(chatId, rawText) {
     if (entityChunks.length > 0) {
       const memory = await getUserMemory(chatId);
       const finalPrompt = buildPrompt(normalizedText, entityChunks, memory.last_entity);
-      const aiReply = await getAIReponse(finalPrompt);
+      const { content: aiReply, usage } = await getAIReponse(finalPrompt);
+      log('TOKENS', `Prompt: ${usage.prompt_tokens} | Completion: ${usage.completion_tokens} | Total: ${usage.total_tokens}`);
       await setUserMemory(chatId, normalizedText, 'admin', rawText).catch(() => null);
       await setCache(redisKey, aiReply);
       log('STEP-5', `Answered via direct entity lookup. Latency: ${Date.now() - startTime}ms`);
@@ -159,7 +160,8 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── LLM GENERATION — STRICT CONTEXT MODE ────────────────────────────────
   const finalPrompt = buildPrompt(contextualQuery, top5Chunks, subject || memory.last_entity);
-  let aiReply = await getAIReponse(finalPrompt);
+  let { content: aiReply, usage } = await getAIReponse(finalPrompt);
+  log('TOKENS', `Pass-1 | P: ${usage.prompt_tokens} | C: ${usage.completion_tokens} | T: ${usage.total_tokens}`);
 
   // ─── STEP 11: RESPONSE VALIDATION — re-generate if LLM ignored context ───
   if (detectContextIgnored(aiReply, top5Chunks)) {
@@ -168,14 +170,18 @@ export async function processRAGQuery(chatId, rawText) {
 Analyze and infer the answer. Do NOT fallback.
 
 ${finalPrompt}`;
-    aiReply = await getAIReponse(analyticalPrompt);
+    const retry = await getAIReponse(analyticalPrompt);
+    aiReply = retry.content;
+    log('TOKENS', `Pass-2 (Retry) | P: ${retry.usage.prompt_tokens} | C: ${retry.usage.completion_tokens} | T: ${retry.usage.total_tokens}`);
   }
 
   // ─── STEP 12: BULLET FORMAT GUARD ─────────────────────────────────────────
   if (!aiReply.includes('•') && !aiReply.includes('-') && aiReply.length > 50) {
     log('STEP-12', 'Non-bullet format detected. Forcing conversion to bullets.');
     const bulletPrompt = `Rewrite this information into exactly 3-6 clean, structured bullet-point format like a Professional Assistant:\n\n${aiReply}`;
-    aiReply = await getAIReponse(bulletPrompt, 'cheap');
+    const guard = await getAIReponse(bulletPrompt, 'cheap');
+    aiReply = guard.content;
+    log('TOKENS', `Formatting Guard | P: ${guard.usage.prompt_tokens} | C: ${guard.usage.completion_tokens} | T: ${guard.usage.total_tokens}`);
   }
 
   // ─── CACHE + LEARN ────────────────────────────────────────────────────────

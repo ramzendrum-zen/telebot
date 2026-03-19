@@ -22,7 +22,7 @@ Output EXACT ONLY JSON (no markdown):
   ]
 }`;
 
-    const content = await getAIReponse(prompt, 'cheap');
+    const { content } = await getAIReponse(prompt, 'cheap');
     
     try {
         const jsonMatch = content.match(/\{.*\}/s);
