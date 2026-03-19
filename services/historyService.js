@@ -37,57 +37,41 @@ export const setUserMemory = async (chatId, entity, topic = 'general', question 
   }
 };
 
-import { getAIReponse } from './aiService.js';
-
-export const rewriteQuery = async (query, memory) => {
-  const { last_entity, last_topic, last_question } = memory;
+export const rewriteQuery = (query, memory) => {
+  const { last_entity, last_topic } = memory;
   if (!last_entity && !last_topic) return query;
   
   const q = query.toLowerCase().trim();
+  const words = q.split(/\s+/);
 
-  // DETECTION RULES: Detect if this is likely a follow-up
-  const followUpKeywords = ['timing', 'phone', 'contact', 'more', 'another', 'details', 'who', 'where', 'list', 'what about'];
-  const isShort = q.split(/\s+/).length <= 4;
-  const hasPronoun = /\b(him|her|it|them|they|he|she|his|hers|that|this)\b/i.test(q);
-  const startWithVague = /^(what|how|who|where|when|list|give|show|tell)\s*\?*$/i.test(q);
-  const isVagueKeyword = followUpKeywords.some(kw => q.includes(kw));
+  // 1. GREETING/SOCIAL DETECTION: Never rewrite social fluff
+  const greetings = /\b(hi|hello|hey|hlo|name is|i am|this is)\b/i;
+  if (greetings.test(q)) return query;
 
-  // GREETING DETECTION: Skip rewrite for greetings
-  const greetings = /\b(hi|hello|hey|hlo|good morning|namaste|morning|evening|greetings)\b/i;
-  if (greetings.test(q) && q.split(/\s+/).length <= 2) {
-    return query;
+  // 2. PRONOUN/HOOK DETECTION: he/his/it/more/timing/phone/list
+  const pronouns = /\b(him|her|it|them|they|he|she|his|hers|that|this|the timing|phone|contact|more|detail|list)\b/i;
+  const hasPronoun = pronouns.test(q);
+
+  // 3. NOUN CLASH: If the user says "buses" but last_entity was "Principal", do NOT rewrite.
+  // This is a topic shift.
+  const transportKeywords = /\b(bus|route|ar-|van|driver|ar5|ar8|r-)\b/i;
+  const adminKeywords = /\b(principal|srinivasan|head|hod|office|admissions)\b/i;
+  
+  const currentTopicIsTransport = transportKeywords.test(q);
+  const lastTopicWasAdmin = adminKeywords.test((last_entity || last_topic || '').toLowerCase());
+  
+  if (currentTopicIsTransport && lastTopicWasAdmin) {
+    return query; // Topic shift detected
   }
 
-  const isFollowUp = (isShort || hasPronoun || startWithVague || isVagueKeyword) && !greetings.test(q);
+  // 4. VAGUE/SHORT HOOKS: "timing?", "contact?", "fees?"
+  const isShortFollowUp = words.length <= 4 && !/bus|principal|fee|hostel/i.test(q);
 
-  if (!isFollowUp) {
-    // RESET RULE: If user asks completely new topic/entity, don't rewrite.
-    return query;
+  if (hasPronoun || isShortFollowUp) {
+    const context = last_entity || last_topic;
+    logger.info(`Context Bound: "${query}" -> "${query} about ${context}"`);
+    return `${query} about ${context}`;
   }
-
-  try {
-    const rewritePrompt = `Goal: Rewrite follow-up question into a complete independent query.
-Context:
-- Previous Topic: ${last_topic}
-- Previous Entity: ${last_entity}
-- Previous Question: ${last_question}
-
-User Follow-up: "${query}"
-
-Rules:
-1. Attach the previous entity/subject if missing.
-2. Preserve original intent exactly.
-3. Be direct. No filler.
-
-Rewritten Query:`;
-
-    const { content: rewritten } = await getAIReponse(rewritePrompt, 'cheap');
-    const finalQuery = rewritten.replace(/["']/g, '').trim();
-    
-    logger.info(`Context Rewrite: "${query}" -> "${finalQuery}" (Entity: ${last_entity})`);
-    return finalQuery;
-  } catch (e) {
-    logger.warn(`Query rewrite failed: ${e.message}`);
-    return query;
-  }
+  
+  return query;
 };

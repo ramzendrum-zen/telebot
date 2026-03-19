@@ -64,7 +64,7 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 6: NORMALIZE QUERY ─────────────────────────────────────────────
   const { normalizedText, cacheKey } = normalizeQueryBasic(rawText);
-  const redisKey = `v27:rag:${cacheKey}`;
+  const redisKey = `v28:rag:${cacheKey}`;
   log('STEP-6', `Normalized: "${normalizedText}" | CacheKey: ${cacheKey}`);
 
   // ─── STEP 5: DIRECT ENTITY LOOKUP (before cache — always fresh) ──────────
@@ -101,7 +101,7 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 7: QUERY DECOMPOSITION + CONTEXT REWRITE ───────────────────────
   const memory = await getUserMemory(chatId);
-  const contextualQuery = await rewriteQuery(normalizedText, memory);
+  const contextualQuery = rewriteQuery(normalizedText, memory);
   log('STEP-7', `Context rewrite: "${contextualQuery}"`);
   const { subject, subQueries } = await decomposeAndSelfQuery(contextualQuery);
   log('STEP-7', `Decomposed into ${subQueries.length} sub-queries. Subject: ${subject || 'None'}`);
@@ -132,9 +132,11 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 9: CONFIDENCE SCORING — retry if too weak ──────────────────────
   const topScore = top5Chunks[0]?.rerankScore || top5Chunks[0]?.score || 0;
-  if (topScore < 5 && top5Chunks.length < 3) {
-    log('STEP-9', `Low confidence (${topScore}). Retrying with broader keyword search...`);
-    const broadChunks = await performHybridSearch(rawText, 'general', {});
+  const isListRequest = /list|all|every/i.test(contextualQuery);
+
+  if ((topScore < 5 && top5Chunks.length < 3) || isListRequest) {
+    log('STEP-9', `Confidence check (Score: ${topScore}, List: ${isListRequest}). Brute-force scanning...`);
+    const broadChunks = await performHybridSearch(contextualQuery, 'transport', {});
     broadChunks.forEach(c => {
       const id = c._id?.toString() || c.content?.slice(0, 30);
       if (!allChunks.has(id)) allChunks.set(id, c);
@@ -142,9 +144,9 @@ export async function processRAGQuery(chatId, rawText) {
     
     mergedTop20 = Array.from(allChunks.values())
       .sort((a, b) => (b.score || 0) - (a.score || 0))
-      .slice(0, 20);
+      .slice(0, 30); // Use 30 for lists
     top5Chunks = await rerankChunks(contextualQuery, mergedTop20);
-    log('STEP-9', `After retry: ${top5Chunks.length} chunks, top score: ${top5Chunks[0]?.rerankScore || top5Chunks[0]?.score || 0}`);
+    log('STEP-9', `Retry done. Found ${top5Chunks.length} chunks.`);
   }
 
   // ─── STEP 10: CONTEXT VALIDATION ─────────────────────────────────────────
