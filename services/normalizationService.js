@@ -33,6 +33,12 @@ export const normalizeQueryBasic = (query) => {
     'civil': 'civil engineering', 'ai': 'AI', 'aiml': 'AI ML',
     'cs': 'cyber security', 'hod': 'head of department',
     'prin': 'principal', 'loc': 'location', 'lib': 'library',
+    // Geographic Neighborhoods (Mapping to parent search terms)
+    'thoraipakkam': 'Thoraipakkam OMR', 'perungudi': 'Perungudi OMR',
+    'thorpakam': 'Thoraipakkam OMR', 'karapakkam': 'Karapakkam OMR',
+    'blue star': 'Anna Nagar', 'thirumangalam': 'Anna Nagar',
+    'skywalk': 'Anna Nagar', 'ramachandra': 'Porur',
+    'vijaya nagar': 'Velachery', 'kasi': 'Kasi Theatre',
   };
 
   let words = q.split(/\s+/);

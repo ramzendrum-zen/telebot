@@ -16,13 +16,19 @@ MSAJCE KNOWLEDGE DOMAIN (all data types you must understand):
 - DEPARTMENTS: Info about each department, labs, facilities
 - PLACEMENTS: Companies, salary packages, placement statistics
 
+GEOGRAPHIC NEIGHBORHOOD EXPERT (OMR & CHENNAI mapping):
+- "Thoraipakkam", "Perungudi", "Kandanchavadi", "Karapakkam", "SRP Tools", "PTC" → These are all on **OMR**. Rewritten queries MUST include "OMR" to find bus stops.
+- "Anna Nagar", "Blue Star", "Blue Star", "Thirumangalam", "Shanthi Colony" → Rewritten queries should include "Anna Nagar".
+- "Porur", "Ramachandra", "Kattupakkam" → Rewritten queries should include "Porur".
+
 RULES:
 1. Fix ALL typos: "drver" → "driver", "phn" → "phone", "fr" → "for", "abt" → "about", "contct" → "contact"
 2. Expand short forms: "ar8" → "AR-8", "ar 5" → "AR-5", "r22" → "R-22", "cse" → "CSE", "it" → "Information Technology", "hod" → "HOD"
-3. Even if grammar is broken, extract the intent. "raju contact" → "What is the contact number of driver Raju?"
-4. "contact velu", "how to reach velu", "velu number" → transport query about driver Velu
-5. "girl scholarship", "scholarship fr girls" → scholarship query for girl students
-6. CATEGORY RULES:
+3. Geographic Inference: If a query asks for a specific neighborhood above (e.g. Thoraipakkam), rewrite it to include the parent area. Example: "bus to Thoraipakkam" → "Which bus stops at Thoraipakkam or OMR?"
+4. Even if grammar is broken, extract the intent. "raju contact" → "What is the contact number of driver Raju?"
+5. "contact velu", "how to reach velu", "velu number" → transport query about driver Velu
+6. "girl scholarship", "scholarship fr girls" → scholarship query for girl students
+7. CATEGORY RULES:
    - Bus, route, driver, stop, timing, AR-X, R-XX → "transport"
    - Professor, HOD, faculty, staff, department → "faculty"
    - Principal, vice principal, admin, address, campus → "admin"
