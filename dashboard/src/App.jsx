@@ -206,69 +206,71 @@ const Dashboard = () => {
                     )}
 
                     {activePanel === 'analytics' && (
-                        <div className="space-y-6 max-w-[1400px] mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            <div className="bg-white border-2 border-slate-100 rounded-3xl shadow-sm overflow-hidden">
-                                <div className="px-8 py-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                                    <div>
-                                        <h3 className="text-sm font-black text-slate-900 tracking-tight">System Telemetry Logs</h3>
-                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Every kernel step documented_</p>
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <div className="px-3 py-1 bg-slate-100 text-[8px] font-black uppercase text-slate-400 rounded-lg">Last 100 Cycles</div>
-                                    </div>
+                        <div className="space-y-5 max-w-[1400px] mx-auto animate-in fade-in duration-300">
+                            {/* Header */}
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h2 className="text-xl font-bold text-slate-900 tracking-tight" style={{fontFamily:'Inter,system-ui,sans-serif'}}>System Telemetry</h2>
+                                    <p className="text-sm text-slate-400 font-medium mt-0.5">Live pipeline logs — every AI call tracked</p>
                                 </div>
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-left table-fixed">
-                                        <thead className="text-[9px] text-slate-400 uppercase tracking-widest border-b border-slate-100 bg-slate-50/10">
-                                            <tr>
-                                                <th className="px-8 py-5 font-black w-[180px]">Timestamp</th>
-                                                <th className="px-8 py-5 font-black w-[100px]">Node</th>
-                                                <th className="px-8 py-5 font-black">Event Lifecycle & Trace</th>
-                                                <th className="px-8 py-5 text-right font-black w-[120px]">Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-slate-50 font-['JetBrains_Mono','monospace']">
-                                            {botLogs.map((log, i) => (
-                                                <tr key={i} className="hover:bg-slate-50/80 transition-all">
-                                                    <td className="px-8 py-5 text-slate-400 text-[10px] font-bold">
+                                <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-xl">
+                                    <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                                    <span className="text-xs font-semibold text-emerald-600">Live · Last 100 cycles</span>
+                                </div>
+                            </div>
+
+                            {/* Log Cards */}
+                            <div className="space-y-2">
+                                {botLogs.map((log, i) => (
+                                    <div key={i} className={`bg-white border rounded-2xl px-6 py-4 hover:shadow-md transition-all duration-200 ${log.type === 'error' ? 'border-rose-100 bg-rose-50/30' : 'border-slate-100'}`}>
+                                        <div className="flex items-start justify-between gap-4">
+                                            {/* Left: timestamp + message */}
+                                            <div className="flex items-start gap-4 flex-1 min-w-0">
+                                                <div className="shrink-0 text-right pt-0.5">
+                                                    <div className="text-sm font-semibold text-slate-500 font-mono" style={{fontFamily:'Inter,monospace'}}>
                                                         {new Date(log.timestamp).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-                                                        <span className="ml-2 opacity-30">[{new Date(log.timestamp).getMilliseconds()}ms]</span>
-                                                    </td>
-                                                    <td className="px-8 py-5 text-[9px] font-black text-slate-300">KERNEL_0{i+1}</td>
-                                                    <td className="px-8 py-5">
-                                                        <div className="flex flex-col gap-1.5">
-                                                            <div className={`text-[12px] font-bold tracking-tight ${log.type === 'error' ? 'text-rose-600' : log.type === 'rag_step' ? 'text-indigo-600' : 'text-slate-800'}`}>
-                                                                {log.message}
-                                                            </div>
-                                                            {log.metadata?.query && (
-                                                                <div className="text-[10px] text-slate-400 font-mono truncate">
-                                                                    <span className="text-slate-300 font-black mr-1">Q:</span>{log.metadata.query}
-                                                                </div>
-                                                            )}
-                                                            {log.metadata?.tokens && (
-                                                                <div className="flex gap-3 text-[9px] font-black mt-0.5">
-                                                                    <span className="text-indigo-400">P: {log.metadata.tokens.prompt}</span>
-                                                                    <span className="text-emerald-400">C: {log.metadata.tokens.completion}</span>
-                                                                    <span className="text-amber-400">Total: {log.metadata.tokens.total}</span>
-                                                                </div>
-                                                            )}
+                                                    </div>
+                                                    <div className="text-[11px] text-slate-300 font-mono">{new Date(log.timestamp).getMilliseconds()}ms</div>
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className={`text-[15px] font-semibold tracking-tight truncate ${log.type === 'error' ? 'text-rose-600' : 'text-slate-800'}`} style={{fontFamily:'Inter,system-ui'}}>
+                                                        {log.message}
+                                                    </p>
+                                                    {/* Query pill */}
+                                                    {log.metadata?.query && (
+                                                        <div className="mt-2 inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 rounded-lg px-3 py-1.5 max-w-full">
+                                                            <span className="text-[11px] font-bold text-indigo-400 shrink-0">USER QUERY</span>
+                                                            <span className="text-[13px] font-medium text-indigo-700 truncate" style={{fontFamily:'Inter,system-ui'}}>{log.metadata.query}</span>
                                                         </div>
-                                                    </td>
-                                                    <td className="px-8 py-5 text-right">
-                                                        <span className={`px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest ${
-                                                            log.type === 'error' ? 'bg-rose-50 text-rose-500 border border-rose-100' : 
-                                                            log.type === 'rag_step' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' : 
-                                                            log.type === 'intent' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 
-                                                            'bg-slate-50 text-slate-400 border border-slate-100'
-                                                        }`}>
-                                                            {log.type || 'info'}
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                                    )}
+                                                    {/* Token badges */}
+                                                    {log.metadata?.tokens && (
+                                                        <div className="flex items-center gap-2 mt-2 flex-wrap">
+                                                            <span className="text-[11px] text-slate-400 font-medium mr-1">Tokens:</span>
+                                                            <span className="px-2.5 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-lg border border-indigo-100">Prompt {log.metadata.tokens.prompt}</span>
+                                                            <span className="px-2.5 py-1 bg-emerald-50 text-emerald-600 text-xs font-bold rounded-lg border border-emerald-100">Output {log.metadata.tokens.completion}</span>
+                                                            <span className="px-2.5 py-1 bg-amber-50 text-amber-600 text-xs font-bold rounded-lg border border-amber-100">Total {log.metadata.tokens.total}</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            {/* Right: status badge */}
+                                            <div className="shrink-0">
+                                                <span className={`px-3 py-1.5 rounded-xl text-[11px] font-bold uppercase tracking-wide ${
+                                                    log.type === 'error' ? 'bg-rose-50 text-rose-500 border border-rose-200' :
+                                                    log.type === 'rag_step' ? 'bg-violet-50 text-violet-600 border border-violet-100' :
+                                                    log.type === 'intent' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
+                                                    'bg-slate-50 text-slate-500 border border-slate-200'
+                                                }`}>
+                                                    {log.type || 'info'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                {botLogs.length === 0 && (
+                                    <div className="text-center py-20 text-slate-300 text-sm font-medium">No logs yet. Send a message to the bot to generate logs.</div>
+                                )}
                             </div>
                         </div>
                     )}
