@@ -64,7 +64,7 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 6: NORMALIZE QUERY ─────────────────────────────────────────────
   const { normalizedText, cacheKey } = normalizeQueryBasic(rawText);
-  const redisKey = `v34:rag:${cacheKey}`;
+  const redisKey = `v35:rag:${cacheKey}`;
   log('STEP-6', `Normalized: "${normalizedText}" | CacheKey: ${cacheKey}`);
   const totalTokens = { prompt: 0, completion: 0, total: 0 };
 
