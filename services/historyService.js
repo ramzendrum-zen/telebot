@@ -52,11 +52,16 @@ export const rewriteQuery = async (query, memory) => {
   const startWithVague = /^(what|how|who|where|when|list|give|show|tell)\s*\?*$/i.test(q);
   const isVagueKeyword = followUpKeywords.some(kw => q.includes(kw));
 
-  const isFollowUp = isShort || hasPronoun || startWithVague || isVagueKeyword;
+  // GREETING DETECTION: Skip rewrite for greetings
+  const greetings = /\b(hi|hello|hey|hlo|good morning|namaste|morning|evening|greetings)\b/i;
+  if (greetings.test(q) && q.split(/\s+/).length <= 2) {
+    return query;
+  }
+
+  const isFollowUp = (isShort || hasPronoun || startWithVague || isVagueKeyword) && !greetings.test(q);
 
   if (!isFollowUp) {
     // RESET RULE: If user asks completely new topic/entity, don't rewrite.
-    // We let the RAG query it independently.
     return query;
   }
 
