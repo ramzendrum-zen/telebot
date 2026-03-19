@@ -65,7 +65,24 @@ export const rewriteQuery = (query, memory) => {
     return query;
   }
 
-  // 4. PRONOUN/HOOK DETECTION: he/his/contact/timing/more/list
+  // 5. ROUTE MISMATCH RESET: Different route number = fully fresh query
+  // Matches any pattern like ar5, r22, ar-8, R22, etc.
+  const routePattern = /\b(ar-?\d+|r-?\d+)\b/i;
+  const queryHasRoute = routePattern.test(query);
+  const lastEntityHasRoute = routePattern.test(last_entity || '');
+
+  if (queryHasRoute) {
+    // Extract the route number from the current query and from memory
+    const queryRoute = (query.match(routePattern) || [])[0]?.toLowerCase().replace(/[-\s]/g, '');
+    const lastRoute = ((last_entity || '').match(routePattern) || [])[0]?.toLowerCase().replace(/[-\s]/g, '');
+    // If it's a different route OR there's any route in the query, always treat as fresh
+    if (!lastEntityHasRoute || queryRoute !== lastRoute) {
+      logger.info(`Route Mismatch Reset: "${query}" (query: ${queryRoute}, memory: ${lastRoute}) — fresh query`);
+      return query;
+    }
+  }
+
+  // 6. PRONOUN/HOOK DETECTION: he/his/contact/timing/more/list
   const pronouns = /\b(him|her|it|them|they|he|she|his|hers|that|this|the timing|phone|contact|more|detail|list)\b/i;
   const hasPronoun = pronouns.test(q);
 

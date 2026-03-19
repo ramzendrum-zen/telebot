@@ -64,7 +64,7 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 6: NORMALIZE QUERY ─────────────────────────────────────────────
   const { normalizedText, cacheKey } = normalizeQueryBasic(rawText);
-  const redisKey = `v33:rag:${cacheKey}`;
+  const redisKey = `v34:rag:${cacheKey}`;
   log('STEP-6', `Normalized: "${normalizedText}" | CacheKey: ${cacheKey}`);
   const totalTokens = { prompt: 0, completion: 0, total: 0 };
 
@@ -137,6 +137,7 @@ export async function processRAGQuery(chatId, rawText) {
   // ─── STEP 9: CONFIDENCE SCORING — retry if too weak ──────────────────────
   const topScore = top5Chunks[0]?.rerankScore || top5Chunks[0]?.score || 0;
   const isListRequest = /list|all|every/i.test(contextualQuery);
+  const transportKeywords = /\b(bus|route|ar-?\d+|r-?\d+|van|driver)\b/i.test(contextualQuery);
 
   if ((topScore < 5 && top5Chunks.length < 3) || isListRequest) {
     log('STEP-9', `Confidence check (Score: ${topScore}, List: ${isListRequest}). Brute-force scanning...`);
