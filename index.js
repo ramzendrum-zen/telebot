@@ -43,12 +43,24 @@ app.get('/api/diag', async (req, res) => {
   } catch (e) { diag.nvidia_ai = `error: ${e.message}`; }
 
   try {
-    const { generateEmbedding } = await import('./services/embeddingService.js');
-    const emb = await generateEmbedding('ping');
-    diag.nvidia_embed = (emb && Array.isArray(emb)) ? `ok (${emb.length}d)` : 'empty';
-  } catch (e) { diag.nvidia_embed = `error: ${e.message}`; }
+    const { performHybridSearch } = await import('./services/retrievalService.js');
+    const results = await performHybridSearch('How many acres is the campus?');
+    diag.rag_test = {
+        count: results.length,
+        top_scores: (results || []).slice(0, 3).map(r => ({ score: r.score, title: r.title || 'Untitled' })),
+        found: (results && results.length > 0) ? results[0].text.slice(0, 50) : 'nothing'
+    };
+  } catch (e) { diag.rag_test = 'retrieval error: ' + e.message; }
 
-  res.json(diag);
+    const os = await import('os');
+    res.json({
+        status: diag,
+        system: {
+            uptime: os.uptime(),
+            memory: Math.round(os.totalmem() / 1024 / 1024 / 1024) + 'GB',
+            node: process.version
+        }
+    });
 });
 
 // Dashboard Frontend Paths (Pre-built React Assets)

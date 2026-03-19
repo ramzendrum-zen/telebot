@@ -522,3 +522,227 @@ QUERY_VARIATIONS:
  - How does the Trust contribute to education in rural areas?
  - What was the significance of the self-financing engineering college established by the Trust in 1984?
 
+--- DOCUMENT_ID: 69bb8d6b0c142506c80c115a ---
+TIMESTAMP: 2026-03-19T05:45:15.121Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The trust contributes to quality education, meeting industry requirements at national and international levels through its institutions.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The trust contributes to quality education, meeting industry requirements at national and international levels through its institutions.
+KEYWORDS: education, quality, academic excellence, industries, national, international
+ENTITIES: 
+QUERY_VARIATIONS:
+ - What are the trust's contributions to education?
+ - How does the trust ensure academic excellence?
+ - What levels of education does the trust provide?
+
+--- DOCUMENT_ID: 69bb8d790c142506c80c115d ---
+TIMESTAMP: 2026-03-19T05:45:29.901Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The institution offers undergraduate and postgraduate programs across multiple disciplines and has 18 educational institutions in different locations.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: to the undergraduate and postgraduate levels in various disciplines such as Engineering Technology, Arts and Science, Pharmacy, Physiotherapy, Nursing, and Medical Sciences. It has 18 educational institutions at present in Kilakarai, Ramanathapuram, and Chennai.
+KEYWORDS: Engineering Technology, Arts, Science, Pharmacy, Physiotherapy, Nursing, Medical Sciences
+ENTITIES: Kilakarai, Ramanathapuram, Chennai
+QUERY_VARIATIONS:
+ - What programs does the institution offer, and where are its educational institutions located?
+ - How many institutions does the college have, and what disciplines do they cover?
+ - Where can I find undergraduate and postgraduate programs in Engineering, Arts, and Sciences in Chennai or nearby areas?
+
+--- DOCUMENT_ID: 69bb8d910c142506c80c1160 ---
+TIMESTAMP: 2026-03-19T05:45:53.210Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The institution operates tuitions in Kilakarai, Ramanathapuram, and Chennai, aiming to build academic excellence with a charitable and unbiased approach.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Tuitions at present in Kilakarai, Ramanathapuram, and Chennai. We believe that 'God will not change the condition of a people until they try to change themselves.' We focus on doing right things without any bias and with a charitable mind, would strive to build an institution of academic excellence and help in building the nation.
+KEYWORDS: academic excellence, charitable education, unbiased learning, institution building
+ENTITIES: Kilakarai, Ramanathapuram, Chennai
+QUERY_VARIATIONS:
+ - What locations does the institution have tuitions in?
+ - What is the mission of the institution in terms of education?
+ - How does the institution approach academic excellence?
+
+--- DOCUMENT_ID: 69bb8d9c0c142506c80c1163 ---
+TIMESTAMP: 2026-03-19T05:46:04.981Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Mohamed Sathak A.J. College of Engineering in Chennai is an institution dedicated to academic excellence and nation-building.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Institution of academic excellence, contributing to nation-building. Our Founder, Our Trustees. Chairman's Message: Dear parents and prospective students, welcome to Mohamed Sathak A.J. College of Engineering, Chennai.
+KEYWORDS: academic excellence, nation-building, engineering college, education, Chennai
+ENTITIES: Mohamed Sathak A.J. College of Engineering, Chennai
+QUERY_VARIATIONS:
+ - What are the goals of Mohamed Sathak A.J. College of Engineering?
+ - How does Mohamed Sathak A.J. College of Engineering contribute to society?
+ - What values does Mohamed Sathak A.J. College of Engineering uphold?
+
+--- DOCUMENT_ID: 69bb8da70c142506c80c1166 ---
+TIMESTAMP: 2026-03-19T05:46:15.592Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Mohamed Sathak A.J. College of Engineering in Chennai offers higher education opportunities for sustainable growth and service.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Attend Mohamed Sathak A.J. College of Engineering in Chennai. Selecting the right institution for higher education is a crucial decision that can unlock lifelong opportunities for sustainable growth and service.
+KEYWORDS: higher education, sustainable growth, engineering college, Chennai
+ENTITIES: Mohamed Sathak A.J. College of Engineering, Chennai
+QUERY_VARIATIONS:
+ - What are the best engineering colleges in Chennai?
+ - How to choose the right institution for higher studies in Chennai?
+ - What opportunities are available at Mohamed Sathak A.J. College of Engineering?
+
+--- DOCUMENT_ID: 69bb8db80c142506c80c1169 ---
+TIMESTAMP: 2026-03-19T05:46:32.345Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Investing in personal intellectual and professional development through relevant education is key to achieving success and sustainable growth.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Our lifelong opportunity for sustainable growth and service involves making informed choices based on relevant and reliable education. Success depends on the effort invested in personal intellectual and professional development.
+KEYWORDS: sustainable growth, education, professional development, intellectual development, personal growth
+ENTITIES: 
+QUERY_VARIATIONS:
+ - How can I achieve sustainable growth through education?
+ - What role does personal development play in professional success?
+ - How can I make informed choices about my education for lifelong opportunities?
+
+--- DOCUMENT_ID: 69bb8dc10c142506c80c116c ---
+TIMESTAMP: 2026-03-19T05:46:41.703Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: MSAJCE faculty and staff are committed to helping students achieve their educational goals through challenging standards and dedicated support.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Invest in your intellectual and professional development. MSAJCE faculty and staff pledge their best efforts to help you achieve your educational goals through challenging standards and dedicated support.
+KEYWORDS: intellectual development, professional development, educational goals, academic standards
+ENTITIES: MSAJCE, Mohamed Sathak A. J. College of Engineering
+QUERY_VARIATIONS:
+ - What support does MSAJCE offer for achieving educational goals?
+ - How does MSAJCE faculty help students develop professionally and intellectually?
+ - What are the academic standards at MSAJCE, and how do they support student development?
+
+--- DOCUMENT_ID: 69bb8dcd0c142506c80c116f ---
+TIMESTAMP: 2026-03-19T05:46:53.906Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The institution is committed to helping students meet standards and succeed in their professional careers.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: We dedicating ourselves in helping you to meet the standards. We will judge our institution's success by how best you succeed in realizing your potential as a student and later in professional career.
+KEYWORDS: education, standards, success, career, potential
+ENTITIES: 
+QUERY_VARIATIONS:
+ - What is the institution's approach to student success?
+ - How does the college support students in achieving their career goals?
+ - What standards does the institution help students meet?
+
+--- DOCUMENT_ID: 69bb8dde0c142506c80c1172 ---
+TIMESTAMP: 2026-03-19T05:47:10.250Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: MSAJCE invites potential students to visit its campus to experience state-of-the-art facilities and interact with students and faculty.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: MSAJCE invites potential students to visit its magnificent campus, witness state-of-the-art facilities including Technology Centres, interact with students and faculty, and understand why many bright students choose MSAJCE as their institution of choice.
+KEYWORDS: education, career, campus, facilities, technology, students, faculty
+ENTITIES: MSAJCE, Mohamed Sathak A. J. College of Engineering, Chennai
+QUERY_VARIATIONS:
+ - What makes MSAJCE a preferred choice for students?
+ - How can I experience the campus life and facilities at MSAJCE?
+ - Why should I consider MSAJCE for my professional career development?
+
+--- DOCUMENT_ID: 69bb8de70c142506c80c1175 ---
+TIMESTAMP: 2026-03-19T05:47:20.096Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: MSAJCE offers a comprehensive educational experience with a strong institutional framework.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Students have made MSAJCE their choice of institution. We are confident that you will take pride in joining our college. Overview of Vision & Mission, Management, Principal Message, Statutory body, Governing Council, Planning & Monitoring Board, Academic Advisory Committee, Grievance and Redressal Committee, and Anti-Ragging Committee.
+KEYWORDS: education, institution, management, vision, mission, committees
+ENTITIES: MSAJCE, Mohamed Sathak A. J. College of Engineering
+QUERY_VARIATIONS:
+ - What are the key committees in MSAJCE?
+ - How is MSAJCE managed?
+ - What is the vision and mission of MSAJCE?
+
+--- DOCUMENT_ID: 69bb8dff0c142506c80c1178 ---
+TIMESTAMP: 2026-03-19T05:47:43.769Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: This institution has various committees and policies in place, including a Grievance and Redressal Committee, Anti-Ragging Committee, Women's Empowerment Cell, and Mandatory Disclosure, ensuring a safe and transparent environment.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Grievance and Redressal Committee, Anti-Ragging Committee & Squad, Women's Empowerment Cell, Functional Committees, MSAJCE Policies, Mandatory Disclosure, Group of Institutions, Download Brochure.
+KEYWORDS: Grievance, Redressal, Anti-Ragging, Women's Empowerment, Mandatory Disclosure, MSAJCE Policies
+ENTITIES: MSAJCE, Mohamed Sathak A. J. College of Engineering
+QUERY_VARIATIONS:
+ - What committees and policies does MSAJCE have in place for student welfare?
+ - How does MSAJCE ensure a safe and empowering environment for its students?
+ - What are the key policies and committees at Mohamed Sathak A. J. College of Engineering?
+
+--- DOCUMENT_ID: 69bb8e090c142506c80c117b ---
+TIMESTAMP: 2026-03-19T05:47:53.339Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Mohamed Sathak AJ College of Engineering is an institution where one can download a brochure.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Mohamed Sathak AJ College of Engineering is mentioned in the context of downloading a brochure.
+KEYWORDS: engineering, college, education, brochure
+ENTITIES: Mohamed Sathak AJ College of Engineering
+QUERY_VARIATIONS:
+ - What are the details of Mohamed Sathak AJ College of Engineering?
+ - How can I download the brochure for Mohamed Sathak AJ College of Engineering?
+ - What programs are offered by Mohamed Sathak AJ College of Engineering?
+
+--- DOCUMENT_ID: 69bb8e1b0c142506c80c117e ---
+TIMESTAMP: 2026-03-19T05:48:11.687Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: A discussion on academic or institutional topics with abstract references to justice or truth.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The text discusses a topic related to academic or institutional settings, mentioning terms like 'iusto' and 'amet', which could imply a discussion on justice or truth in an academic context.
+KEYWORDS: academic, institutional, justice, truth
+ENTITIES: 
+QUERY_VARIATIONS:
+ - What are the core values discussed in academic settings related to justice?
+ - How does the concept of truth apply in institutional contexts?
+ - What are some key topics related to justice and truth in education?
+
+--- DOCUMENT_ID: 69bb8e300c142506c80c1181 ---
+TIMESTAMP: 2026-03-19T05:48:32.616Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: This text contains contact information and a copyright notice.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: omain.com contact@yourdomain.com Copyright 2016 ThemeMascot
+KEYWORDS: contact, copyright, domain
+ENTITIES: omain.com, ThemeMascot, 2016
+QUERY_VARIATIONS:
+ - What is the contact email of this domain?
+ - Who owns the copyright for this website?
+ - What year was this website copyrighted?
+
+--- DOCUMENT_ID: 69bb8e4a0c142506c80c1184 ---
+TIMESTAMP: 2026-03-19T05:48:58.927Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: This group of institutions includes several colleges and an ITI in Kilakarai & Ramanathapuram, offering various academic programs.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Group of Institutions: Mohamed Sathak Engineering College, Mohamed Sathak Hamid College of Arts and Science for Women, Syed Hameedha Arts & Science College, Mohamed Sathak Polytechnic College, Mohamed Sathak I.T.I., located in Kilakarai & Ramanathapuram.
+KEYWORDS: education, institutions, colleges, Kilakarai, Ramanathapuram, engineering, arts, science, polytechnic, ITI
+ENTITIES: Mohamed Sathak Engineering College, Mohamed Sathak Hamid College of Arts and Science for Women, Syed Hameedha Arts & Science College, Mohamed Sathak Polytechnic College, Mohamed Sathak I.T.I., Kilakarai, Ramanathapuram
+QUERY_VARIATIONS:
+ - What colleges are part of the Mohamed Sathak group of institutions?
+ - Which institutions in Kilakarai & Ramanathapuram offer engineering and arts programs?
+ - What are the educational institutions available in the Mohamed Sathak group?
+
+--- DOCUMENT_ID: 69bb8e590c142506c80c1187 ---
+TIMESTAMP: 2026-03-19T05:49:14.016Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Mohamed Sathak institutions include various colleges and schools offering different levels of education in Chennai.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Mohamed Sathak institutions include Polytechnic College, I.T.I., Syed Hameedha Arabic College, Dastagir Matriculation Hr. Sec. School, Kabeer Public School, Dasthagir Teacher Training College, and A.J. College of Engineering in Chennai.
+KEYWORDS: education, institutions, Chennai, Mohamed Sathak, colleges, schools
+ENTITIES: Mohamed Sathak Polytechnic College, Mohamed Sathak I.T.I., Syed Hameedha Arabic College, Mohamed Sathak Dastagir Matriculation Hr. Sec. School, Mohamed Sathak Kabeer Public School, Mohamed Sathak Dasthagir Teacher Training College, Mohamed Sathak A.J. College of Engineering, Chennai
+QUERY_VARIATIONS:
+ - What educational institutions are part of the Mohamed Sathak group in Chennai?
+ - List the colleges and schools under Mohamed Sathak in Chennai.
+ - What are the educational options available in Chennai under the Mohamed Sathak group?
+
