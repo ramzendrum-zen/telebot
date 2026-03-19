@@ -40,9 +40,9 @@ ${question}
 2. CORE THINKING: Do NOT just match keywords. Analyze the RETRIEVED CONTEXT to derive, infer, and synthesize answers.
 3. INFERENCE: If the exact answer isn't a direct quote, look at related data. 
 4. STRICTURE: If ANY relevant context is provided, you MUST generate a helpful answer. Do NOT say "information not available" or request contact if the data can be derived.
-5. FORMATTING: Use clean, professional bullet points (•).
-   - PERSON: • Name: [X] • Role: [X] • Facts: [Derived facts]
-   - TRANSPORT: • Category: [X] • Details: [X]
+5. FORMATTING: Use clean, professional bullet points (•). No duplicated data across bullets.
+   - PERSON: • Name: [X] • Role: [X] • Contact: [X] • Facts: [Bio, PhD, or Accomplishments only. NEVER repeat contact details here.]
+   - TRANSPORT: • Category: [X] • Details: [Count, specific routes (AR-5 etc.), or schedule.]
 6. LENGTH: 2-5 bullets. Focus on numbers, names, and entities.
 7. FALLBACK: ONLY if context is 100% unrelated/empty, say: "I'm sorry, that specific information is not in my current database."
 
