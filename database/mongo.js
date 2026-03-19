@@ -12,17 +12,19 @@ const startKeepAlive = () => {
   if (pingInterval) return; // Already running
   pingInterval = setInterval(async () => {
     try {
-      if (mongoose.connection.readyState === 1) {
+      if (mongoose.connection.readyState === 1 && mongoose.connection.db) {
         await mongoose.connection.db.admin().ping();
         logger.info('[MongoDB] Keep-alive ping OK');
       } else {
-        logger.warn('[MongoDB] Keep-alive: connection lost, reconnecting...');
-        isConnected = false;
-        await connectDB();
+        logger.warn('[MongoDB] Keep-alive: connection not ready, state:', mongoose.connection.readyState);
+        // Only try to reconnect if explicitly lost (0) or disconnected
+        if (mongoose.connection.readyState === 0) {
+          isConnected = false;
+          await connectDB().catch(e => logger.error(`[MongoDB] Periodic reconnect failed: ${e.message}`));
+        }
       }
     } catch (err) {
-      logger.warn(`[MongoDB] Keep-alive ping failed: ${err.message}`);
-      isConnected = false;
+      logger.warn(`[MongoDB] Keep-alive ping error: ${err.message}`);
     }
   }, 4 * 60 * 1000); // Every 4 minutes
 };

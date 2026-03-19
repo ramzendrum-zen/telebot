@@ -20,6 +20,37 @@ app.get('/api/monitor', monitorHandler);
 app.use('/api/admin', adminRouter);
 app.get('/api/health', (req, res) => res.json({ status: 'ok', uptime: process.uptime() }));
 
+// Diagnostic Endpoint
+app.get('/api/diag', async (req, res) => {
+  const diag = {
+    mongodb: 'unknown',
+    nvidia_ai: 'unknown',
+    nvidia_embed: 'unknown',
+    env: process.env.NODE_ENV
+  };
+
+  try {
+    const connectDB = (await import('./database/mongo.js')).default;
+    await connectDB();
+    const mongoose = (await import('mongoose')).default;
+    diag.mongodb = mongoose.connection.readyState === 1 ? 'ok' : 'failed';
+  } catch (e) { diag.mongodb = `error: ${e.message}`; }
+
+  try {
+    const { getAIReponse } = await import('./services/aiService.js');
+    const resp = await getAIReponse('ping');
+    diag.nvidia_ai = resp ? 'ok' : 'empty';
+  } catch (e) { diag.nvidia_ai = `error: ${e.message}`; }
+
+  try {
+    const { generateEmbedding } = await import('./services/embeddingService.js');
+    const emb = await generateEmbedding('ping');
+    diag.nvidia_embed = (emb && Array.isArray(emb)) ? `ok (${emb.length}d)` : 'empty';
+  } catch (e) { diag.nvidia_embed = `error: ${e.message}`; }
+
+  res.json(diag);
+});
+
 // Dashboard Frontend Paths (Pre-built React Assets)
 const publicPath = path.resolve(process.cwd(), 'public');
 console.log(`[System] Static Assets Root: ${publicPath}`);
