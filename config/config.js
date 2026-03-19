@@ -33,9 +33,9 @@ const config = {
     rerankerApiKey: process.env.NVIDIA_RERANKER_API_KEY,
     baseUrl: 'https://integrate.api.nvidia.com/v1',
     models: {
-      cheap: 'meta/llama-3.3-70b-instruct',   // Free, fast, high-quality
-      advanced: 'nvidia/llama-3.3-nemotron-super-49b-v1', // Free, advanced reasoning
-      reranker: 'nv-rerank-qa-mistral-4b:1'  // Free NVIDIA reranker
+      cheap: 'meta/llama-3.1-8b-instruct',   // Faster, stays under 10s
+      advanced: 'meta/llama-3.3-70b-instruct', // Advanced reasoning
+      reranker: 'nv-rerank-qa-mistral-4b:1'
     }
   },
   
