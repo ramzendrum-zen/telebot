@@ -20,3 +20,6 @@ ingestProduction.js
 keywords_out.txt
 final_debug*
 api/test-db.js
+
+.vercel
+.env*.local
