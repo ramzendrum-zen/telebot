@@ -18,20 +18,18 @@ Return a STRICT JSON array of objects using this exact schema (no markdown, no q
   }
 ]`;
 
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const response = await fetch(`${config.nvidia.baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${config.openRouter.apiKey}`,
+        'Authorization': `Bearer ${config.nvidia.apiKey}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: config.openRouter.models.cheap,
+        model: config.nvidia.models.cheap,
         messages: [{ role: 'user', content: prompt }],
-        response_format: { type: "json_object" },
-        max_tokens: 150,
         temperature: 0.1
       }),
-      signal: AbortSignal.timeout(6000)
+      signal: AbortSignal.timeout(10000) // 10s timeout
     });
 
     if (response.ok) {

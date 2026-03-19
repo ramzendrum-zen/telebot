@@ -70,19 +70,19 @@ Only output the variations, one per line.
 Question: "${canonical}"`;
     
     try {
-        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        const response = await fetch(`${config.nvidia.baseUrl}/chat/completions`, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${config.openRouter.apiKey}`,
+                'Authorization': `Bearer ${config.nvidia.apiKey}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                model: config.openRouter.models.cheap,
+                model: config.nvidia.models.cheap,
                 messages: [{ role: 'user', content: prompt }],
-                max_tokens: 100,
+                max_tokens: 150,
                 temperature: 0.6
             }),
-            signal: AbortSignal.timeout(8000)
+            signal: AbortSignal.timeout(10000)
         });
 
         if (response.ok) {
