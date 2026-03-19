@@ -426,3 +426,99 @@ QUERY_VARIATIONS:
  - How does MSAJCE promote sustainable development and critical thinking?
  - What is MSAJCE's commitment to professional ethics and civic responsibilities?
 
+--- DOCUMENT_ID: 69bb8ce70c142506c80c1145 ---
+TIMESTAMP: 2026-03-19T05:43:03.520Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The institution emphasizes industrial relations, human values, ethics, and continual improvement, outlining its vision, mission, and governance structure.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The institution emphasizes industrial relations, human values, ethics, and continual improvement, outlining its vision, mission, and governance structure.
+KEYWORDS: industrial relations, human values, ethics, vision, mission, governance, education
+ENTITIES: Mohamed Sathak A. J. College of Engineering, Chennai
+QUERY_VARIATIONS:
+ - What is the vision and mission of MSAJCE?
+ - How does MSAJCE approach industrial relations and ethics?
+ - What governance structure does MSAJCE have in place?
+
+--- DOCUMENT_ID: 69bb8cf30c142506c80c1148 ---
+TIMESTAMP: 2026-03-19T05:43:15.692Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: This section of the MSAJCE website outlines various committees and policies, including those for grievance redressal, anti-ragging, women's empowerment, and mandatory disclosure.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Committee Grievance and Redressal Committee, Anti-Ragging Committee and Squad, Women's Empowerment Cell, Functional Committees, MSAJCE Policies, Mandatory Disclosure, Group of Institutions, Download Brochure.
+KEYWORDS: Committee, Grievance, Redressal, Anti-Ragging, Women's Empowerment, Mandatory Disclosure, MSAJCE, Policies
+ENTITIES: MSAJCE, Mohamed Sathak A. J. College of Engineering
+QUERY_VARIATIONS:
+ - What committees and policies does MSAJCE have in place for student welfare?
+ - How does MSAJCE address grievances and ensure a ragging-free environment?
+ - What are the key policies and committees at MSAJCE for empowering women and ensuring transparency?
+
+--- DOCUMENT_ID: 69bb8cfd0c142506c80c114b ---
+TIMESTAMP: 2026-03-19T05:43:25.705Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Access to institutional brochures and operational hours.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Institutional information including opening hours and resource downloads.
+KEYWORDS: education, institutional hours, brochure
+ENTITIES: Disclosure Group of Institutions
+QUERY_VARIATIONS:
+ - What are the opening hours of the institution?
+ - How can I download a brochure from the institution?
+ - What resources are available for students at the institution?
+
+--- DOCUMENT_ID: 69bb8d0f0c142506c80c114e ---
+TIMESTAMP: 2026-03-19T05:43:43.295Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The operating hours and contact information for a particular establishment are provided.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Operating Hours: Monday - Friday 9.00 - 20.00, Saturday 10.00 - 16.00, Sunday 9.30 - 18.00. Contact Info: (+01) - 234 567 890, www.yourdomain.com, contact@yourdomain.com.
+KEYWORDS: operating hours, contact information, customer service
+ENTITIES: ThemeMascot, 2016
+QUERY_VARIATIONS:
+ - What are the operating hours?
+ - How can I contact the establishment?
+ - What is the establishment's website and email?
+
+--- DOCUMENT_ID: 69bb8d200c142506c80c1151 ---
+TIMESTAMP: 2026-03-19T05:44:00.991Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: 
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: omain.com contact@yourdomain.com Copyright ©2016 ThemeMascot
+KEYWORDS: 
+ENTITIES: 
+QUERY_VARIATIONS:
+
+
+--- DOCUMENT_ID: 69bb8d390c142506c80c1154 ---
+TIMESTAMP: 2026-03-19T05:44:25.904Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Mohamed Sathak Trust, a charitable and educational organization, was established in 1973 to help deprived people from rural areas.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Mohamed Sathak Trust, a charitable and educational organization established on 26 October 1973 at Kilakarai, by the philanthropic Mohamed Sathak Family of Kilakarai, Ramanathapuram District, Tamil Nadu, aims to help deprived people from rural areas.
+KEYWORDS: charitable organization, educational institution, rural development, philanthropy, education
+ENTITIES: Mohamed Sathak Trust, Kilakarai, Ramanathapuram District, Tamil Nadu, Mohamed Sathak Family, 26 October 1973
+QUERY_VARIATIONS:
+ - What is the purpose of the Mohamed Sathak Trust?
+ - When was the Mohamed Sathak Trust established?
+ - What are the main objectives of the Mohamed Sathak Trust in terms of community service?
+
+--- DOCUMENT_ID: 69bb8d480c142506c80c1157 ---
+TIMESTAMP: 2026-03-19T05:44:41.012Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The Trust aims to provide quality education to deprived people from rural and financially challenged backgrounds, having established the first self-financing engineering college in the country in 1984.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The Trust aims to help deprived people from rural and financially challenged backgrounds obtain quality education. It established the first self-financing engineering college in the country in 1984 at Kilakarai, contributing to quality education.
+KEYWORDS: education, rural development, financial challenges, self-financing colleges, quality education
+ENTITIES: Trust, Kilakarai, 1984
+QUERY_VARIATIONS:
+ - What is the mission of the Trust regarding education for the underprivileged?
+ - How does the Trust contribute to education in rural areas?
+ - What was the significance of the self-financing engineering college established by the Trust in 1984?
+
