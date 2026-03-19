@@ -42,16 +42,25 @@ export const setUserMemory = async (chatId, entity, topic = 'general', question 
  * Handles pronouns like him/her/it/more by injecting context.
  */
 export const rewriteQuery = (query, memory) => {
-  const { last_entity } = memory;
-  if (!last_entity) return query;
+  const { last_entity, last_topic } = memory;
+  if (!last_entity && !last_topic) return query;
   
-  const q = query.toLowerCase();
+  const q = query.toLowerCase().trim();
+  const context = last_entity || last_topic;
+
   const pronouns = ['him', 'her', 'it', 'them', 'they', 'those', 'he', 'she'];
   const hasPronoun = pronouns.some(p => new RegExp(`\\b${p}\\b`, 'i').test(q));
+  
+  // Catch list/enumerate follow-ups: "list out all", "name them", "show all", "give the list"
+  const isListFollowUp = /^(list|show|give|name|mention|tell|what are|enumerate)\b|list (out\s*)?all|show all|name (them|all|it)/i.test(q);
+  
+  // Catch very short follow-ups (< 5 words, no clear noun)
+  const isShortContinuation = q.split(/\s+/).length <= 4 && !/college|bus|route|ar-|faculty|principal|hostel|fee/i.test(q);
+  
   const isContinuation = /\b(more|tell me more|detail|elaborate|explain)\b/i.test(q);
 
-  if (hasPronoun || isContinuation) {
-    return `${query} (specifically regarding ${last_entity})`;
+  if (hasPronoun || isContinuation || isListFollowUp || isShortContinuation) {
+    return `${query} about ${context}`;
   }
   
   return query;
