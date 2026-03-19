@@ -12,6 +12,12 @@ export const getAIReponse = async (prompt, modelType = 'cheap') => {
       ? config.nvidia.models.advanced
       : config.nvidia.models.cheap;
 
+    const systemMsg = `You are the Official AI Academic Assistant for Mohamed Sathak A J College of Engineering (MSAJCE). 
+Strict Grounding Rule: You MUST only answer from the provided [CONTEXT].
+If the answer is NOT in [CONTEXT], say: "I currently do not have that specific information in the MSAJCE knowledge base."
+Never hallucinate or invent names (e.g., Suresh Kumar, Raju, etc. unless explicitly in context).
+Stay professional and concise.`;
+
     const response = await fetch(`${config.nvidia.baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -20,9 +26,12 @@ export const getAIReponse = async (prompt, modelType = 'cheap') => {
       },
       body: JSON.stringify({
         model: model,
-        messages: [{ role: 'user', content: prompt }],
+        messages: [
+          { role: 'system', content: systemMsg },
+          { role: 'user', content: prompt }
+        ],
         temperature: 0.1,
-        max_tokens: 1024,
+        max_tokens: 800,
         stream: false
       }),
       signal: AbortSignal.timeout(60000) // 60 second timeout
