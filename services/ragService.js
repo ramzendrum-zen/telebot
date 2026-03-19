@@ -10,6 +10,7 @@ import { rerankChunks } from './rerankService.js';
 import { getCache, setCache } from './cacheService.js';
 import { pushLog } from './monitorService.js';
 import logger from '../utils/logger.js';
+import config from '../config/config.js';
 
 // ─── STEP 5: DIRECT ENTITY LOOKUP KEYWORDS ────────────────────────────────────
 const ENTITY_LOOKUP_MAP = {
@@ -24,6 +25,10 @@ const ENTITY_LOOKUP_MAP = {
   'sathak trust': 'trust_institutions_list',
   '18 colleges':  'trust_institutions_list',
   institutions:   'trust_institutions_list',
+  'csi president': 'student_yogesh',
+  'yogesh':       'student_yogesh',
+  'it hod':       'hod_it',
+  'hod it':       'hod_it',
 };
 
 function detectEntityLookup(query) {
@@ -62,7 +67,7 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 6: NORMALIZE QUERY ─────────────────────────────────────────────
   const { normalizedText, cacheKey } = normalizeQueryBasic(rawText);
-  const redisKey = `v57:rag:${cacheKey}`;
+  const redisKey = `v58:rag:${cacheKey}`;
   log('STEP-6', `Normalized: "${normalizedText}" | CacheKey: ${cacheKey}`);
   const totalTokens = { prompt: 0, completion: 0, total: 0 };
 
