@@ -25,7 +25,7 @@ export async function processRAGQuery(chatId, rawText) {
   if (cached) return { aiReply: cached, source: 'redis', latency: Date.now() - startTime };
 
   // 3. Generate Embedding & Check Semantic FAQ Cache
-  const queryEmbedding = await generateEmbedding(normalizedText);
+  const queryEmbedding = await generateEmbedding(normalizedText, 'query');
   const faqAnswer = await checkSemanticCache(queryEmbedding);
   if (faqAnswer) return { aiReply: faqAnswer, source: 'semantic_cache', latency: Date.now() - startTime };
 

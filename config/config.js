@@ -24,11 +24,18 @@ const config = {
   
   openRouter: {
     apiKey: process.env.OPENROUTER_API_KEY,
+  },
+
+  // NVIDIA NIM — free-tier models via build.nvidia.com
+  nvidia: {
+    apiKey: process.env.NVIDIA_API_KEY,
+    rerankerApiKey: process.env.NVIDIA_RERANKER_API_KEY,
+    baseUrl: 'https://integrate.api.nvidia.com/v1',
     models: {
-      cheap: 'openrouter/hunter-alpha', 
-      advanced: 'openrouter/hunter-alpha',
-      embedding: 'openai/text-embedding-3-small',
-      reranker: 'bge-reranker-large' // Or specific API endpoint if using external service
+      cheap: 'meta/llama-3.3-70b-instruct',   // Free, fast, high-quality
+      advanced: 'nvidia/llama-3.3-nemotron-super-49b-v1', // Free, advanced reasoning
+      embedding: 'nvidia/nv-embedqa-e5-v5',   // Free, 1024-dim embeddings
+      reranker: 'nv-rerank-qa-mistral-4b:1'  // Free NVIDIA reranker
     }
   },
   

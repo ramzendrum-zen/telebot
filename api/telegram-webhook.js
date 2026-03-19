@@ -62,42 +62,6 @@ export default async function handler(req, res) {
   }
 }
 
-/**
- * Query Rewriting Logic
- */
-async function expandQuery(query) {
-  const queries = [query];
-  try {
-    const prompt = `You are a query expansion system for a college AI assistant.
-Convert this query into 2 clear alternative search queries for a vector database.
-Query: "${query}"
-Return ONLY 2 queries, one per line.`;
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${config.openRouter.apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: config.openRouter.models.cheap,
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 80,
-        temperature: 0.3
-      }),
-      signal: AbortSignal.timeout(8000)
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      const expanded = data.choices?.[0]?.message?.content || '';
-      queries.push(...expanded.split('\n').map(l => l.trim()).filter(l => l.length > 5).slice(0, 2));
-    }
-  } catch (e) {
-    logger.warn(`Expansion failed: ${e.message}`);
-  }
-  return [...new Set(queries)];
-}
-
 async function sendTelegramMessage(chatId, text) {
   const url = `https://api.telegram.org/bot${config.telegram.token}/sendMessage`;
   try {

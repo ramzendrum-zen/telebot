@@ -99,7 +99,7 @@ export const performHybridSearch = async (queryText, category = 'general', filte
     // 2. VECTOR SEARCH — semantic similarity
     let vectorResults = [];
     try {
-      const queryEmbedding = await generateEmbedding(queryText);
+      const queryEmbedding = await generateEmbedding(queryText, 'query');
       const vectorPipeline = [
         {
           "$vectorSearch": {

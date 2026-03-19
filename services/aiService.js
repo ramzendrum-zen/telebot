@@ -2,40 +2,42 @@ import config from '../config/config.js';
 import logger from '../utils/logger.js';
 
 /**
- * Handles AI orchestration with model fallbacks using native fetch.
+ * Handles AI orchestration using NVIDIA NIM free-tier models.
+ * NVIDIA NIM uses an OpenAI-compatible API endpoint.
  */
 export const getAIReponse = async (prompt, modelType = 'cheap') => {
   try {
-    const model = modelType === 'advanced' 
-      ? config.openRouter.models.advanced 
-      : config.openRouter.models.cheap;
+    const model = modelType === 'advanced'
+      ? config.nvidia.models.advanced
+      : config.nvidia.models.cheap;
 
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const response = await fetch(`${config.nvidia.baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${config.openRouter.apiKey}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://msajce-bot.vercel.app', // Required by OpenRouter for ranking
-        'X-Title': 'MSAJCE Assistant'
+        'Authorization': `Bearer ${config.nvidia.apiKey}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         model: model,
-        messages: [{ role: 'user', content: prompt }]
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.1,
+        max_tokens: 1024,
+        stream: false
       }),
       signal: AbortSignal.timeout(60000) // 60 second timeout
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`AI API Error: ${response.status} - ${errorText}`);
+      throw new Error(`NVIDIA AI API Error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
     if (data && data.choices && data.choices[0]) {
       return data.choices[0].message.content;
     }
-    
-    throw new Error('Invalid response structure from OpenRouter');
+
+    throw new Error('Invalid response structure from NVIDIA NIM');
   } catch (error) {
     logger.error(`AI Service Error: ${error.message}`);
     throw error;
