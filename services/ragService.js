@@ -74,7 +74,7 @@ export async function processRAGQuery(chatId, rawText) {
     const entityChunks = await directEntityLookup(entityDocId);
     if (entityChunks.length > 0) {
       const memory = await getUserMemory(chatId);
-      const finalPrompt = buildPrompt(normalizedText, entityChunks, memory.last_entity);
+      const finalPrompt = buildPrompt(normalizedText, entityChunks);
       const { content: aiReply, usage } = await getAIReponse(finalPrompt);
       log('TOKENS', `Prompt: ${usage.prompt_tokens} | Completion: ${usage.completion_tokens} | Total: ${usage.total_tokens}`);
       await setUserMemory(chatId, normalizedText, 'admin', rawText).catch(() => null);
@@ -159,7 +159,7 @@ export async function processRAGQuery(chatId, rawText) {
   }
 
   // ─── LLM GENERATION — STRICT CONTEXT MODE ────────────────────────────────
-  const finalPrompt = buildPrompt(contextualQuery, top5Chunks, subject || memory.last_entity);
+  const finalPrompt = buildPrompt(contextualQuery, top5Chunks);
   let { content: aiReply, usage } = await getAIReponse(finalPrompt);
   log('TOKENS', `Pass-1 | P: ${usage.prompt_tokens} | C: ${usage.completion_tokens} | T: ${usage.total_tokens}`);
 

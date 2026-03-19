@@ -44,6 +44,19 @@ export default async function handler(req, res) {
       return res.status(200).send('ok');
     }
 
+    // ─── SOCIAL / IDENTITY HANDLER ───────────────────────────────────────────
+    if (/(my name is|i am|this is) \b\w+\b/i.test(rawText) && rawText.split(/\s+/).length <= 5) {
+      const nameMatch = rawText.match(/(my name is|i am|this is) (.*)/i);
+      const name = nameMatch ? nameMatch[2].replace(/[?.!]/g, '').trim() : 'there';
+      await sendTelegramMessage(chatId, `• Nice to meet you, ${name}! 👋\n• I am the MSAJCE Assistant.\n• How can I help you today?`);
+      return res.status(200).send('ok');
+    }
+
+    if (/who (are|r) you|what is (your|ur) name|your (identity|purpose)/i.test(rawText)) {
+      await sendTelegramMessage(chatId, `• I am the *MSAJCE Professional AI Assistant*.\n• I can help you with transport routes, faculty info, and admissions.\n• What would you like to know?`);
+      return res.status(200).send('ok');
+    }
+
     // ──────────────────────────────────────────────
     // PRODUCTION RAG PIPELINE (Unified)
     // ──────────────────────────────────────────────
