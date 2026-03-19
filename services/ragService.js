@@ -31,9 +31,19 @@ const ENTITY_LOOKUP_MAP = {
   'hod it':       'hod_it',
   'cse seats':    'seats_cse',
   'cse intake':   'seats_cse',
-  'cse department seats': 'seats_cse',
+  'it seats':     'seats_it',
+  'it department seats': 'seats_it',
+  'it intake':    'seats_it',
+  'ece seats':    'seats_ece',
+  'eee seats':    'seats_eee',
+  'mech seats':   'seats_mech',
   'civil seats':  'seats_civil',
-  'scholarships': 'scholar_sports'
+  'aids seats':   'seats_aids',
+  'aiml seats':   'seats_aiml',
+  'csbs seats':   'seats_csbs',
+  'scholarships': 'scholar_sports',
+  'ladies scholarship': 'scholar_minority',
+  'girl scholarship': 'scholar_minority'
 };
 
 function detectEntityLookup(query) {
@@ -74,7 +84,7 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 6: NORMALIZE QUERY ─────────────────────────────────────────────
   const { normalizedText, cacheKey } = normalizeQueryBasic(rawText);
-  const redisKey = `v63:rag:${cacheKey}`;
+  const redisKey = `v64:rag:${cacheKey}`;
   log('STEP-6', `Normalized: "${normalizedText}" | CacheKey: ${cacheKey}`);
   const totalTokens = { prompt: 0, completion: 0, total: 0 };
 

@@ -11,7 +11,13 @@ const masterData = [
   { id: 'seats_it', title: 'Seats in IT Department', category: 'admission', content: 'The intake for B.Tech. Information Technology (IT) is 60 seats (30 Government Quota, 30 Management Quota).', entities: ['IT', 'Information Technology', 'seats', 'intake'] },
   { id: 'seats_aiml', title: 'Seats in AI & ML Department', category: 'admission', content: 'The intake for B.Tech. Artificial Intelligence and Machine Learning (AI&ML) is 60 seats.', entities: ['AI&ML', 'seats', 'intake'] },
   { id: 'seats_aids', title: 'Seats in AI & DS Department', category: 'admission', content: 'The intake for B.Tech. Artificial Intelligence and Data Science (AI&DS) is 30 seats.', entities: ['AI&DS', 'seats', 'intake'] },
+  { id: 'seats_csbs', title: 'Seats in CSBS Department', category: 'admission', content: 'The intake for B.Tech. Computer Science and Business Systems (CSBS) is 30 seats.', entities: ['CSBS', 'seats', 'intake'] },
   { id: 'seats_cyber', title: 'Seats in Cyber Security', category: 'admission', content: 'The intake for B.E. Computer Science and Engineering (Cyber Security) is 30 seats.', entities: ['Cyber Security', 'Cybersecurity', 'seats', 'intake'] },
+  { id: 'seats_ece', title: 'Seats in ECE Department', category: 'admission', content: 'The intake for B.E. Electronics and Communication Engineering (ECE) is 60 seats. ECE w/s in Advanced Communication Technology has 30 seats.', entities: ['ECE', 'Electronics', 'seats', 'intake'] },
+  { id: 'seats_eee', title: 'Seats in EEE Department', category: 'admission', content: 'The intake for B.E. Electrical and Electronics Engineering (EEE) is 30 seats.', entities: ['EEE', 'Electrical', 'seats', 'intake'] },
+  { id: 'seats_mech', title: 'Seats in Mech Department', category: 'admission', content: 'The intake for B.E. Mechanical Engineering is 30 seats.', entities: ['Mech', 'Mechanical', 'seats', 'intake'] },
+  { id: 'seats_civil', title: 'Seats in Civil Department', category: 'admission', content: 'The intake for B.E. Civil Engineering is 30 seats.', entities: ['Civil', 'seats', 'intake'] },
+  { id: 'seats_vlsi', title: 'Seats in VLSI Design', category: 'admission', content: 'The intake for B.E. Electronics Engineering w/s in VLSI Design & Technology is 30 seats.', entities: ['VLSI', 'seats', 'intake'] },
   
   // 💰 SCHOLARSHIPS
   { id: 'scholar_sports', title: 'Sports Quota Scholarship', category: 'admission', content: 'MSAJCE offers admission through Sports Quota and provides scholarships to District, State, and National level sports participants.', entities: ['scholarship', 'sports', 'quota', 'admission'] },
