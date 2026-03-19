@@ -47,8 +47,8 @@ app.get('/api/diag', async (req, res) => {
     const results = await performHybridSearch('How many acres is the campus?');
     diag.rag_test = {
         count: results.length,
-        top_scores: (results || []).slice(0, 3).map(r => ({ score: r.score, title: r.title || 'Untitled' })),
-        found: (results && results.length > 0) ? results[0].text.slice(0, 50) : 'nothing'
+        scores: (results || []).slice(0, 5).map(r => ({ score: r.score, title: r.title || 'Untitled', type: r.matchType })),
+        snippet: (results && results.length > 0) ? (results[0].text || results[0].content || '').slice(0, 250) + '...' : 'nothing'
     };
   } catch (e) { diag.rag_test = 'retrieval error: ' + e.message; }
 
