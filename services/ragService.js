@@ -64,7 +64,7 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 6: NORMALIZE QUERY ─────────────────────────────────────────────
   const { normalizedText, cacheKey } = normalizeQueryBasic(rawText);
-  const redisKey = `v35:rag:${cacheKey}`;
+  const redisKey = `v36:rag:${cacheKey}`;
   log('STEP-6', `Normalized: "${normalizedText}" | CacheKey: ${cacheKey}`);
   const totalTokens = { prompt: 0, completion: 0, total: 0 };
 
@@ -134,14 +134,16 @@ export async function processRAGQuery(chatId, rawText) {
   log('STEP-8', `Reranker completed. Top score: ${top5Chunks[0]?.rerankScore || top5Chunks[0]?.score || 0}`, 
       top5Chunks.slice(0,3).map(c => ({ title: c.title, score: c.rerankScore || c.score })));
 
-  // ─── STEP 9: CONFIDENCE SCORING — retry if too weak ──────────────────────
+  // ─── STEP 9: CONFIDENCE SCORING — targeted retry ─────────────────────────
   const topScore = top5Chunks[0]?.rerankScore || top5Chunks[0]?.score || 0;
-  const isListRequest = /list|all|every/i.test(contextualQuery);
-  const transportKeywords = /\b(bus|route|ar-?\d+|r-?\d+|van|driver)\b/i.test(contextualQuery);
+  const isTransportQuery = /\b(bus|route|ar-?\d+|r-?\d+|van|driver|stop|timing)\b/i.test(contextualQuery);
+  const isListRequest = /\b(list|all|every)\b/i.test(contextualQuery) && isTransportQuery;
 
   if ((topScore < 5 && top5Chunks.length < 3) || isListRequest) {
-    log('STEP-9', `Confidence check (Score: ${topScore}, List: ${isListRequest}). Brute-force scanning...`);
-    const broadChunks = await performHybridSearch(contextualQuery, 'transport', {});
+    // Only search transport category if it's a transport query
+    const retryCategory = isTransportQuery ? 'transport' : 'general';
+    log('STEP-9', `Confidence check (Score: ${topScore}, Transport: ${isTransportQuery}, List: ${isListRequest}). Scanning category: ${retryCategory}...`);
+    const broadChunks = await performHybridSearch(contextualQuery, retryCategory, {});
     broadChunks.forEach(c => {
       const id = c._id?.toString() || c.content?.slice(0, 30);
       if (!allChunks.has(id)) allChunks.set(id, c);
@@ -149,7 +151,7 @@ export async function processRAGQuery(chatId, rawText) {
     
     mergedTop20 = Array.from(allChunks.values())
       .sort((a, b) => (b.score || 0) - (a.score || 0))
-      .slice(0, 30); // Use 30 for lists
+      .slice(0, isListRequest ? 30 : 20);
     top5Chunks = await rerankChunks(contextualQuery, mergedTop20);
     log('STEP-9', `Retry done. Found ${top5Chunks.length} chunks.`);
   }
