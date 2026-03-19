@@ -29,6 +29,11 @@ const ENTITY_LOOKUP_MAP = {
   'yogesh':       'student_yogesh',
   'it hod':       'hod_it',
   'hod it':       'hod_it',
+  'cse seats':    'seats_cse',
+  'cse intake':   'seats_cse',
+  'cse department seats': 'seats_cse',
+  'civil seats':  'seats_civil',
+  'scholarships': 'scholar_sports'
 };
 
 function detectEntityLookup(query) {
@@ -67,7 +72,7 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 6: NORMALIZE QUERY ─────────────────────────────────────────────
   const { normalizedText, cacheKey } = normalizeQueryBasic(rawText);
-  const redisKey = `v59:rag:${cacheKey}`;
+  const redisKey = `v60:rag:${cacheKey}`;
   log('STEP-6', `Normalized: "${normalizedText}" | CacheKey: ${cacheKey}`);
   const totalTokens = { prompt: 0, completion: 0, total: 0 };
 
@@ -107,11 +112,22 @@ export async function processRAGQuery(chatId, rawText) {
   }
 
   // ─── STEP 7: QUERY DECOMPOSITION + CONTEXT REWRITE ───────────────────────
+  // ─── STEP 7: QUERY DECOMPOSITION (only for complex requests) ─────────────────
   const memory = await getUserMemory(chatId);
   const contextualQuery = rewriteQuery(normalizedText, memory);
   log('STEP-7', `Context rewrite: "${contextualQuery}"`);
-  const { subject, subQueries } = await decomposeAndSelfQuery(contextualQuery);
-  log('STEP-7', `Decomposed into ${subQueries.length} sub-queries. Subject: ${subject || 'None'}`);
+  
+  let subject = null;
+  let subQueries = [{ query: contextualQuery, category: 'general', filters: {} }];
+
+  if (normalizedText.length > 40 || normalizedText.includes(' and ')) {
+    const decomposition = await decomposeAndSelfQuery(contextualQuery);
+    subject = decomposition.subject;
+    subQueries = decomposition.subQueries;
+    log('STEP-7', `Decomposed into ${subQueries.length} sub-queries. Subject: ${subject || 'None'}`);
+  } else {
+    log('STEP-7', 'Short query mode: skipping decomposition.');
+  }
 
   // ─── STEP 4: HYBRID RETRIEVAL ─────────────────────────────────────────────
   const allChunks = new Map();
