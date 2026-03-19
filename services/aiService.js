@@ -12,11 +12,7 @@ export const getAIReponse = async (prompt, modelType = 'cheap') => {
       ? config.nvidia.models.advanced
       : config.nvidia.models.cheap;
 
-    const systemMsg = `You are the Official AI Academic Assistant for Mohamed Sathak A J College of Engineering (MSAJCE). 
-Strict Grounding Rule: You MUST only answer from the provided [CONTEXT].
-If the answer is NOT in [CONTEXT], say: "I currently do not have that specific information in the MSAJCE knowledge base."
-Never hallucinate or invent names (e.g., Suresh Kumar, Raju, etc. unless explicitly in context).
-Stay professional and concise.`;
+    const systemMsg = `You are the Official MSAJCE Assistant. Ground all answers ONLY in the provided [CONTEXT]. Stay professional and concise.`;
 
     const response = await fetch(`${config.nvidia.baseUrl}/chat/completions`, {
       method: 'POST',
