@@ -17,67 +17,49 @@ export const normalizeText = (text) => {
  * Step 9: Structured Prompt Format
  */
 export const buildPrompt = (question, contextParts) => {
-  // Step 4: Format context as numbered chunks for clarity
-  const context = contextParts.length > 0
-    ? contextParts
-        .map((p, i) => `[${i+1}] ${(p.text || p.content || p.summary || '').trim()}`)
-        .filter(Boolean)
-        .join('\n\n')
-    : null;
+  const context = contextParts
+    .map((p, i) => `[CHUNK ${i+1}] ${p.text || p.content || ''}`)
+    .join('\n\n');
 
-  if (!context) {
-    return `[USER QUESTION]\n${question}\n\n[RULES]\nSay: "I'm sorry, I don't have that specific information in my database right now. Please contact the college directly at +91 99400 04500."\n\nAI RESPONSE:`;
-  }
+  return `[ROLE: ADVANCED REASONING ENGINE]
+You are the extraction and reasoning core of the MSAJCE RAG system.
 
-  return `[RETRIEVED CONTEXT FROM MSAJCE DATABASE]
+---
+
+[OPERATIONAL PROTOCOL]
+
+STEP 1: INTENT DETECTION
+Classify query: Factual, Numerical (count/total), List, Location-based, or Follow-up.
+
+STEP 2: CONTEXT FILTERING & EXTRACTION
+Scan [RETRIEVED CONTEXT] and extract ONLY:
+- Entities (Names, Roles, Departments)
+- Numbers (Counts, Intake, Seats, Fees)
+- Locations (Stops, Areas, Landmarks)
+- Contacts (Phone numbers, Emails)
+
+STEP 3: REASONING RULES
+- NUMERICAL: For "how many", sum up distinct values.
+- LOCATION: If place, return [Before -> Requested -> After] sequence.
+- DRIVER: If driver/contact query, return ONLY Name and Number.
+- PERSON: Return Role, Name, Contact, Dept.
+
+STEP 4: RESPONSE GENERATION (Strictly Concise)
+Use ONLY extracted data. If NO data matches, proceed to FALLBACK.
+
+---
+
+[RETRIEVED CONTEXT]
 ${context}
 
 [USER QUESTION]
 ${question}
 
-[ROLE]
-You are the MSAJCE Assistant. Ground your answers ONLY in the [RETRIEVED CONTEXT].
-
-[CATEGORY-SPECIFIC RULES]
-
-### 🚌 A. TRANSPORT (Bus, Route, Driver, Stop, Timing)
-
-1. IF USER ASKS FOR A DRIVER/CONTACT (e.g. "who is driver for AR-5"):
-   • Bus: [Route]
-   • Driver: [Name]
-   • Contact: [Mobile]
-   (Do NOT show any stops/timings here).
-
-2. IF USER ASKS FOR A LOCATION/TIMING (e.g. "bus for Thoraipakkam"):
-   • Bus: [Route]
-   • Driver: [Name]
-   • Contact: [Mobile]
-   • Surrounding Stops:
-     * [Stop BEFORE requested stop] – [Time]
-     * [THE REQUESTED STOP] – [Time] (Bold this)
-     * [Stop AFTER requested stop] – [Time]
-   (Show ONLY 3-4 stops that surround the user's requested location. Use smart inference: OMR = Perungudi/Thoraipakkam).
-
-3. EXCEPTION: If the user explicitly asks for the "full route", then list EVERY stop in order.
-
-### 🎓 B. PERSONS (Principal, HOD, Professor, Staff)
-1. FORMAT:
-   • Role: [value]
-   • Name: [value]
-   • Contact: [value/Phone/Email]
-   • Qualification/Dept: [value if available]
-
-### 🏢 C. GENERAL (Scholarships, Fees, Hostel, Clubs)
-1. Format as clean bullet points.
-
-[GENERAL CONSTRAINTS]
-1. ANSWER ONLY THE CURRENT QUESTION.
-2. DEDUPLICATION: Don't repeat facts. 
-3. FALLBACK: Only if context is empty:
-   - "I'm sorry, I don't have that specific information in my database right now."
-   - "Please visit our website: www.msajce-edu.in"
-   - "Or contact the college office: +91 99400 04500 (Chennai)"
-   - "(For Transport specific issues, you can also call: +91 94430 10256)"
+[FALLBACK CONTROL]
+If context is empty: 
+"I'm sorry, I don't have that info right now. 
+Website: www.msajce-edu.in 
+Office: +91 99400 04500 (Chennai)"
 
 AI RESPONSE:`;
 };
