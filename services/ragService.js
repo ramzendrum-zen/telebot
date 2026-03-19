@@ -71,8 +71,10 @@ export async function processRAGQuery(chatId, rawText) {
   const aiReply = await getAIReponse(finalPrompt);
 
   // 8. Output, Cache, & Learn
-  await setCache(redisKey, aiReply);
-  storeInSemanticCache(normalizedText, queryEmbedding, aiReply).catch(()=>null);
+  if (top5Chunks.length > 0) {
+    await setCache(redisKey, aiReply);
+    storeInSemanticCache(normalizedText, queryEmbedding, aiReply).catch(()=>null);
+  }
   await setUserMemory(chatId, contextualQuery, subQueries[0]?.category || 'general', rawText).catch(()=>null);
 
   return { 

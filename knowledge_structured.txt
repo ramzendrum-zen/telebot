@@ -1728,3 +1728,213 @@ QUERY_VARIATIONS:
  - Where can I find open-access libraries and research articles related to my field of study?
  - What academic resources are available for students looking for scholarly articles and research groups?
 
+--- DOCUMENT_ID: 69bb92d50c142506c80c125f ---
+TIMESTAMP: 2026-03-19T06:08:21.875Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The text lists several academic and research resources including libraries and databases.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: CSC Open-Access Library, OMICS International, Indian Academy of Science, Delnet, J-Gate, National Digital library
+KEYWORDS: academic resources, research libraries, open-access databases
+ENTITIES: CSC Open-Access Library, OMICS International, Indian Academy of Science, Delnet, J-Gate, National Digital library
+QUERY_VARIATIONS:
+ - What are some open-access libraries for research?
+ - Where can I find academic resources online?
+ - What databases are available for students to access research papers?
+
+--- DOCUMENT_ID: 69bb93040c142506c80c1262 ---
+TIMESTAMP: 2026-03-19T06:09:08.424Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: A list of digital libraries and educational resources.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: National Digital Library, World Digital Library, Shodhganga, Shodhsindhu, NPTEL Videos, NLIST E-Resource
+KEYWORDS: digital libraries, educational resources, academic databases
+ENTITIES: National Digital Library, World Digital Library, Shodhganga, Shodhsindhu, NPTEL, NLIST
+QUERY_VARIATIONS:
+ - What digital libraries are available for academic research?
+ - Where can I find educational resources online?
+ - What are some notable academic databases?
+
+--- DOCUMENT_ID: 69bb93170c142506c80c1265 ---
+TIMESTAMP: 2026-03-19T06:09:27.645Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: This resource provides a list of e-book databases, including Directory of Open Access Books, E-Books Directory, AMS Books, and Intech, offering access to a wide range of electronic books.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: NLIST E-Resource provides a list of e-book databases including Directory of Open Access Books, E-Books Directory, AMS Books, and Intech.
+KEYWORDS: e-books, open access, academic resources, online libraries
+ENTITIES: NLIST, Directory of Open Access Books, E-Books Directory, AMS Books, Intech
+QUERY_VARIATIONS:
+ - Where can I find open-access e-books for academic purposes?
+ - What are some online directories for e-books?
+ - How can I access electronic books from reputable sources like NLIST?
+
+--- DOCUMENT_ID: 69bb932c0c142506c80c1268 ---
+TIMESTAMP: 2026-03-19T06:09:48.934Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The list comprises various online academic resources offering free books and e-books.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Academic resources include MS Books, Intech, Audio Books for free, New Free Books, ACS e-Books, Online book page, and UC press E-Books Collection.
+KEYWORDS: e-books, academic resources, online books, free books, educational materials
+ENTITIES: MS Books, Intech, Audio Books for free, New Free Books, ACS e-Books, Online book page, UC press E-Books Collection
+QUERY_VARIATIONS:
+ - Where can I find free academic e-books online?
+ - What are some online resources for free books?
+ - How can I access academic books for free on the internet?
+
+--- DOCUMENT_ID: 69bb93370c142506c80c126b ---
+TIMESTAMP: 2026-03-19T06:10:00.023Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: A collection of online resources for e-books and academic publications.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: edu: UC press E-Books Collection https://publishing.cdlib.org/ucpreebooks/, GPO Access http://www.gpo.gov/, Internet Archive http://archive.org/, Project Gutenberg http://www.gutenberg.org/, Bookboon http://bookboon.com/, Free books Hub http://www.freebookshub.com/, World Book http://www.worldbook.
+KEYWORDS: e-books, academic publications, online resources, education
+ENTITIES: UC press, GPO Access, Internet Archive, Project Gutenberg, Bookboon, Free books Hub, World Book
+QUERY_VARIATIONS:
+ - Where can I find free e-books for academic purposes?
+ - What online resources offer access to educational publications?
+ - How can I access e-books from reputable sources like UC press and Project Gutenberg?
+
+--- DOCUMENT_ID: 69bb93480c142506c80c126e ---
+TIMESTAMP: 2026-03-19T06:10:16.294Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: This list provides various online book resources for reading and research.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: A list of book resources including World Book, The Bookstore Sisters, Computer Books, Page by page Books Online, Read Print, and World e-books library.
+KEYWORDS: ebooks, online books, book resources, reading materials, digital library
+ENTITIES: World Book, The Bookstore Sisters, Computer Books, Page by page Books Online, Read Print, World e-books library
+QUERY_VARIATIONS:
+ - Where can I find free online books?
+ - What are some good resources for ebook downloads?
+ - How can I access digital libraries for research?
+
+--- DOCUMENT_ID: 69bb93520c142506c80c1271 ---
+TIMESTAMP: 2026-03-19T06:10:26.736Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: A collection of online libraries and book resources.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: A collection of online resources including World e-books library, Biodiversity Heritage Library, Free book centre, Comic books, AR book find, and Black book online.
+KEYWORDS: e-books, libraries, biodiversity, comics, book finding
+ENTITIES: World e-books library, Biodiversity Heritage Library, Free book centre, Comic books, AR book find, Black book online
+QUERY_VARIATIONS:
+ - Where can I find free online libraries and book resources?
+ - What are some popular e-book libraries and comic book websites?
+ - How can I access biodiversity and educational books online?
+
+--- DOCUMENT_ID: 69bb936d0c142506c80c1274 ---
+TIMESTAMP: 2026-03-19T06:10:53.328Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: A list of online resources for accessing various types of books and academic materials.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: 25. Black book online, 26. Fiction database, 27. Free Tech Books, 28. Open Access e-Books, 29. E-Books, 30. Get Free Books
+KEYWORDS: e-books, online books, academic resources, free books, tech books
+ENTITIES: Black book, Fiction db, Free Tech Books, Open Access e-Books, E-Books, Get Free Books
+QUERY_VARIATIONS:
+ - Where can I find free online books?
+ - What are some good websites for accessing e-books and academic materials?
+ - How can I get free access to tech books and fiction novels online?
+
+--- DOCUMENT_ID: 69bb93770c142506c80c1277 ---
+TIMESTAMP: 2026-03-19T06:11:03.665Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Access a list of databases offering free online course materials and books from institutions like MIT, NPTEL, Coursera, and more.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Get free books and access online course materials from renowned databases including MIT, NPTEL, Coursera, The Khan Academy, EdX, and Udacity.
+KEYWORDS: online course materials, free books, MIT, NPTEL, Coursera, Khan Academy, EdX, Udacity
+ENTITIES: MIT, NPTEL, Coursera, Khan Academy, EdX, Udacity
+QUERY_VARIATIONS:
+ - Where can I find free online course materials?
+ - What databases offer free books and courses?
+ - How can I access free educational resources from top universities?
+
+--- DOCUMENT_ID: 69bb939f0c142506c80c127a ---
+TIMESTAMP: 2026-03-19T06:11:43.247Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: A list of online platforms for learning and self-improvement.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Online learning platforms include EDX (https://www.edx.org/), UDACITY (https://www.udacity.com/), LYNDA (https://www.linkedin.com), AUDIBLE (https://www.audible.in/), GOOGLE BOOKS (https://books.google.co.in/), WIKI-HOW (https://www.wikihow.com/), DO IT YOURSELF (https://www.doityourself.com/), and INFRASTRUCTABLES (https://instuctables.com).
+KEYWORDS: online learning, education, self-improvement, e-learning, professional development
+ENTITIES: EDX, UDACITY, LYNDA, AUDIBLE, GOOGLE BOOKS, WIKI-HOW, DO IT YOURSELF, INFRASTRUCTABLES
+QUERY_VARIATIONS:
+ - What online platforms are available for self-improvement and learning?
+ - How can I access educational resources online?
+ - What are some popular e-learning platforms for professional development?
+
+--- DOCUMENT_ID: 69bb93b10c142506c80c127d ---
+TIMESTAMP: 2026-03-19T06:12:02.022Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: A list of educational and DIY resources.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: A collection of DIY and educational resources including Instructables, RobotShop, Wonder How To, IKEA Hackers, Make Projects, TED Talks, and How Stuff Works.
+KEYWORDS: DIY, Robotics, Education, Technology, Innovation, Learning
+ENTITIES: Instructables, RobotShop, Wonder How To, IKEA Hackers, Make Projects, TED Talks, How Stuff Works
+QUERY_VARIATIONS:
+ - What are some good DIY project websites?
+ - Where can I find educational resources on robotics and technology?
+ - What websites offer tutorials on making things and learning new skills?
+
+--- DOCUMENT_ID: 69bb93d30c142506c80c1280 ---
+TIMESTAMP: 2026-03-19T06:12:35.202Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The list includes online educational resources such as TED, How Stuff Works, YouTube, Udemy, Skillshare, and Teachable.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: TED, How Stuff Works, YouTube, Udemy, Skillshare, Teachable
+KEYWORDS: online education, learning resources, educational websites
+ENTITIES: TED, How Stuff Works, YouTube, Udemy, Skillshare, Teachable
+QUERY_VARIATIONS:
+ - What are some popular online learning platforms?
+ - Where can I find educational resources online?
+ - What websites are good for learning new skills?
+
+--- DOCUMENT_ID: 69bb93df0c142506c80c1283 ---
+TIMESTAMP: 2026-03-19T06:12:47.806Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The library offers various services including book transactions, digital access, and study spaces to support academic activities.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Library services include transaction of books, internet and intranet access, reservation of books, reference services, online public access catalogue, reminders for overdue books, reprographic services, group discussion rooms, interlibrary loan, and periodical utilization.
+KEYWORDS: library services, academic support, information access, study spaces
+ENTITIES: libraries, educational institutions
+QUERY_VARIATIONS:
+ - What services does the library offer?
+ - How can I access library resources?
+ - What study facilities are available in the library?
+
+--- DOCUMENT_ID: 69bb93e80c142506c80c1286 ---
+TIMESTAMP: 2026-03-19T06:12:56.949Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: DELNET provides inter-library loan services, enabling access to books and journal articles across its network.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The Developing Library Network (DELNET), an international library network, facilitates access to books, Xerox copies, or soft copies of journal articles through Inter Library Loan (ILL) services.
+KEYWORDS: Inter Library Loan, DELNET, International Library Network, Academic Resources, Library Services
+ENTITIES: DELNET, International Library Network
+QUERY_VARIATIONS:
+ - How can I access books or journal articles from other libraries?
+ - What services does DELNET offer for students and researchers?
+ - How do I obtain a copy of a journal article or book not available in my university library?
+
+--- DOCUMENT_ID: 69bb93f40c142506c80c1289 ---
+TIMESTAMP: 2026-03-19T06:13:08.683Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The college library offers access to over 50,684 journals through J-Gate Database and allows students to borrow up to 18 books.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Article through ILL (Inter Library Loan). J-Gate Database has more than 50,684 journals available online. Rules and Regulations: All staff and students are members of our college library. Students are eligible to borrow 18 books.
+KEYWORDS: library resources, interlibrary loan, journal access, academic databases
+ENTITIES: J-Gate, Inter Library Loan, College Library
+QUERY_VARIATIONS:
+ - How many books can I borrow from the college library?
+ - What online databases does the college library subscribe to?
+ - Can I access journals through the college library?
+
