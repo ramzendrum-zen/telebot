@@ -25,7 +25,7 @@ export const rerankChunks = async (query, chunks, limit = config.rag.finalTopK) 
         query: { text: query },
         passages
       }),
-      signal: AbortSignal.timeout(8000)
+      signal: AbortSignal.timeout(4000)
     });
 
     if (response.ok) {

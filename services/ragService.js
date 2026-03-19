@@ -62,7 +62,7 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 6: NORMALIZE QUERY ─────────────────────────────────────────────
   const { normalizedText, cacheKey } = normalizeQueryBasic(rawText);
-  const redisKey = `v56:rag:${cacheKey}`;
+  const redisKey = `v57:rag:${cacheKey}`;
   log('STEP-6', `Normalized: "${normalizedText}" | CacheKey: ${cacheKey}`);
   const totalTokens = { prompt: 0, completion: 0, total: 0 };
 
@@ -124,20 +124,20 @@ export async function processRAGQuery(chatId, rawText) {
   // ─── STEP 8: RERANKING ENFORCEMENT ───────────────────────────────────────
   let mergedTop20 = Array.from(allChunks.values())
     .sort((a, b) => (b.score || 0) - (a.score || 0))
-    .slice(0, 30);
+    .slice(0, 20);
 
   log('STEP-8', `Sending ${mergedTop20.length} chunks to Reranker`);
   let top5Chunks = await rerankChunks(contextualQuery, mergedTop20);
   
   // CRITICAL: Ensure verified data is NOT omitted even if reranker score is lower
-  const verifiedInPool = mergedTop20.filter(c => c.source?.includes('verified'));
+  const verifiedInPool = Array.from(allChunks.values()).filter(c => c.source?.includes('verified'));
   verifiedInPool.forEach(vc => {
     if (!top5Chunks.some(tc => tc._id?.toString() === vc._id?.toString())) {
         top5Chunks.push(vc);
     }
   });
 
-  // Re-sort by score and take final 7
+  // Re-sort and take final 7
   top5Chunks = top5Chunks.sort((a, b) => (b.rerankScore || b.score || 0) - (a.rerankScore || a.score || 0)).slice(0, config.rag.finalTopK || 7);
 
   log('STEP-8', `Reranker completed. Top score: ${top5Chunks[0]?.rerankScore || top5Chunks[0]?.score || 0}`);
