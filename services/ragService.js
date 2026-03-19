@@ -64,7 +64,7 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 6: NORMALIZE QUERY ─────────────────────────────────────────────
   const { normalizedText, cacheKey } = normalizeQueryBasic(rawText);
-  const redisKey = `v22:rag:${cacheKey}`;
+  const redisKey = `v23:rag:${cacheKey}`;
   log('STEP-6', `Normalized: "${normalizedText}" | CacheKey: ${cacheKey}`);
 
   // ─── STEP 5: DIRECT ENTITY LOOKUP (before cache — always fresh) ──────────
@@ -100,10 +100,10 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 7: QUERY DECOMPOSITION + CONTEXT REWRITE ───────────────────────
   const memory = await getUserMemory(chatId);
-  const contextualQuery = rewriteQuery(normalizedText, memory);
+  const contextualQuery = await rewriteQuery(normalizedText, memory);
   log('STEP-7', `Context rewrite: "${contextualQuery}"`);
-  const subQueries = await decomposeAndSelfQuery(contextualQuery);
-  log('STEP-7', `Decomposed into ${subQueries.length} sub-queries`);
+  const { subject, subQueries } = await decomposeAndSelfQuery(contextualQuery);
+  log('STEP-7', `Decomposed into ${subQueries.length} sub-queries. Subject: ${subject || 'None'}`);
 
   // ─── STEP 4: HYBRID RETRIEVAL ─────────────────────────────────────────────
   const allChunks = new Map();
@@ -158,7 +158,7 @@ export async function processRAGQuery(chatId, rawText) {
   }
 
   // ─── LLM GENERATION — STRICT CONTEXT MODE ────────────────────────────────
-  const finalPrompt = buildPrompt(contextualQuery, top5Chunks, memory.last_entity);
+  const finalPrompt = buildPrompt(contextualQuery, top5Chunks, subject || memory.last_entity);
   let aiReply = await getAIReponse(finalPrompt);
 
   // ─── STEP 11: RESPONSE VALIDATION — re-generate if LLM ignored context ───
@@ -171,7 +171,7 @@ export async function processRAGQuery(chatId, rawText) {
   // ─── CACHE + LEARN ────────────────────────────────────────────────────────
   await setCache(redisKey, aiReply);
   storeInSemanticCache(normalizedText, queryEmbedding, aiReply).catch(() => null);
-  await setUserMemory(chatId, contextualQuery, subQueries[0]?.category || 'general', rawText).catch(() => null);
+  await setUserMemory(chatId, subject || memory.last_entity, subQueries[0]?.category || 'general', rawText).catch(() => null);
   await pushLog('assistant', 'rag_step', `Done. ${logs.length} steps. Latency: ${Date.now() - startTime}ms`).catch(() => null);
 
   return {

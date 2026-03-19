@@ -37,31 +37,52 @@ export const setUserMemory = async (chatId, entity, topic = 'general', question 
   }
 };
 
-/**
- * REWRITE QUERY PIPELINE
- * Handles pronouns like him/her/it/more by injecting context.
- */
-export const rewriteQuery = (query, memory) => {
-  const { last_entity, last_topic } = memory;
+import { getAIReponse } from './aiService.js';
+
+export const rewriteQuery = async (query, memory) => {
+  const { last_entity, last_topic, last_question } = memory;
   if (!last_entity && !last_topic) return query;
   
   const q = query.toLowerCase().trim();
-  const context = last_entity || last_topic;
 
-  const pronouns = ['him', 'her', 'it', 'them', 'they', 'those', 'he', 'she'];
-  const hasPronoun = pronouns.some(p => new RegExp(`\\b${p}\\b`, 'i').test(q));
-  
-  // Catch list/enumerate follow-ups: "list out all", "name them", "show all", "give the list"
-  const isListFollowUp = /^(list|show|give|name|mention|tell|what are|enumerate)\b|list (out\s*)?all|show all|name (them|all|it)/i.test(q);
-  
-  // Catch very short follow-ups (< 5 words, no clear noun)
-  const isShortContinuation = q.split(/\s+/).length <= 4 && !/college|bus|route|ar-|faculty|principal|hostel|fee/i.test(q);
-  
-  const isContinuation = /\b(more|tell me more|detail|elaborate|explain)\b/i.test(q);
+  // DETECTION RULES: Detect if this is likely a follow-up
+  const followUpKeywords = ['timing', 'phone', 'contact', 'more', 'another', 'details', 'who', 'where', 'list', 'what about'];
+  const isShort = q.split(/\s+/).length <= 4;
+  const hasPronoun = /\b(him|her|it|them|they|he|she|his|hers|that|this)\b/i.test(q);
+  const startWithVague = /^(what|how|who|where|when|list|give|show|tell)\s*\?*$/i.test(q);
+  const isVagueKeyword = followUpKeywords.some(kw => q.includes(kw));
 
-  if (hasPronoun || isContinuation || isListFollowUp || isShortContinuation) {
-    return `${query} about ${context}`;
+  const isFollowUp = isShort || hasPronoun || startWithVague || isVagueKeyword;
+
+  if (!isFollowUp) {
+    // RESET RULE: If user asks completely new topic/entity, don't rewrite.
+    // We let the RAG query it independently.
+    return query;
   }
-  
-  return query;
+
+  try {
+    const rewritePrompt = `Goal: Rewrite follow-up question into a complete independent query.
+Context:
+- Previous Topic: ${last_topic}
+- Previous Entity: ${last_entity}
+- Previous Question: ${last_question}
+
+User Follow-up: "${query}"
+
+Rules:
+1. Attach the previous entity/subject if missing.
+2. Preserve original intent exactly.
+3. Be direct. No filler.
+
+Rewritten Query:`;
+
+    const rewritten = await getAIReponse(rewritePrompt, 'cheap');
+    const finalQuery = rewritten.replace(/["']/g, '').trim();
+    
+    logger.info(`Context Rewrite: "${query}" -> "${finalQuery}" (Entity: ${last_entity})`);
+    return finalQuery;
+  } catch (e) {
+    logger.warn(`Query rewrite failed: ${e.message}`);
+    return query;
+  }
 };
