@@ -1,198 +1,151 @@
-/**
- * MSAJCE Transport Ingester V2
- * 
- * Ingests detailed MTC and College Bus routes provided by the user.
- * Follows Semantic Enrichment and Master Prompt rules.
- */
-
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { generateEmbedding } from '../services/embeddingService.js';
 import config from '../config/config.js';
-import logger from '../utils/logger.js';
+import { generateEmbedding } from '../services/embeddingService.js';
 
 dotenv.config();
 
 const transportData = {
-  "public_transport_mtc": {
-    "stop_name": "SIPCOT / Siruseri IT Park",
-    "routes": [
-      { "routeNo": "19", "start": "T. Nagar", "end": "Thiruporur", "via": "OMR, Madhiya Kailash, SRP", "freq": "Daily" },
-      { "routeNo": "519", "start": "T. Nagar", "end": "Thiruporur", "via": "Saidapet, Adyar, SRP", "freq": "Daily" },
-      { "routeNo": "221H", "start": "Central", "end": "Thiruporur", "via": "Anna Salai, Saidapet, SRP", "freq": "Daily" },
-      { "routeNo": "102X", "start": "Broadway", "end": "Thiruporur", "via": "Marina, Adyar, OMR", "freq": "Daily" },
-      { "routeNo": "102S", "start": "Broadway", "end": "Sipcot", "via": "Marina, Adyar, OMR", "freq": "Daily" },
-      { "routeNo": "102", "start": "Broadway", "end": "Kelambakkam", "via": "Marina, Adyar, OMR", "freq": "Daily" },
-      { "routeNo": "B19", "start": "Shollinganallur", "end": "Kelambakkam", "via": "Sipcot, OMR", "freq": "Daily" },
-      { "routeNo": "570", "start": "CMBT", "end": "Kelambakkam", "via": "Vadapalani, Velachery, SRP", "freq": "Daily" },
-      { "routeNo": "570S", "start": "CMBT", "end": "Sipcot", "via": "Vadapalani, Velachery, SRP", "freq": "Daily" },
-      { "routeNo": "105", "start": "Tambaram", "end": "Siruseri", "via": "Thalambur", "freq": "Daily" }
-    ]
-  },
-  "college_buses": [
-    {
-      "route_no": "AR-3",
-      "driver": { "name": "Mr. Sathish K", "mobile": "+91-9789970304" },
-      "stops": [
-        { "stop": "G.H Hospital", "time": "06:20" }, { "stop": "Paranur Tollgate", "time": "06:35" }, { "stop": "Mahindra City", "time": "06:40" },
-        { "stop": "S.P. Koil", "time": "06:45" }, { "stop": "Maraimalai Nagar", "time": "06:48" }, { "stop": "Guduvanchery", "time": "06:50" },
-        { "stop": "Ooraapakkam", "time": "06:52" }, { "stop": "Vandalur Zoo", "time": "06:55" }, { "stop": "Perungalathur", "time": "07:00" },
-        { "stop": "Kandigai", "time": "07:15" }, { "stop": "Mambakkam", "time": "07:25" }, { "stop": "Puthupakkam", "time": "07:30" },
-        { "stop": "Kelambakkam", "time": "07:40" }, { "stop": "SIPCOT", "time": "07:50" }, { "stop": "M.S.A.J.C.E – College", "time": "08:00" }
+    "public_transport_mtc": {
+      "stop_name": "SIPCOT / Siruseri IT Park",
+      "routes": [
+        { "routeNo": "19", "start": "T. Nagar", "end": "Thiruporur", "via": "OMR, Madhiya Kailash, SRP", "freq": "Daily" },
+        { "routeNo": "519", "start": "T. Nagar", "end": "Thiruporur", "via": "Saidapet, Adyar, SRP", "freq": "Daily" },
+        { "routeNo": "221H", "start": "Central", "end": "Thiruporur", "via": "Anna Salai, Saidapet, SRP", "freq": "Daily" },
+        { "routeNo": "102X", "start": "Broadway", "end": "Thiruporur", "via": "Marina, Adyar, OMR", "freq": "Daily" },
+        { "routeNo": "102S", "start": "Broadway", "end": "Sipcot", "via": "Marina, Adyar, OMR", "freq": "Daily" },
+        { "routeNo": "102", "start": "Broadway", "end": "Kelambakkam", "via": "Marina, Adyar, OMR", "freq": "Daily" },
+        { "routeNo": "B19", "start": "Shollinganallur", "end": "Kelambakkam", "via": "Sipcot, OMR", "freq": "Daily" },
+        { "routeNo": "570", "start": "CMBT", "end": "Kelambakkam", "via": "Vadapalani, Velachery, SRP", "freq": "Daily" },
+        { "routeNo": "570S", "start": "CMBT", "end": "Sipcot", "via": "Vadapalani, Velachery, SRP", "freq": "Daily" },
+        { "routeNo": "105", "start": "Tambaram", "end": "Siruseri", "via": "Thalambur", "freq": "Daily" }
       ]
     },
-    {
-      "route_no": "AR-4",
-      "driver": { "name": "Mr. M. Suresh", "mobile": "+91-9849265637" },
-      "stops": [
-        { "stop": "Moolakadai", "time": "06:10" }, { "stop": "Perambur Railway Station", "time": "06:15" }, { "stop": "Otteri Pattalam", "time": "06:18" },
-        { "stop": "Dowton", "time": "06:23" }, { "stop": "Vepery Police Station", "time": "06:25" }, { "stop": "Periyamed", "time": "06:30" },
-        { "stop": "Central", "time": "06:35" }, { "stop": "Parrys Corner", "time": "06:40" }, { "stop": "Marina Beach", "time": "06:45" },
-        { "stop": "Santhome", "time": "06:50" }, { "stop": "Adyar", "time": "07:00" }, { "stop": "Thiruvanmiyur", "time": "07:05" },
-        { "stop": "Palavakkam", "time": "07:10" }, { "stop": "Neelankarai", "time": "07:15" }, { "stop": "Akkarai Water Tank", "time": "07:20" },
-        { "stop": "Sholinganallur", "time": "07:25" }, { "stop": "Ladies Hostel", "time": "07:30" }, { "stop": "M.S.A.J.C.E – College", "time": "08:00" }
-      ]
-    },
-    {
-      "route_no": "AR-5 / N-3",
-      "driver": { "name": "Mr. Velu", "mobile": "+91-9940050685" },
-      "stops": [
-        { "stop": "MMDA School", "time": "06:15" }, { "stop": "Anna Nagar", "time": "06:20" }, { "stop": "Chinthamani", "time": "06:25" },
-        { "stop": "Skywalk", "time": "06:30" }, { "stop": "Choolaimadu", "time": "06:33" }, { "stop": "Loyola College", "time": "06:35" },
-        { "stop": "T. Nagar", "time": "06:40" }, { "stop": "CIT Nagar", "time": "06:43" }, { "stop": "Saidapet", "time": "06:45" },
-        { "stop": "Velachery Check Post", "time": "06:50" }, { "stop": "Vijaya Nagar Bus Stop", "time": "06:53" }, { "stop": "Baby Nagar", "time": "06:55" },
-        { "stop": "Tharamani", "time": "07:00" }, { "stop": "MGR Road", "time": "07:15" }, { "stop": "OMR", "time": "07:20" },
-        { "stop": "Ladies Hostel", "time": "07:35" }, { "stop": "M.S.A.J.C.E – College", "time": "08:00" }
-      ]
-    },
-    {
-      "route_no": "AR-6",
-      "driver": { "name": "Mr. Venkatachalam", "mobile": "+91-9025731746" },
-      "stops": [
-        { "stop": "MMDA School", "time": "06:15" }, { "stop": "Anna Nagar", "time": "06:20" }, { "stop": "Chinthamani", "time": "06:25" },
-        { "stop": "Skywalk", "time": "06:30" }, { "stop": "Choolaimadu", "time": "06:33" }, { "stop": "Loyola College", "time": "06:35" },
-        { "stop": "T. Nagar", "time": "06:40" }, { "stop": "CIT Nagar", "time": "06:43" }, { "stop": "Saidapet", "time": "06:45" },
-        { "stop": "Velachery Check Post", "time": "06:50" }, { "stop": "Vijaya Nagar Bus Stop", "time": "06:53" }, { "stop": "Baby Nagar", "time": "06:55" },
-        { "stop": "Tharamani", "time": "07:00" }, { "stop": "MGR Road", "time": "07:15" }, { "stop": "OMR", "time": "07:20" },
-        { "stop": "Ladies Hostel", "time": "07:35" }, { "stop": "M.S.A.J.C.E – College", "time": "08:00" }
-      ]
-    },
-    {
-      "route_no": "AR-7",
-      "driver": { "name": "Mr. Suresh", "mobile": "+91-9789895025" },
-      "stops": [
-        { "stop": "Chunambedu", "time": "05:25" }, { "stop": "Kadapakkam", "time": "05:45" }, { "stop": "Elliyamman Koil", "time": "06:00" },
-        { "stop": "Koovathur", "time": "06:17" }, { "stop": "Kathan Kadai", "time": "06:22" }, { "stop": "Kalpakkam", "time": "06:30" },
-        { "stop": "Caturankappattinam", "time": "06:40" }, { "stop": "Venkampakkam", "time": "06:50" }, { "stop": "Thirukazukundram", "time": "07:00" },
-        { "stop": "Punceri", "time": "07:12" }, { "stop": "Paiyanur", "time": "07:15" }, { "stop": "Alathur", "time": "07:20" },
-        { "stop": "Thirupporur", "time": "07:30" }, { "stop": "Kalavakkam", "time": "07:36" }, { "stop": "Cenkanmal", "time": "07:41" },
-        { "stop": "Kelambakkam", "time": "07:45" }, { "stop": "Padur", "time": "07:50" }, { "stop": "Aananth College", "time": "07:53" },
-        { "stop": "M.S.A.J.C.E – College", "time": "08:00" }
-      ]
-    },
-    {
-      "route_no": "AR-8",
-      "driver": { "name": "Mr. Raju", "mobile": "+91-9790750906" },
-      "stops": [
-        { "stop": "Manjambakkam", "time": "05:50" }, { "stop": "Retteri", "time": "05:55" }, { "stop": "Senthil Nagar", "time": "06:00" },
-        { "stop": "Padi", "time": "06:05" }, { "stop": "Anna Nagar", "time": "06:10" }, { "stop": "Thirumangalam", "time": "06:12" },
-        { "stop": "Vijaykanth", "time": "06:15" }, { "stop": "CMBT", "time": "06:20" }, { "stop": "Vadapalani", "time": "06:25" },
-        { "stop": "Ashok Pillar", "time": "06:30" }, { "stop": "Kasi Theatre", "time": "06:35" }, { "stop": "Ekkattuthangal", "time": "06:40" },
-        { "stop": "Aadampakkam", "time": "06:50" }, { "stop": "Kaiveli", "time": "06:55" }, { "stop": "Pallikaranai", "time": "07:10" },
-        { "stop": "Medavakkam", "time": "07:20" }, { "stop": "Perumpakkam", "time": "07:25" }, { "stop": "Sholinganallur", "time": "07:30" },
-        { "stop": "Ladies Hostel", "time": "07:35" }, { "stop": "M.S.A.J.C.E – College", "time": "08:00" }
-      ]
-    },
-    {
-      "route_no": "AR-9",
-      "driver": { "name": "Mr. Kanagaraj", "mobile": "+91-9710209097" },
-      "stops": [
-        { "stop": "Ennore", "time": "06:15" }, { "stop": "Mint", "time": "06:20" }, { "stop": "Broadway", "time": "06:25" },
-        { "stop": "Central", "time": "06:30" }, { "stop": "Omandhoorar Hospital", "time": "06:40" }, { "stop": "Royapettah", "time": "06:45" },
-        { "stop": "Mylapore", "time": "06:50" }, { "stop": "Santhome", "time": "07:00" }, { "stop": "Adyar", "time": "07:10" },
-        { "stop": "Thiruvanmiyur", "time": "07:15" }, { "stop": "Palavakkam", "time": "07:20" }, { "stop": "Neelankarai", "time": "07:25" },
-        { "stop": "Akkarai Water Tank", "time": "07:30" }, { "stop": "Sholinganallur", "time": "07:35" }, { "stop": "Ladies Hostel", "time": "07:40" },
-        { "stop": "M.S.A.J.C.E – College", "time": "08:00" }
-      ]
-    },
-    {
-      "route_no": "R-20",
-      "driver": { "name": "Mr. M. Suresh", "mobile": "+91-9849265637" },
-      "stops": [
-        { "stop": "Moolakadai", "time": "05:55" }, { "stop": "Perambur Railway", "time": "06:10" }, { "stop": "Otteri Pattalam", "time": "06:15" },
-        { "stop": "Dowton", "time": "06:20" }, { "stop": "Central", "time": "06:25" }, { "stop": "Parrys", "time": "06:30" },
-        { "stop": "Omandhoorar Hospital", "time": "06:40" }, { "stop": "Royapettah", "time": "06:45" }, { "stop": "Mylapore", "time": "06:50" },
-        { "stop": "Santhome", "time": "07:00" }, { "stop": "Adyar", "time": "07:05" }, { "stop": "Thiruvanmiyur", "time": "07:10" },
-        { "stop": "Palavakkam", "time": "07:15" }, { "stop": "Neelankarai", "time": "07:20" }, { "stop": "Akkarai Water Tank", "time": "07:25" },
-        { "stop": "Sholinganallur", "time": "07:30" }, { "stop": "Ladies Hostel", "time": "07:35" }, { "stop": "M.S.A.J.C.E – College", "time": "08:00" }
-      ]
-    },
-    {
-      "route_no": "R-21",
-      "driver": { "name": "Mr. E. Sathish", "mobile": "+91-9677007583" },
-      "stops": [
-        { "stop": "Porur", "time": "06:25" }, { "stop": "Boy Kadai", "time": "06:33" }, { "stop": "Kovoor", "time": "06:35" },
-        { "stop": "Kundrathur", "time": "06:38" }, { "stop": "Anagaputhur", "time": "06:40" }, { "stop": "Pammal", "time": "06:43" },
-        { "stop": "Pallavaram", "time": "06:45" }, { "stop": "Meenambakkam", "time": "06:48" }, { "stop": "Pallavaram", "time": "06:50" },
-        { "stop": "Chrompet", "time": "06:55" }, { "stop": "Tambaram W & E", "time": "07:00" }, { "stop": "Camp Road", "time": "07:05" },
-        { "stop": "Saliyur", "time": "07:10" }, { "stop": "Medavakkam", "time": "07:25" }, { "stop": "Chithalapakkam", "time": "07:30" },
-        { "stop": "Thalambur", "time": "07:35" }, { "stop": "M.S.A.J.C.E – College", "time": "08:00" }
-      ]
-    },
-    {
-      "route_no": "R-22",
-      "driver": { "name": "Mr. Jaffar", "mobile": "+91-9566037890" },
-      "stops": [
-        { "stop": "Nemilichery", "time": "05:50" }, { "stop": "Poonamallee", "time": "06:05" }, { "stop": "Kumanan Chavadi", "time": "06:00" },
-        { "stop": "Kattupakkam", "time": "06:05" }, { "stop": "Ramachandra Hospital", "time": "06:10" }, { "stop": "Porur", "time": "06:15" },
-        { "stop": "Valasaravakkam", "time": "06:20" }, { "stop": "Ramapuram", "time": "06:25" }, { "stop": "Nandhampakkam", "time": "06:30" },
-        { "stop": "Kathipara Junction", "time": "06:35" }, { "stop": "Thillai Ganga Subway", "time": "06:40" }, { "stop": "Velachery Bypass", "time": "06:45" },
-        { "stop": "Kaiveli", "time": "07:00" }, { "stop": "Madipakkam", "time": "07:05" }, { "stop": "Kilkattalai", "time": "07:10" },
-        { "stop": "Kovilambakkam", "time": "07:15" }, { "stop": "Medavakkam", "time": "07:20" }, { "stop": "Sholinganallur", "time": "07:25" },
-        { "stop": "M.S.A.J.C.E – College", "time": "08:00" }
-      ]
-    }
-  ]
-};
-
-async function enrichKnowledge(text) {
-  const prompt = `You are a MSAJCE Transport Specialist. 
-Analyze this bus route info and generate enrichment metadata.
-
-TEXT:
-"${text}"
-
-Output JSON:
-{
-  "summary": "Full sentence describing route start, end, and driver",
-  "entities": ["driver name", "route no", "all landmarks", "phone"],
-  "keywords": ["route number", "destination", "starting point", "driver", "transport", "msajce bus"],
-  "query_variations": [
-    "5-8 ways a student might ask for this",
-    "include queries for specific stops",
-    "include driver contact requests",
-    "include timings request"
-  ]
-}`;
-
-  try {
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${config.openRouter.apiKey}`,
-        'Content-Type': 'application/json',
+    "college_buses": [
+      {
+        "route_no": "AR-3",
+        "driver": { "name": "Mr. Sathish K", "mobile": "+91-9789970304" },
+        "stops": [
+          { "stop": "G.H Hospital", "time": "06:20" }, { "stop": "Paranur Tollgate", "time": "06:35" }, { "stop": "Mahindra City", "time": "06:40" },
+          { "stop": "S.P. Koil", "time": "06:45" }, { "stop": "Maraimalai Nagar", "time": "06:48" }, { "stop": "Guduvanchery", "time": "06:50" },
+          { "stop": "Ooraapakkam", "time": "06:52" }, { "stop": "Vandalur Zoo", "time": "06:55" }, { "stop": "Perungalathur", "time": "07:00" },
+          { "stop": "Kandigai", "time": "07:15" }, { "stop": "Mambakkam", "time": "07:25" }, { "stop": "Puthupakkam", "time": "07:30" },
+          { "stop": "Kelambakkam", "time": "07:40" }, { "stop": "SIPCOT", "time": "07:50" }, { "stop": "M.S.A.J.C.E – College", "time": "08:00" }
+        ]
       },
-      body: JSON.stringify({
-        model: config.openRouter.models.cheap,
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.1
-      }),
-      signal: AbortSignal.timeout(30000)
-    });
-    const data = await response.json();
-    return JSON.parse(data.choices[0].message.content.match(/\{[\s\S]*\}/)[0]);
-  } catch (e) { return null; }
-}
+      {
+        "route_no": "AR-4",
+        "driver": { "name": "Mr. M. Suresh", "mobile": "+91-9849265637" },
+        "stops": [
+          { "stop": "Moolakadai", "time": "06:10" }, { "stop": "Perambur Railway Station", "time": "06:15" }, { "stop": "Otteri Pattalam", "time": "06:18" },
+          { "stop": "Dowton", "time": "06:23" }, { "stop": "Vepery Police Station", "time": "06:25" }, { "stop": "Periyamed", "time": "06:30" },
+          { "stop": "Central", "time": "06:35" }, { "stop": "Parrys Corner", "time": "06:40" }, { "stop": "Marina Beach", "time": "06:45" },
+          { "stop": "Santhome", "time": "06:50" }, { "stop": "Adyar", "time": "07:00" }, { "stop": "Thiruvanmiyur", "time": "07:05" },
+          { "stop": "Palavakkam", "time": "07:10" }, { "stop": "Neelankarai", "time": "07:15" }, { "stop": "Akkarai Water Tank", "time": "07:20" },
+          { "stop": "Sholinganallur", "time": "07:25" }, { "stop": "Ladies Hostel", "time": "07:30" }, { "stop": "M.S.A.J.C.E – College", "time": "08:00" }
+        ]
+      },
+      {
+        "route_no": "AR-5",
+        "driver": { "name": "Mr. Velu", "mobile": "+91-9940050685" },
+        "stops": [
+          { "stop": "MMDA School", "time": "06:15" }, { "stop": "Anna Nagar", "time": "06:20" }, { "stop": "Chinthamani", "time": "06:25" },
+          { "stop": "Skywalk", "time": "06:30" }, { "stop": "Choolaimadu", "time": "06:33" }, { "stop": "Loyola College", "time": "06:35" },
+          { "stop": "T. Nagar", "time": "06:40" }, { "stop": "CIT Nagar", "time": "06:43" }, { "stop": "Saidapet", "time": "06:45" },
+          { "stop": "Velachery Check Post", "time": "06:50" }, { "stop": "Vijaya Nagar Bus Stop", "time": "06:53" }, { "stop": "Baby Nagar", "time": "06:55" },
+          { "stop": "Tharamani", "time": "07:00" }, { "stop": "MGR Road", "time": "07:15" }, { "stop": "OMR", "time": "07:20" },
+          { "stop": "Ladies Hostel", "time": "07:35" }, { "stop": "M.S.A.J.C.E – College", "time": "08:00" }
+        ]
+      },
+      {
+        "route_no": "AR-6",
+        "driver": { "name": "Mr. Venkatachalam", "mobile": "+91-9025731746" },
+        "stops": [
+          { "stop": "MMDA School", "time": "06:15" }, { "stop": "Anna Nagar", "time": "06:20" }, { "stop": "Chinthamani", "time": "06:25" },
+          { "stop": "Skywalk", "time": "06:30" }, { "stop": "Choolaimadu", "time": "06:33" }, { "stop": "Loyola College", "time": "06:35" },
+          { "stop": "T. Nagar", "time": "06:40" }, { "stop": "CIT Nagar", "time": "06:43" }, { "stop": "Saidapet", "time": "06:45" },
+          { "stop": "Velachery Check Post", "time": "06:50" }, { "stop": "Vijaya Nagar Bus Stop", "time": "06:53" }, { "stop": "Baby Nagar", "time": "06:55" },
+          { "stop": "Tharamani", "time": "07:00" }, { "stop": "MGR Road", "time": "07:15" }, { "stop": "OMR", "time": "07:20" },
+          { "stop": "Ladies Hostel", "time": "07:35" }, { "stop": "M.S.A.J.C.E – College", "time": "08:00" }
+        ]
+      },
+      {
+        "route_no": "AR-7",
+        "driver": { "name": "Mr. Suresh", "mobile": "+91-9789895025" },
+        "stops": [
+          { "stop": "Chunambedu", "time": "05:25" }, { "stop": "Kadapakkam", "time": "05:45" }, { "stop": "Elliyamman Koil", "time": "06:00" },
+          { "stop": "Koovathur", "time": "06:17" }, { "stop": "Kathan Kadai", "time": "06:22" }, { "stop": "Kalpakkam", "time": "06:30" },
+          { "stop": "Caturankappattinam", "time": "06:40" }, { "stop": "Venkampakkam", "time": "06:50" }, { "stop": "Thirukazukundram", "time": "07:00" },
+          { "stop": "Punceri", "time": "07:12" }, { "stop": "Paiyanur", "time": "07:15" }, { "stop": "Alathur", "time": "07:20" },
+          { "stop": "Thirupporur", "time": "07:30" }, { "stop": "Kalavakkam", "time": "07:36" }, { "stop": "Cenkanmal", "time": "07:41" },
+          { "stop": "Kelambakkam", "time": "07:45" }, { "stop": "Padur", "time": "07:50" }, { "stop": "Aananth College", "time": "07:53" },
+          { "stop": "M.S.A.J.C.E – College", "time": "08:00" }
+        ]
+      },
+      {
+        "route_no": "AR-8",
+        "driver": { "name": "Mr. Raju", "mobile": "+91-9790750906" },
+        "stops": [
+          { "stop": "Manjambakkam", "time": "05:50" }, { "stop": "Retteri", "time": "05:55" }, { "stop": "Senthil Nagar", "time": "06:00" },
+          { "stop": "Padi", "time": "06:05" }, { "stop": "Anna Nagar", "time": "06:10" }, { "stop": "Thirumangalam", "time": "06:12" },
+          { "stop": "Vijaykanth", "time": "06:15" }, { "stop": "CMBT", "time": "06:20" }, { "stop": "Vadapalani", "time": "06:25" },
+          { "stop": "Ashok Pillar", "time": "06:30" }, { "stop": "Kasi Theatre", "time": "06:35" }, { "stop": "Ekkattuthangal", "time": "06:40" },
+          { "stop": "Aadampakkam", "time": "06:50" }, { "stop": "Kaiveli", "time": "06:55" }, { "stop": "Pallikaranai", "time": "07:10" },
+          { "stop": "Medavakkam", "time": "07:20" }, { "stop": "Perumpakkam", "time": "07:25" }, { "stop": "Sholinganallur", "time": "07:30" },
+          { "stop": "Ladies Hostel", "time": "07:35" }, { "stop": "M.S.A.J.C.E – College", "time": "08:00" }
+        ]
+      },
+      {
+        "route_no": "AR-9",
+        "driver": { "name": "Mr. Kanagaraj", "mobile": "+91-9710209097" },
+        "stops": [
+          { "stop": "Ennore", "time": "06:15" }, { "stop": "Mint", "time": "06:20" }, { "stop": "Broadway", "time": "06:25" },
+          { "stop": "Central", "time": "06:30" }, { "stop": "Omandhoorar Hospital", "time": "06:40" }, { "stop": "Royapettah", "time": "06:45" },
+          { "stop": "Mylapore", "time": "06:50" }, { "stop": "Santhome", "time": "07:00" }, { "stop": "Adyar", "time": "07:10" },
+          { "stop": "Thiruvanmiyur", "time": "07:15" }, { "stop": "Palavakkam", "time": "07:20" }, { "stop": "Neelankarai", "time": "07:25" },
+          { "stop": "Akkarai Water Tank", "time": "07:30" }, { "stop": "Sholinganallur", "time": "07:35" }, { "stop": "Ladies Hostel", "time": "07:40" },
+          { "stop": "M.S.A.J.C.E – College", "time": "08:00" }
+        ]
+      },
+      {
+        "route_no": "R-20",
+        "driver": { "name": "Mr. M. Suresh", "mobile": "+91-9849265637" },
+        "stops": [
+          { "stop": "Moolakadai", "time": "05:55" }, { "stop": "Perambur Railway", "time": "06:10" }, { "stop": "Otteri Pattalam", "time": "06:15" },
+          { "stop": "Dowton", "time": "06:20" }, { "stop": "Central", "time": "06:25" }, { "stop": "Parrys", "time": "06:30" },
+          { "stop": "Omandhoorar Hospital", "time": "06:40" }, { "stop": "Royapettah", "time": "06:45" }, { "stop": "Mylapore", "time": "06:50" },
+          { "stop": "Santhome", "time": "07:00" }, { "stop": "Adyar", "time": "07:05" }, { "stop": "Thiruvanmiyur", "time": "07:10" },
+          { "stop": "Palavakkam", "time": "07:15" }, { "stop": "Neelankarai", "time": "07:20" }, { "stop": "Akkarai Water Tank", "time": "07:25" },
+          { "stop": "Sholinganallur", "time": "07:30" }, { "stop": "Ladies Hostel", "time": "07:35" }, { "stop": "M.S.A.J.C.E – College", "time": "08:00" }
+        ]
+      },
+      {
+        "route_no": "R-21",
+        "driver": { "name": "Mr. E. Sathish", "mobile": "+91-9677007583" },
+        "stops": [
+          { "stop": "Porur", "time": "06:25" }, { "stop": "Boy Kadai", "time": "06:33" }, { "stop": "Kovoor", "time": "06:35" },
+          { "stop": "Kundrathur", "time": "06:38" }, { "stop": "Anagaputhur", "time": "06:40" }, { "stop": "Pammal", "time": "06:43" },
+          { "stop": "Pallavaram", "time": "06:45" }, { "stop": "Meenambakkam", "time": "06:48" }, { "stop": "Pallavaram", "time": "06:50" },
+          { "stop": "Chrompet", "time": "06:55" }, { "stop": "Tambaram W & E", "time": "07:00" }, { "stop": "Camp Road", "time": "07:05" },
+          { "stop": "Saliyur", "time": "07:10" }, { "stop": "Medavakkam", "time": "07:25" }, { "stop": "Chithalapakkam", "time": "07:30" },
+          { "stop": "Thalambur", "time": "07:35" }, { "stop": "M.S.A.J.C.E – College", "time": "08:00" }
+        ]
+      },
+      {
+        "route_no": "R-22",
+        "driver": { "name": "Mr. Jaffar", "mobile": "+91-9566037890" },
+        "stops": [
+          { "stop": "Nemilichery", "time": "05:50" }, { "stop": "Poonamallee", "time": "06:05" }, { "stop": "Kumanan Chavadi", "time": "06:00" },
+          { "stop": "Kattupakkam", "time": "06:05" }, { "stop": "Ramachandra Hospital", "time": "06:10" }, { "stop": "Porur", "time": "06:15" },
+          { "stop": "Valasaravakkam", "time": "06:20" }, { "stop": "Ramapuram", "time": "06:25" }, { "stop": "Nandhampakkam", "time": "06:30" },
+          { "stop": "Kathipara Junction", "time": "06:35" }, { "stop": "Thillai Ganga Subway", "time": "06:40" }, { "stop": "Velachery Bypass", "time": "06:45" },
+          { "stop": "Kaiveli", "time": "07:00" }, { "stop": "Madipakkam", "time": "07:05" }, { "stop": "Kilkattalai", "time": "07:10" },
+          { "stop": "Kovilambakkam", "time": "07:15" }, { "stop": "Medavakkam", "time": "07:20" }, { "stop": "Sholinganallur", "time": "07:25" },
+          { "stop": "M.S.A.J.C.E – College", "time": "08:00" }
+        ]
+      }
+    ]
+};
 
 async function run() {
   await mongoose.connect(process.env.MONGO_URI, { dbName: process.env.DB_NAME });
@@ -201,12 +154,10 @@ async function run() {
   console.log("Ingesting MTC Public Transport...");
   for (const r of transportData.public_transport_mtc.routes) {
     const content = `Public MTC Bus Route ${r.routeNo} connects ${r.start} to ${r.end} via ${r.via}. This bus stops at ${transportData.public_transport_mtc.stop_name} and runs ${r.freq}.`;
-    const rich = await enrichKnowledge(content);
     const embedding = await generateEmbedding(content);
     await col.insertOne({
       source: "verified_mtc", category: "transport", title: `MTC Route ${r.routeNo}`,
       content, text: content, embedding,
-      summary: rich?.summary, entities: rich?.entities, keywords: rich?.keywords, query_variations: rich?.query_variations,
       metadata: { route: r.routeNo, type: "MTC", created_at: new Date().toISOString() }
     });
   }
@@ -217,17 +168,14 @@ async function run() {
     const content = `MSAJCE College Bus Route ${r.route_no}. Driver: ${r.driver.name} (${r.driver.mobile}). Full Route: ${stopList}. The bus arrives at college at 08:00 AM.`;
     
     process.stdout.write(`Processing ${r.route_no}...\r`);
-    const rich = await enrichKnowledge(content);
     const embedding = await generateEmbedding(content);
 
     await col.insertOne({
       source: "verified_transport", category: "transport", title: `Bus Route ${r.route_no}`,
       content, text: content, embedding,
-      summary: rich?.summary, entities: rich?.entities, keywords: rich?.keywords, query_variations: rich?.query_variations,
       metadata: { route: r.route_no, driver: r.driver.name, phone: r.driver.mobile, stops_count: r.stops.length, created_at: new Date().toISOString() }
     });
 
-    // Also ingest individual stops for more granular matching
     for (const s of r.stops) {
         const stopFact = `MSAJCE Bus ${r.route_no} stops at ${s.stop} at ${s.time} AM. The driver is ${r.driver.name} (${r.driver.mobile}).`;
         const stopEmbedding = await generateEmbedding(stopFact);
@@ -239,7 +187,7 @@ async function run() {
     }
   }
 
-  console.log("\n✅ Master Transport V2 Ingestion Complete!");
+  console.log("\n✅ Master Transport Ingestion Complete!");
   process.exit(0);
 }
 
