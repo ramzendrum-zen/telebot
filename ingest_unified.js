@@ -67,7 +67,7 @@ const verifiedTransport = [
     document_id: "transport_route_ar8",
     title: "MSAJCE Bus Route AR-8",
     category: "transport",
-    content: "Route AR-8 starts from Manjambakkam (5:50 AM). Stops: Manjambakkam (5:50 AM) → Retteri → Senthil Nagar → Anna Nagar Blue Star (7:25 AM) → Nerkundrum → Maduravoyal → Porur (7:45 AM) → Perungalathur → College (8:00 AM). Driver: Mr. Raju (+91-9790750906).",
+    content: "Route AR-8 starts from Manjambakkam (5:50 AM). Stops: Manjambakkam (5:50 AM) → Retteri (6:00 AM) → Senthil Nagar (6:15 AM) → Anna Nagar Blue Star (7:25 AM) → Nerkundrum (7:30 AM) → Maduravoyal (7:35 AM) → Porur (7:45 AM) → Perungalathur (7:55 AM) → College (8:00 AM). Driver: Mr. Raju (+91-9790750906).",
     keywords: ["AR-8", "ar8", "manjambakkam", "retteri", "anna nagar", "porur"],
     entities: ["MSAJCE", "Manjambakkam", "Retteri", "Anna Nagar", "Porur", "Mr. Raju"],
     query_variations: ["Who is the driver for AR-8?", "AR-8 stops", "Manjambakkam bus timing", "AR-8 driver phone number"]
