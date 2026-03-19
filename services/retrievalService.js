@@ -87,11 +87,13 @@ export const performHybridSearch = async (queryText, category = 'general', filte
           else if (txt.includes(w)) score += 1.0;
         });
 
-        // Boost curated sources
-        if (doc.source === 'verified_transport') score += 5.0;
-        if (doc.source === 'verified_faculty')   score += 5.0;
-        if (doc.source === 'verified_data')       score += 5.0; // covers verified_admin + transport
-        if (doc.source === 'verified_trust')      score += 3.0;
+        // Boost curated sources — Step 2: Verified Data Priority Layer
+        if (doc.source === 'verified_transport') score += 8.0;
+        if (doc.source === 'verified_faculty')   score += 8.0;
+        if (doc.source === 'verified_data')       score += 10.0; // Highest priority
+        if (doc.source === 'verified_trust')      score += 5.0;
+        // Step 3: Raw Data Penalty — scraped content should never override verified
+        if (doc.source && (doc.source.includes('scraped') || doc.source.includes('raw'))) score -= 3.0;
 
         return { ...doc, score };
       });
@@ -172,3 +174,26 @@ export const performHybridSearch = async (queryText, category = 'general', filte
     return [];
   }
 };
+
+/**
+ * STEP 5 — DIRECT ENTITY LOOKUP
+ * Bypasses vector/keyword search for critical entities.
+ * Returns document by document_id for O(1) precision retrieval.
+ */
+export const directEntityLookup = async (documentId) => {
+  try {
+    const db = mongoose.connection.db;
+    const collection = db.collection(config.mongodb.vectorCollection);
+    const doc = await collection.findOne({ document_id: documentId });
+    if (doc) {
+      logger.info(`Direct entity lookup HIT: ${documentId}`);
+      return [{ ...doc, score: 999, source: doc.source || 'verified_data' }];
+    }
+    logger.warn(`Direct entity lookup MISS: ${documentId}`);
+    return [];
+  } catch (error) {
+    logger.error(`Direct Entity Lookup Error: ${error.message}`);
+    return [];
+  }
+};
+

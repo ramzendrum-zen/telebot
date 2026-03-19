@@ -13,30 +13,39 @@ export const normalizeText = (text) => {
 
 /**
  * Builds the RAG prompt — role-aware, strict grounding.
+ * Step 1: Strict Context Enforcement
+ * Step 9: Structured Prompt Format
  */
 export const buildPrompt = (question, contextParts, lastSubject = null) => {
+  const history = lastSubject ? `[Note: User previously discussed "${lastSubject}"]\n` : "";
+
+  // Step 4: Format context as numbered chunks for clarity
   const context = contextParts.length > 0
-    ? contextParts.map(p => p.text || p.content || p.summary || '').filter(Boolean).slice(0, 5).join('\n---\n')
-    : "No relevant internal records found.";
+    ? contextParts
+        .map((p, i) => `[${i+1}] ${(p.text || p.content || p.summary || '').trim()}`)
+        .filter(Boolean)
+        .join('\n\n')
+    : null;
 
-  const history = lastSubject ? `Note: User was previously discussing "${lastSubject}".\n` : "";
+  if (!context) {
+    return `[USER QUESTION]\n${question}\n\n[RULES]\nSay: "I currently do not have that information in the MSAJCE knowledge base. Please call +91 99400 04500."\n\nAI RESPONSE:`;
+  }
 
-  return `
-[CONTEXT PROVIDER]
+  return `[RETRIEVED CONTEXT FROM MSAJCE DATABASE]
 ${context}
 
 [USER QUESTION]
 ${question}
 
-[REGLATORY SYSTEM CONSTRAINTS - DO NOT IGNORE]
-1. IDENTITY: You are the Official MSAJCE AI Assistant.
-2. ZERO-HALLUCINATION: If specific data is NOT in the [CONTEXT PROVIDER] blocks above, say you do not have that detail.
-3. CONCISENESS: 
-   - FOR BUS ROUTES/TIMINGS: ALWAYS start with: "Route: [Route Number] | Driver: [Driver Name] | Contact: [Phone]". Then list ALL stops one per line as "Time - Stop Name". Never skip stops.
-   - FOR ALL OTHER TOPICS: Answer in exactly 1-2 brief bullet points. NO paragraphs.
-4. FORMAT: Use plain text with single dashes (-) for bullets. No double asterisks (**). No bolding.
-5. NO FLUFF: Only give the needed answer. No "I hope this helps" or "Safe travels".
-
 ${history}
+[ABSOLUTE RULES — MUST FOLLOW]
+1. IDENTITY: You are the MSAJCE Official AI Assistant.
+2. STRICT GROUNDING: The RETRIEVED CONTEXT above is from the official MSAJCE database. You MUST use it. Do NOT ignore chunks. Do NOT say "I don't have information" if the context contains relevant data.
+3. BUS ROUTES: Start with "Route: [X] | Driver: [Name] | Contact: [Phone]", then list ALL stops as "Time - Stop Name". Never truncate.
+4. OTHER TOPICS: Answer in 1-3 bullet points max. No paragraphs.
+5. FORMAT: Plain text, single dash (-) bullets. No bold (**). No asterisks.
+6. ZERO HALLUCINATION: Do NOT invent names, numbers, or facts not in [RETRIEVED CONTEXT].
+7. FALLBACK: Only say "I don't have that information" if RETRIEVED CONTEXT is completely unrelated.
+
 AI RESPONSE:`;
 };
