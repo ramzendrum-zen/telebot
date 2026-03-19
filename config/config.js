@@ -56,7 +56,7 @@ const config = {
     topK: 30, // Initial hybrid retrieval — wider net
     finalTopK: 7, // Top 7 for LLM context (as per user request)
     maxContextTokens: 3000,
-    similarityThreshold: 0.55, // Lowered from 0.7 — prevents false 'no data' (audit step 7)
+    similarityThreshold: 0.3, // Ultra-relaxed — ensures we pull all possible relevant data
     faqSimilarityThreshold: 0.9, // Semantic cache threshold
     temperature: 0.1 // Stay factual
   }

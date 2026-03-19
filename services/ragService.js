@@ -37,9 +37,11 @@ const ENTITY_LOOKUP_MAP = {
 };
 
 function detectEntityLookup(query) {
-  const q = query.toLowerCase();
-  for (const [keyword, docId] of Object.entries(ENTITY_LOOKUP_MAP)) {
-    if (q.includes(keyword)) return docId;
+  const qWords = query.toLowerCase().split(/\s+/);
+  for (const [phrase, docId] of Object.entries(ENTITY_LOOKUP_MAP)) {
+    const triggerWords = phrase.toLowerCase().split(/\s+/);
+    // Intersection: all trigger words must be in the query
+    if (triggerWords.every(tw => qWords.includes(tw))) return docId;
   }
   return null;
 }
@@ -72,7 +74,7 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 6: NORMALIZE QUERY ─────────────────────────────────────────────
   const { normalizedText, cacheKey } = normalizeQueryBasic(rawText);
-  const redisKey = `v62:rag:${cacheKey}`;
+  const redisKey = `v63:rag:${cacheKey}`;
   log('STEP-6', `Normalized: "${normalizedText}" | CacheKey: ${cacheKey}`);
   const totalTokens = { prompt: 0, completion: 0, total: 0 };
 
