@@ -89,8 +89,9 @@ export const performHybridSearch = async (queryText, category = 'general', filte
 
         // Boost curated sources
         if (doc.source === 'verified_transport') score += 5.0;
-        if (doc.source === 'verified_faculty') score += 5.0;
-        if (doc.source === 'verified_trust') score += 3.0;
+        if (doc.source === 'verified_faculty')   score += 5.0;
+        if (doc.source === 'verified_data')       score += 5.0; // covers verified_admin + transport
+        if (doc.source === 'verified_trust')      score += 3.0;
 
         return { ...doc, score };
       });

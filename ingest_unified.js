@@ -98,6 +98,34 @@ const verifiedTransport = [
     keywords: ["sathak trust", "institutions", "colleges", "list", "18", "engineering college", "nursing", "pharmacy"],
     entities: ["Mohamed Sathak Trust", "MSEC", "MSAJCE", "Kilakarai", "Syed Hameedha"],
     query_variations: ["How many colleges under Sathak Trust?", "List all Sathak Trust institutions", "Sathak Trust college names", "Which colleges are under Mohamed Sathak Trust?", "All colleges in Sathak group"]
+  },
+  // ─── VERIFIED ADMINISTRATION DATA ─────────────────────────────────────────
+  {
+    document_id: "admin_principal",
+    title: "MSAJCE Principal",
+    category: "admin",
+    content: "The Principal of Mohamed Sathak A.J. College of Engineering (MSAJCE) is Dr. K.S. Srinivasan. Contact: Phone: 9150575066, Email: principal@msajce-edu.in.",
+    keywords: ["principal", "head", "dr srinivasan", "ks srinivasan", "college head", "principal name"],
+    entities: ["Dr. K.S. Srinivasan", "MSAJCE", "Principal"],
+    query_variations: ["Who is the principal of MSAJCE?", "Principal name", "Who is the head of MSAJCE?", "Principal contact number", "principal email"]
+  },
+  {
+    document_id: "admin_campus_facts",
+    title: "MSAJCE Campus Facts",
+    category: "general",
+    content: "Mohamed Sathak A.J. College of Engineering (MSAJCE) is located in Sirucheri IT Park, Chennai, surrounded by 100+ leading IT companies including TCS, CTS, Infosys, Intellect, FSS, HCL. The campus is spread over 70 acres of lush green environment. Established in 2009 under the Mohamed Sathak Trust.",
+    keywords: ["campus", "acres", "location", "sirucheri", "it park", "established", "70 acres"],
+    entities: ["MSAJCE", "Sirucheri IT Park", "Chennai", "Mohamed Sathak Trust"],
+    query_variations: ["How many acres is the campus?", "Where is MSAJCE located?", "When was MSAJCE established?", "MSAJCE campus size", "location of MSAJCE"]
+  },
+  {
+    document_id: "admin_contact",
+    title: "MSAJCE Contact Information",
+    category: "admin",
+    content: "MSAJCE Contact Details: Phone: +91 99400 04500, 044 2747 0025. Email: msajce.office@gmail.com. Address: Mohamed Sathak A.J. College of Engineering, Sirucheri, Chennai - 603 103. Transport Office: +91 94430 10256. Transport Convener: Dr. K.P. Santhosh Nathan (98408 86992). Asst. Transport Convener: Mr. A. Abdul Gafoor (99403 19629).",
+    keywords: ["contact", "phone", "address", "email", "transport office", "college contact"],
+    entities: ["MSAJCE", "Dr. K.P. Santhosh Nathan", "Mr. A. Abdul Gafoor", "Sirucheri"],
+    query_variations: ["MSAJCE phone number", "College contact", "Transport office contact", "MSAJCE address", "How to contact MSAJCE?"]
   }
 ];
 
