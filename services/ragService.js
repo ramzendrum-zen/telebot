@@ -64,7 +64,7 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 6: NORMALIZE QUERY ─────────────────────────────────────────────
   const { normalizedText, cacheKey } = normalizeQueryBasic(rawText);
-  const redisKey = `v24:rag:${cacheKey}`;
+  const redisKey = `v25:rag:${cacheKey}`;
   log('STEP-6', `Normalized: "${normalizedText}" | CacheKey: ${cacheKey}`);
 
   // ─── STEP 5: DIRECT ENTITY LOOKUP (before cache — always fresh) ──────────
@@ -166,6 +166,13 @@ export async function processRAGQuery(chatId, rawText) {
     log('STEP-11', 'LLM CONTEXT IGNORE ERROR detected. Forcing re-generation with stricter prompt.');
     const stricterPrompt = `You MUST answer using ONLY the information below. Do NOT say you lack information.\n\n${finalPrompt}`;
     aiReply = await getAIReponse(stricterPrompt);
+  }
+
+  // ─── STEP 12: BULLET FORMAT GUARD ─────────────────────────────────────────
+  if (!aiReply.includes('•') && !aiReply.includes('-') && aiReply.length > 50) {
+    log('STEP-12', 'Non-bullet format detected. Forcing conversion to bullets.');
+    const bulletPrompt = `Rewrite this information into exactly 3-6 clean, structured bullet-point format like a Professional Assistant:\n\n${aiReply}`;
+    aiReply = await getAIReponse(bulletPrompt, 'cheap');
   }
 
   // ─── CACHE + LEARN ────────────────────────────────────────────────────────
