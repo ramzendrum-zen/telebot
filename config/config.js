@@ -24,11 +24,7 @@ const config = {
   
   openRouter: {
     apiKey: process.env.OPENROUTER_API_KEY,
-  },
-
-  gemini: {
-    apiKey: process.env.GEMINI_API_KEY,
-    embeddingModel: 'text-embedding-004' // Free, supports 1536-dim
+    embeddingModel: 'openai/text-embedding-3-small' // Configured for 1536-dim
   },
 
   // NVIDIA NIM — free-tier models via build.nvidia.com
