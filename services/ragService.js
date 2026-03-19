@@ -67,7 +67,7 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 6: NORMALIZE QUERY ─────────────────────────────────────────────
   const { normalizedText, cacheKey } = normalizeQueryBasic(rawText);
-  const redisKey = `v58:rag:${cacheKey}`;
+  const redisKey = `v59:rag:${cacheKey}`;
   log('STEP-6', `Normalized: "${normalizedText}" | CacheKey: ${cacheKey}`);
   const totalTokens = { prompt: 0, completion: 0, total: 0 };
 
@@ -127,11 +127,14 @@ export async function processRAGQuery(chatId, rawText) {
   }
 
   // ─── STEP 8: RERANKING ENFORCEMENT ───────────────────────────────────────
+  const isBroadQuery = intent.type === 'location' || intent.type === 'list' || rawText.toLowerCase().includes('which bus');
+  const recallLimit = isBroadQuery ? 40 : 20;
+  
   let mergedTop20 = Array.from(allChunks.values())
     .sort((a, b) => (b.score || 0) - (a.score || 0))
-    .slice(0, 20);
+    .slice(0, recallLimit);
 
-  log('STEP-8', `Sending ${mergedTop20.length} chunks to Reranker`);
+  log('STEP-8', `Sending ${mergedTop20.length} chunks to Reranker (${isBroadQuery ? 'HIGH-RECALL' : 'Standard'})`);
   let top5Chunks = await rerankChunks(contextualQuery, mergedTop20);
   
   // CRITICAL: Ensure verified data is NOT omitted even if reranker score is lower
