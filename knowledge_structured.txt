@@ -1938,3 +1938,227 @@ QUERY_VARIATIONS:
  - What online databases does the college library subscribe to?
  - Can I access journals through the college library?
 
+--- DOCUMENT_ID: 69bb94100c142506c80c128c ---
+TIMESTAMP: 2026-03-19T06:13:36.212Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The library allows students to borrow up to 18 books, with staff also eligible to borrow books, excluding reference books and periodicals.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The library allows students to borrow up to 18 books. Staff are also eligible to borrow books. However, reference books and periodicals will not be issued. Library ID is not transferable, and members must notify the librarian of any loss of cards or change of address immediately. Users can reserve a book that is in circulation.
+KEYWORDS: library, borrowing, books, students, staff, reference books, periodicals
+ENTITIES: 
+QUERY_VARIATIONS:
+ - How many books can I borrow from the library as a student?
+ - What types of books are not available for borrowing from the library?
+ - Can staff members borrow books from the library, and are there any restrictions?
+
+--- DOCUMENT_ID: 69bb94190c142506c80c128f ---
+TIMESTAMP: 2026-03-19T06:13:45.557Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Users can reserve books in circulation and will be notified upon return, with a one-day hold period and a 30-day loan duration.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The User may reserve a book in circulation. He will be notified as soon as the reserved books are returned. The book will be retained at the circulation Desk for one day from the date of return. Books will be issued for a short duration of 30 days only. After 30 days, the first seven days cost Rs.1.
+KEYWORDS: book reservation, circulation, notification, return policy, loan duration, library services
+ENTITIES: 
+QUERY_VARIATIONS:
+ - How do I reserve a book that is currently checked out?
+ - What is the policy for holding reserved books at the library?
+ - Can I extend the loan period for a book beyond 30 days?
+
+--- DOCUMENT_ID: 69bb94300c142506c80c1292 ---
+TIMESTAMP: 2026-03-19T06:14:08.873Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The library has a ration of 30 days with varying rental fees per day per book after the initial period, and silence is mandatory.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Ration of 30 days only. After 30 days, the first seven days cost Rs.1.00 per day per book. After 30 days, from 8 to 14 days, the cost is Rs.2.00 per day per book. After 30 days, from 15 days onwards, the cost is Rs.5.00 per day per book. Silence should be observed in the library.
+KEYWORDS: library, rental, fees, silence, ration
+ENTITIES: library
+QUERY_VARIATIONS:
+ - What are the library rental fees after 30 days?
+ - How much does it cost to rent a book from the library after the first month?
+ - What are the rules and fees for borrowing books from the library?
+
+--- DOCUMENT_ID: 69bb943a0c142506c80c1295 ---
+TIMESTAMP: 2026-03-19T06:14:18.166Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The library requires silence, mandates the storage of personal belongings at the entrance, and necessitates immediate reporting of lost books to the librarian.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The library requires silence. Users are required to leave their personal belongings, such as bags, briefcases, notebooks, and files, at the entrance. Loss of books should be reported immediately to the librarian.
+KEYWORDS: library rules, silence, personal belongings, lost books, librarian
+ENTITIES: Library, Librarian
+QUERY_VARIATIONS:
+ - What are the rules for using the library?
+ - Where should I store my personal belongings when I'm in the library?
+ - What should I do if I lose a book in the library?
+
+--- DOCUMENT_ID: 69bb944a0c142506c80c1298 ---
+TIMESTAMP: 2026-03-19T06:14:34.858Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The library requires immediate reporting of lost books, with borrowers liable for double the cost if unable to replace them, and all books must be returned for stock verification.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Loss of books should be reported immediately to the Librarian. If the borrower is unable to replace the lost book, the cost (double amount) will be recovered from the borrower. All the books must be returned to the Library in time for the physical stock verification of library books.
+KEYWORDS: library, books, librarian, borrowers, stock verification
+ENTITIES: Librarian, Library
+QUERY_VARIATIONS:
+ - What happens if I lose a library book?
+ - How do I report a lost book to the library?
+ - What are the consequences of not returning a library book on time?
+
+--- DOCUMENT_ID: 69bb94550c142506c80c129b ---
+TIMESTAMP: 2026-03-19T06:14:45.870Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Students must verify library books for completeness before borrowing and will be responsible for any damage upon return.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: It is time for the physical stock verification of library books. Students are advised to verify that the book is intact with all pages before borrowing. Upon return, borrowers will be held responsible for any damage or defects found.
+KEYWORDS: library books, stock verification, borrower responsibility, book damage
+ENTITIES: library, students, books
+QUERY_VARIATIONS:
+ - What are my responsibilities when borrowing library books?
+ - How do I check out books from the library without incurring damage fees?
+ - What happens if I return a library book with damage?
+
+--- DOCUMENT_ID: 69bb94680c142506c80c129e ---
+TIMESTAMP: 2026-03-19T06:15:04.889Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The library borrowing policy outlines the responsibilities of borrowers and the borrowing entitlements for different categories of members.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Any damage or defect the borrower will be held responsible. Membership borrowing eligibility is categorized as follows: Teaching Staff - 10 books for 30 days, UG Students - 18 books for 30 days, PG Students - 18 books for 30 days, Supporting and Administrative Staff - 4 books for 30 days. The Library Committee includes Dr. K.S.
+KEYWORDS: library policy, borrowing eligibility, membership categories, loan period
+ENTITIES: Dr. K.S., Library Committee, Teaching Staff, UG Students, PG Students, Supporting and Administrative Staff
+QUERY_VARIATIONS:
+ - What are the library borrowing rules for students and staff?
+ - How many books can I borrow from the library, and for how long?
+ - What are the membership categories and their respective borrowing entitlements in the library?
+
+--- DOCUMENT_ID: 69bb94800c142506c80c12a1 ---
+TIMESTAMP: 2026-03-19T06:15:28.888Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The library committee consists of academic staff members with specific roles.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Administrative Staff 04 Books 30 Days LIBRARY COMMITTEE 1 Dr.K.S.Srinivasan Principal Chairman 2 Dr.A. Balakrishnan Head - Academics Member 3 Dr.B. Janarthanan Head – Research Member 4 Dr. I. Manju Head - IQAC Member 5 Dr. Kamalaselvan A Library I/C Secretary 6 Mrs. Anusuya
+KEYWORDS: library committee, academic staff, roles, responsibilities
+ENTITIES: Dr.K.S.Srinivasan, Dr.A. Balakrishnan, Dr.B. Janarthanan, Dr. I. Manju, Dr. Kamalaselvan, Mrs. Anusuya
+QUERY_VARIATIONS:
+ - Who are the members of the library committee?
+ - What are the roles of the staff in the library committee?
+ - Can I get a list of the library committee members and their positions?
+
+--- DOCUMENT_ID: 69bb94a40c142506c80c12a4 ---
+TIMESTAMP: 2026-03-19T06:16:04.226Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The library committee consists of faculty members and student representatives from Mohamed Sathak A. J. College of Engineering.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Dr. Kamalaselvan, Library I/C Secretary; Mrs. Anusuya P, AP/ECE & Library I/C Member Secretary; All HoDs, Member; Mr. S. Sudhakar, Chief Librarian Member; Mr. John Anish, Librarian Member; Mr. Arshad K, III-Yr EEE Student Rep Member; Ms. Swetha Maria Saustina S, III-Yr EEE Student Rep Member
+KEYWORDS: library committee, faculty members, student representatives, Mohamed Sathak A. J. College of Engineering
+ENTITIES: Dr. Kamalaselvan, Mrs. Anusuya P, Mr. S. Sudhakar, Mr. John Anish, Mr. Arshad K, Ms. Swetha Maria Saustina S, Mohamed Sathak A. J. College of Engineering
+QUERY_VARIATIONS:
+ - Who are the members of the library committee at MSAJCE?
+ - What is the composition of the library committee in terms of faculty and students at Mohamed Sathak A. J. College of Engineering?
+ - Can I get a list of the library committee members, including both faculty and student representatives, at MSAJCE?
+
+--- DOCUMENT_ID: 69bb94b50c142506c80c12a7 ---
+TIMESTAMP: 2026-03-19T06:16:21.576Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: A list of student representatives from different departments, including EEE, ECE, MECH, and CIVIL.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Maria Saustina S, III-Year EEE Student Representative Member 12. Mr. Mohamed Nayeem B, III-Year ECE Student Representative Member 13. Ms. D. Kamali, III-Year EEE Student Representative Member 14. Mr. Vasanthakumar N, III-Year MECH Student Representative Member 15. Mr. Salman S, III-Year MECH Student Representative Member 16. Mr. Musthaq J, III-Year CIVIL Student Representative Member 17. Mr. Shanmugam.
+KEYWORDS: Student Representatives, EEE, ECE, MECH, CIVIL, Academic Leadership
+ENTITIES: Maria Saustina S, Mohamed Nayeem B, D. Kamali, Vasanthakumar N, Salman S, Musthaq J, Shanmugam
+QUERY_VARIATIONS:
+ - Who are the student representatives for the III year in different engineering departments?
+ - What are the names of the III-year student reps in EEE, ECE, MECH, and CIVIL?
+ - Can I get a list of III-year student representatives from various engineering disciplines?
+
+--- DOCUMENT_ID: 69bb94c20c142506c80c12aa ---
+TIMESTAMP: 2026-03-19T06:16:34.153Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: A list of student representatives from different departments, including Civil, IT, and CSE.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Usthaq J, III-Year Civil Student Representative Member 17. Mr. Shanmugam S, III-Year Civil Student Representative Member 18. Ms. Revathi U, III-Year IT Student Representative Member 19. Mr. Imamm Jaffar J, III-Year IT Student Representative Member 20. Mr. Elango V, III-Year CSE Student Representative Member 21. Ms. Vasumathi.
+KEYWORDS: student representatives, civil engineering, IT, CSE, academic leadership
+ENTITIES: Usthaq J, Mr. Shanmugam S, Ms. Revathi U, Mr. Imamm Jaffar J, Mr. Elango V, Ms. Vasumathi
+QUERY_VARIATIONS:
+ - Who are the student representatives for the III year in different engineering departments?
+ - What are the names of the student reps for Civil, IT, and CSE in their third year?
+ - Can I get a list of III-year student representatives across various engineering disciplines?
+
+--- DOCUMENT_ID: 69bb94cd0c142506c80c12ad ---
+TIMESTAMP: 2026-03-19T06:16:45.427Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Elango V and Ms. Vasumathi A serve as III-Year CSE Student Representatives with available database information and links.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Elango V and Ms. Vasumathi A are III-Year CSE Student Representatives. Database information and useful links are available, including opening hours from Monday to Friday.
+KEYWORDS: CSE, Student Representatives, Database, Useful Links, Opening Hours
+ENTITIES: Elango V, Ms. Vasumathi A
+QUERY_VARIATIONS:
+ - Who are the student representatives for the III-Year CSE?
+ - What database information is available for CSE students?
+ - What are the opening hours for resources mentioned for CSE students?
+
+--- DOCUMENT_ID: 69bb95030c142506c80c12b0 ---
+TIMESTAMP: 2026-03-19T06:17:39.579Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: This text provides contact information and operating hours for a particular establishment.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Useful Links Opening Hours Monday - Friday 9.00 - 20.00 Saturday 10.00 - 16.00 Sunday 9.30 - 18.00 Contact Info (+01) - 234 567 890 www.yourdomain.com contact@yourdomain.com
+KEYWORDS: contact info, operating hours, establishment
+ENTITIES: yourdomain.com, (+01) - 234 567 890
+QUERY_VARIATIONS:
+ - What are the operating hours and contact details of the establishment?
+ - How can I get in touch with the establishment and what are their working hours?
+ - What is the contact information and schedule of the establishment?
+
+--- DOCUMENT_ID: 69bb951b0c142506c80c12b3 ---
+TIMESTAMP: 2026-03-19T06:18:03.183Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: This text provides contact information and copyright details for a domain.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: omain.com contact@yourdomain.com Copyright 2016 ThemeMascot
+KEYWORDS: contact information, copyright notice, domain details
+ENTITIES: omain.com, ThemeMascot, 2016
+QUERY_VARIATIONS:
+ - What is the contact email for omain.com?
+ - Who owns the copyright for ThemeMascot?
+ - What year was the content on omain.com copyrighted?
+
+--- DOCUMENT_ID: 69bb953f0c142506c80c12b6 ---
+TIMESTAMP: 2026-03-19T06:18:40.046Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: MSAJCE offers hostel facilities for both boys and girls with various amenities.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: MSAJCE hostel facilities include a boys' hostel on campus and a girls' hostel at Sholinganallur. The boys' hostel has 3 blocks with 233 non-AC rooms and 6 AC rooms, accommodating 2 persons per room. The girls' hostel has 1 block with 71 non-AC rooms, accommodating 3 persons per room. Facilities available include a cot, chair, lamp, fan, and water heater.
+KEYWORDS: hostel facilities, MSAJCE, boys hostel, girls hostel, accommodation, amenities
+ENTITIES: MSAJCE, Sholinganallur
+QUERY_VARIATIONS:
+ - What are the hostel facilities available at MSAJCE?
+ - How many rooms are there in the boys and girls hostels at MSAJCE?
+ - What amenities are provided in the hostels at MSAJCE?
+
+--- DOCUMENT_ID: 69bb954c0c142506c80c12b9 ---
+TIMESTAMP: 2026-03-19T06:18:53.024Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The hostel provides comfortable living with amenities like WiFi, TV hall, and basic furniture, accommodating both boys and girls in separate facilities.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The hostel facilities include a cot, chair, lamp, fan, and water heater. Additional amenities are WiFi and a TV hall. The boys' hostel is designed to be a home away from home, accommodating 480 boys and 210 girls separately.
+KEYWORDS: hostel facilities, WiFi, TV hall, accommodation, boys hostel, girls hostel
+ENTITIES: Mohamed Sathak A. J. College of Engineering
+QUERY_VARIATIONS:
+ - What facilities are available in the hostel?
+ - How many students can the boys' and girls' hostels accommodate?
+ - Does the hostel provide WiFi and TV facilities?
+
