@@ -21,27 +21,54 @@ export default async function handler(req, res) {
         logger.info('Collection wiped');
     }
 
-    const scrapedData = JSON.parse(fs.readFileSync('./scraped_data.json', 'utf8'));
-    let totalIngested = 0;
+    const fs = await import('fs');
+    const path = await import('path');
+    const filePath = path.join(process.cwd(), 'knowledge_structured.txt');
+    
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ error: 'knowledge_structured.txt not found on server' });
+    }
 
-    for (const page of scrapedData) {
-      const chunks = splitContent(page.content, 350, 60);
-      for (let i = 0; i < chunks.length; i++) {
-        try {
-            const metadata = { source: page.url, title: page.title, index: i };
-            const rich = await cleanAndEnrichChunk(chunks[i], metadata);
-            const embedding = await generateEmbedding(rich.content);
-            
-            await col.insertOne({
-                ...rich,
-                embedding,
-                text: rich.content,
-                timestamp: new Date().toISOString()
-            });
-            totalIngested++;
-        } catch (e) {
-            logger.error(`Ingest failed for ${page.url} chunk ${i}: ${e.message}`);
+    const data = fs.readFileSync(filePath, 'utf8');
+    const blocks = data.split(/--- DOCUMENT_ID: [a-f0-9]+ ---/).filter(b => b.trim().length > 50);
+    
+    let totalIngested = 0;
+    for (const block of blocks) {
+      try {
+        const lines = block.split('\n');
+        let title = '', summary = '', content = '', keywords = [], entities = [], query_variations = [];
+        let inQueryVars = false;
+
+        for (const line of lines) {
+            const l = line.trim();
+            if (l.startsWith('TITLE:')) title = l.replace('TITLE:', '').trim();
+            else if (l.startsWith('SUMMARY:')) summary = l.replace('SUMMARY:', '').trim();
+            else if (l.startsWith('CONTENT:')) content = l.replace('CONTENT:', '').trim();
+            else if (l.startsWith('KEYWORDS:')) keywords = l.replace('KEYWORDS:', '').split(',').map(k => k.trim());
+            else if (l.startsWith('ENTITIES:')) entities = l.replace('ENTITIES:', '').split(',').map(e => e.trim());
+            else if (l.startsWith('QUERY_VARIATIONS:')) inQueryVars = true;
+            else if (inQueryVars && l.startsWith('-')) query_variations.push(l.replace('-', '').trim());
+            else if (l.length === 0) inQueryVars = false;
         }
+
+        if (!content) continue;
+
+        const textToEmbed = `${title}\n${summary}\n${content}`;
+        const embedding = await generateEmbedding(textToEmbed);
+        
+        await col.insertOne({
+            title, summary, content, keywords, entities, query_variations,
+            text: textToEmbed,
+            embedding,
+            source: 'structured_reingest',
+            timestamp: new Date().toISOString()
+        });
+        totalIngested++;
+
+        // Safety break for Vercel timeouts in case of too many blocks
+        if (totalIngested >= 150) break; 
+      } catch (e) {
+        logger.error(`Block ingest error: ${e.message}`);
       }
     }
 

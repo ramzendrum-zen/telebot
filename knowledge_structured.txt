@@ -1336,3 +1336,395 @@ QUERY_VARIATIONS:
  - How does the institution support research among students and faculty?
  - What facilities are provided for research in emerging areas of study?
 
+--- DOCUMENT_ID: 69bb91510c142506c80c120b ---
+TIMESTAMP: 2026-03-19T06:01:53.309Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The infrastructure supports research and innovation among students and faculty by encouraging publications and funding applications.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Infrastructure is required to carry out research, fostering zeal among students and faculty for research and innovation, encouraging publication in conferences and journals, and assisting students in applying for research funding.
+KEYWORDS: research, innovation, infrastructure, funding, publications, conferences, journals
+ENTITIES: 
+QUERY_VARIATIONS:
+ - What infrastructure is needed for research and innovation?
+ - How can students and faculty be encouraged to publish research findings?
+ - What funding options are available for student research projects?
+
+--- DOCUMENT_ID: 69bb915c0c142506c80c120e ---
+TIMESTAMP: 2026-03-19T06:02:04.716Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The institute engages in research under student project schemes with various funding agencies to enhance industry collaboration and productivity.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Research under student project scheme to various funding agencies like TNSCST, MSME, IEI (I) etc. To work closely with the industry to understand their needs that eventually will result in new or improved products, processes, systems or services that can increase the company's productivity and also promote Institute-Industry Collaboration.
+KEYWORDS: research, student project scheme, funding agencies, industry collaboration, productivity
+ENTITIES: TNSCST, MSME, IEI
+QUERY_VARIATIONS:
+ - What research initiatives does the institute offer for students?
+ - How does the institute collaborate with funding agencies for student projects?
+ - What are the benefits of industry collaboration in the institute's research projects?
+
+--- DOCUMENT_ID: 69bb916c0c142506c80c1211 ---
+TIMESTAMP: 2026-03-19T06:02:20.564Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Enhance research capabilities through institute-industry collaboration and government-sponsored projects.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Promote institute-industry collaboration, support government initiatives through sponsored projects by agencies like TNSCST, DST, AICTE, UGC, ISRO, DRDO, CSIR, DBT, and enhance research capabilities of budding engineers.
+KEYWORDS: institute-industry collaboration, research capability, government initiatives, sponsored projects, engineering education
+ENTITIES: TNSCST, DST, AICTE, UGC, ISRO, DRDO, CSIR, DBT
+QUERY_VARIATIONS:
+ - How can institute-industry collaboration enhance research capabilities?
+ - What government agencies offer sponsored projects for engineering research?
+ - How do collaborative projects between institutes and industries benefit budding engineers?
+
+--- DOCUMENT_ID: 69bb91840c142506c80c1214 ---
+TIMESTAMP: 2026-03-19T06:02:44.249Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The institution supports the development of budding engineers through research promotion, workshops, and intellectual property encouragement.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The development of budding engineers is facilitated through participation in conferences, seminars, workshops, and project competitions. This includes organizing workshops, seminars, and training sessions to promote research, as well as encouraging students and faculty to secure copyrights and patents.
+KEYWORDS: research, development, engineering, education, innovation, copyrights, patents
+ENTITIES: 
+QUERY_VARIATIONS:
+ - How does the college support engineering students in research and development?
+ - What opportunities are available for engineering students to participate in workshops and competitions?
+ - How can students and faculty at the college protect their intellectual property?
+
+--- DOCUMENT_ID: 69bb91900c142506c80c1217 ---
+TIMESTAMP: 2026-03-19T06:02:56.700Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The facility operates on specific hours from Monday to Sunday and provides contact information for further inquiries.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The facility provides useful links and operates during the following hours: Monday through Friday from 9:00 AM to 8:00 PM, Saturday from 10:00 AM to 4:00 PM, and Sunday from 9:30 AM to 6:00 PM. For further information, please contact (+01) 234 567 890.
+KEYWORDS: facility hours, contact information, operational schedule
+ENTITIES: 
+QUERY_VARIATIONS:
+ - What are the operational hours of the facility?
+ - How can I contact the facility for more information?
+ - What is the schedule for the facility from Monday to Sunday?
+
+--- DOCUMENT_ID: 69bb919b0c142506c80c121a ---
+TIMESTAMP: 2026-03-19T06:03:07.332Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Contact information and operational hours for a given entity.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Sunday, 9:30 AM - 6:00 PM, contact information: (+01) 234 567 890, website: www.yourdomain.com, email: contact@yourdomain.com
+KEYWORDS: contact information, operational hours, customer service
+ENTITIES: Sunday, (+01) 234 567 890, www.yourdomain.com, contact@yourdomain.com
+QUERY_VARIATIONS:
+ - What are the operational hours and how can I contact the entity?
+ - How can I get in touch with the entity and what are their working hours?
+ - What is the contact information and when is the entity available?
+
+--- DOCUMENT_ID: 69bb91a40c142506c80c121d ---
+TIMESTAMP: 2026-03-19T06:03:16.766Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: Contact information and copyright notice for a domain.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: omain.com contact@yourdomain.com Copyright 2016 ThemeMascot
+KEYWORDS: contact, domain, copyright
+ENTITIES: omain.com, ThemeMascot, 2016
+QUERY_VARIATIONS:
+ - How do I contact the owner of omain.com?
+ - What is the copyright information for ThemeMascot?
+ - What contact email is associated with omain.com?
+
+--- DOCUMENT_ID: 69bb91b70c142506c80c1220 ---
+TIMESTAMP: 2026-03-19T06:03:35.116Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: MSAJCE established Technology Centres in 2019-2020 to educate and up-skill students in emerging technologies.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Technology Centre In pursuit of MSAJCE vision and mission to make the students deployable and equip them with the upcoming emerging industrial demands, various Technology Centres to educate, train and up-skill students in niche technologies established in the year 2019-2020.
+KEYWORDS: Technology Centre, MSAJCE, emerging technologies, industrial demands, niche technologies
+ENTITIES: MSAJCE, Technology Centre, 2019-2020
+QUERY_VARIATIONS:
+ - What are the Technology Centres at MSAJCE for?
+ - How does MSAJCE prepare students for emerging industrial demands?
+ - What niche technologies are taught at MSAJCE's Technology Centres?
+
+--- DOCUMENT_ID: 69bb91c30c142506c80c1223 ---
+TIMESTAMP: 2026-03-19T06:03:47.323Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The institution offers niche technology courses and training based on AICTE recommendations and the India Skill Report 2020, providing a conducive environment for research and innovation.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The institution offers courses and training in niche technologies, established in 2019-2020, based on AICTE recommendations and the India Skill Report 2020, providing a conducive environment for research and innovation.
+KEYWORDS: AICTE, India Skill Report, niche technologies, research, innovation, technology centers
+ENTITIES: AICTE, India Skill Report 2020, 2019-2020
+QUERY_VARIATIONS:
+ - What courses are offered based on the India Skill Report 2020?
+ - How do AICTE recommendations influence the curriculum?
+ - What facilities are available for research and innovation in niche technologies?
+
+--- DOCUMENT_ID: 69bb91d20c142506c80c1226 ---
+TIMESTAMP: 2026-03-19T06:04:02.939Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: A collaborative learning environment offering research, innovation, and practical experiences through industry and government partnerships.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: An ambient learning environment fosters research and innovation. Each center collaborates with industry and government organizations to provide certifications, on-site and off-site projects, and internships.
+KEYWORDS: ambient learning, research, innovation, industry partnerships, government collaborations, certifications, projects, internships
+ENTITIES: 
+QUERY_VARIATIONS:
+ - What kinds of collaborative projects can I participate in for research and innovation?
+ - How do industry and government partnerships enhance the learning experience?
+ - What opportunities are available for certifications and internships through these collaborations?
+
+--- DOCUMENT_ID: 69bb91f00c142506c80c1229 ---
+TIMESTAMP: 2026-03-19T06:04:32.215Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The institution offers various certifications, projects, and internships across multiple industries.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Certifications, onsite/offsite projects, and internships are available. Industries include Automation Anywhere, Godrej Inc, Ford, Palo Alto Systems, Amazon Web Services, National Instruments, Cisco Academy, Altair, Openwave Computing, Levergent Technologies, Propeller Technologies.
+KEYWORDS: certifications, onsite projects, offsite projects, internships, Automation Anywhere, Godrej Inc, Ford, Palo Alto Systems, Amazon Web Services, National Instruments, Cisco Academy, Altair, Openwave Computing, Levergent Technologies, Propeller Technologies
+ENTITIES: Automation Anywhere, Godrej Inc, Ford, Palo Alto Systems, Amazon Web Services, National Instruments, Cisco Academy, Altair, Openwave Computing, Levergent Technologies, Propeller Technologies
+QUERY_VARIATIONS:
+ - What certifications and projects are offered by the institution?
+ - Which industries are involved in the internships and projects provided?
+ - What companies partner with the institution for certifications, onsite, and offsite projects?
+
+--- DOCUMENT_ID: 69bb92050c142506c80c122c ---
+TIMESTAMP: 2026-03-19T06:04:53.249Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The college offers multiple technology and skill development centers for engineering students.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The college features various technology and skill development centers including those for 3D printing, CAE, industrial robotics, and NDT, catering to disciplines like mechanical, civil, electronics, and computer science engineering.
+KEYWORDS: Technology, Skill Development, 3D Printing, Additive Manufacturing, CAE, Industrial Robotics, NDT, Non-Destructive Testing, Engineering Education
+ENTITIES: Mohamed Sathak A.J. College of Engineering, Levergent Technologies, Propeller Technologies
+QUERY_VARIATIONS:
+ - What technology and skill development centers are available in the college?
+ - How can I learn about 3D printing and additive manufacturing in the college?
+ - What are the different engineering disciplines and their respective technology centers offered by the college?
+
+--- DOCUMENT_ID: 69bb92220c142506c80c122f ---
+TIMESTAMP: 2026-03-19T06:05:22.920Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: This centre offers views into robotics, non-destructive testing, and building information modelling.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The centre offers insights into robotics, non-destructive testing, and building information modelling.
+KEYWORDS: robotics, NDT, Non Destructive Testing, Building Information Modelling, Technology Centre
+ENTITIES: strial Robotics, Centre for NDT, Centre for Building Information Modelling, Technology Centre
+QUERY_VARIATIONS:
+ - What technology centres are available for robotics and building information modelling?
+ - Where can I find information on non-destructive testing and its application?
+ - What are the key areas of focus for the Technology Centre in terms of innovation and research?
+
+--- DOCUMENT_ID: 69bb922f0c142506c80c1232 ---
+TIMESTAMP: 2026-03-19T06:05:36.054Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The contact information and operating hours for a particular domain or business.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Useful Links Opening Hours Monday - Friday 9.00 - 20.00 Saturday 10.00 - 16.00 Sunday 9.30 - 18.00 Contact Info (+01) – 234 567 890 www.yourdomain.com contact@yourdomain.com Copyright 2016 ThemeMascot
+KEYWORDS: contact, hours, operation, business, information
+ENTITIES: (+01) – 234 567 890, www.yourdomain.com, contact@yourdomain.com, 2016, ThemeMascot
+QUERY_VARIATIONS:
+ - What are the operating hours and contact details for your business?
+ - How can I get in touch with your company, and what are your hours of operation?
+ - What is the contact information and schedule for your institution?
+
+--- DOCUMENT_ID: 69bb923c0c142506c80c1235 ---
+TIMESTAMP: 2026-03-19T06:05:48.568Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: A copyright notice from 2016 by ThemeMascot associated with omain.com and contact@yourdomain.com.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: omain.com and contact@yourdomain.com are associated with a copyright notice from 2016 by ThemeMascot.
+KEYWORDS: copyright, ThemeMascot, contact information
+ENTITIES: omain.com, ThemeMascot, 2016
+QUERY_VARIATIONS:
+ - What is the copyright information for ThemeMascot?
+ - How can I contact the owners of omain.com?
+ - What year was ThemeMascot's copyright notice issued?
+
+--- DOCUMENT_ID: 69bb924a0c142506c80c1238 ---
+TIMESTAMP: 2026-03-19T06:06:02.637Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The MSAJCE Learning Centre welcomes students and staff to utilize its library, a crucial academic support service.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Learning Centre Home Life at MSAJCE Learning Centre Welcome to the Learning Centre Library is the Heart of every academic Institution. Our institution encourages all students and staff members to make the best use of the library that has been carefully built up since the inception of the college as a cardinal support service
+KEYWORDS: Learning Centre, Library, Academic Institution, MSAJCE
+ENTITIES: MSAJCE, Learning Centre
+QUERY_VARIATIONS:
+ - What are the resources available at the MSAJCE Learning Centre?
+ - How can I utilize the library at MSAJCE?
+ - What support services does the MSAJCE Learning Centre offer?
+
+--- DOCUMENT_ID: 69bb92540c142506c80c123b ---
+TIMESTAMP: 2026-03-19T06:06:12.377Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The library's primary goal is to deliver accurate information to its readers through various sources and formats.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Since the inception of the college as a cardinal support service of the Institute, the prime objective of our library is to provide the right information to the right readers at the right time in the right manner by bibliographic sources and full text sources in the form of print as well as digital in the disciplines of Science.
+KEYWORDS: library, information services, academic support, bibliographic sources, digital resources
+ENTITIES: Mohamed Sathak A.J. College of Engineering, Institute
+QUERY_VARIATIONS:
+ - What are the primary objectives of the library at Mohamed Sathak A.J. College of Engineering?
+ - How does the library at MSAJCE support its readers?
+ - What kinds of resources does the MSAJCE library offer to its students?
+
+--- DOCUMENT_ID: 69bb925d0c142506c80c123e ---
+TIMESTAMP: 2026-03-19T06:06:22.098Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The library organizes its print and digital resources by discipline in separate sections to support the academic community.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The library maintains print and digital resources across disciplines like Science, Engineering, Technology, Humanities, Management, and more, organized in sections such as the stack, reference, and periodicals, to support the academic community.
+KEYWORDS: Science, Engineering, Technology, Humanities, Management, Library, Resources, Academic Community
+ENTITIES: 
+QUERY_VARIATIONS:
+ - How does the library organize its resources?
+ - What types of materials does the library have for different disciplines?
+ - Where can I find academic resources in the library?
+
+--- DOCUMENT_ID: 69bb92670c142506c80c1241 ---
+TIMESTAMP: 2026-03-19T06:06:31.602Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The library supports the scholarly and informational needs of the Institute Community, offering a spacious, fully computerized facility with an extensive collection of books and reference volumes.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The library supports the scholarly and informational needs of the Institute Community. It is housed in a spacious area of 8978 Sq.ft, on the Ground Floor and First Floor, and is fully computerized with more than 29853 books and 1885 reference volumes for the benefit of staff and students.
+KEYWORDS: library, academic resources, informational needs, computerized facility, book collection, reference volumes
+ENTITIES: Institute Community, Ground Floor, First Floor
+QUERY_VARIATIONS:
+ - What facilities does the library offer to support academic needs?
+ - How extensive is the book collection in the library?
+ - What are the operational details of the library, including its location and resources?
+
+--- DOCUMENT_ID: 69bb927b0c142506c80c1244 ---
+TIMESTAMP: 2026-03-19T06:06:51.375Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The library offers a collection of reference volumes, journals, and magazines, and is a member of DELNET and the J-Gate database, with regular additions to its collection.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Reference volumes are stacked for the benefit of staff and students. The library subscribes to around 35 specialized printed journals and 20 magazines. We are also a member of DELNET and subscribe to the J-Gate database yearly. Our library regularly adds new titles and volumes across all subject areas.
+KEYWORDS: library, reference volumes, journals, magazines, DELNET, J-Gate database
+ENTITIES: DELNET, J-Gate
+QUERY_VARIATIONS:
+ - What resources does the library offer to students and staff?
+ - How can I access journals and magazines through the college library?
+ - What databases is the college library a member of?
+
+--- DOCUMENT_ID: 69bb92840c142506c80c1247 ---
+TIMESTAMP: 2026-03-19T06:07:00.146Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The library continuously updates its collection with new titles and subscriptions to keep students informed about current events and support their academic needs.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The library continuously updates its collection with new titles across all subject areas and subscribes to reputable newspapers and publications to keep students informed about current events.
+KEYWORDS: library updates, academic resources, current events, faculty recommendations
+ENTITIES: 
+QUERY_VARIATIONS:
+ - How does the library stay updated with new information?
+ - What resources are available for students to keep up with current events?
+ - How does the faculty contribute to the library's collection?
+
+--- DOCUMENT_ID: 69bb928d0c142506c80c124a ---
+TIMESTAMP: 2026-03-19T06:07:10.040Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The library provides resources such as bar-coded technology, open source software (Koha), internet connectivity, and Wi-Fi to keep students updated on current events.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: So that the students can stay up to date on current events. Bar-coded technology, open source software called Koha, and internet connectivity and Wi-Fi facility are all available to us.
+KEYWORDS: library resources, bar-coded technology, open source software, Koha, internet connectivity, Wi-Fi, current events
+ENTITIES: Koha
+QUERY_VARIATIONS:
+ - What technology and resources are available in the library to help students stay current?
+ - How does the library support students in accessing current events and information?
+ - What software and connectivity options are provided by the library for student use?
+
+--- DOCUMENT_ID: 69bb92970c142506c80c124d ---
+TIMESTAMP: 2026-03-19T06:07:19.420Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The library of MSAJCE offers a wide range of resources including books, journals, e-books, and databases.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: RNET connectivity and WIFI facility are available. Library Resources include Stack Collection Details: Volumes 29853, Title 5628, Reference Books 1885, National Journals 35, Magazines 20, E-Books 3790, Daily Newspapers 05, Back Volumes 106, CD-ROM 356, Project Reports 260, E-Journal DELNET 1379, Database (Gale) International Journals.
+KEYWORDS: library resources, RNET connectivity, WIFI facility, academic databases, e-books, journals
+ENTITIES: MSAJCE, DELNET, Gale
+QUERY_VARIATIONS:
+ - What resources are available in the MSAJCE library?
+ - How can I access academic databases and journals at MSAJCE?
+ - What facilities are provided for connectivity and research at MSAJCE?
+
+--- DOCUMENT_ID: 69bb92a00c142506c80c1250 ---
+TIMESTAMP: 2026-03-19T06:07:28.170Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The library offers access to international journals through DELNET and Gale databases, with specified working hours.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: E-Journal DELNET 1379 Database (Gale) International Journals. Library working hours are Monday to Saturday, 8:00 AM to 7:00 PM, and Sunday, 10:00 AM to 4:00 PM. List of printed journals available.
+KEYWORDS: e-journals, DELNET, Gale, international journals, library hours
+ENTITIES: DELNET, Gale, Monday, Saturday, Sunday
+QUERY_VARIATIONS:
+ - What are the library hours for accessing international journals?
+ - How can I access e-journals through the library?
+ - What databases does the library use for international journals?
+
+--- DOCUMENT_ID: 69bb92aa0c142506c80c1253 ---
+TIMESTAMP: 2026-03-19T06:07:38.485Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The library is open on Sundays from 10:00 A.M. to 4:00 P.M. and has a total of 37 printed journals across various engineering departments.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The library is open on Sundays from 10:00 A.M. to 4:00 P.M. and has a total of 37 printed journals across various engineering departments including Mechanical Engineering, Electronics and Communication Engineering, Electrical and Electronics Engineering, Computer Science Engineering / Information Technology, Civil Engineering, and S&H.
+KEYWORDS: engineering, journals, library, mechanical engineering, electronics, electrical, computer science, information technology, civil engineering
+ENTITIES: Sunday, Mechanical Engineering, Electronics and Communication Engineering, Electrical and Electronics Engineering, Computer Science Engineering, Information Technology, Civil Engineering, S&H
+QUERY_VARIATIONS:
+ - What are the library hours on Sunday and how many journals are available?
+ - How many printed journals does the engineering college library have?
+ - What departments have printed journals available in the library on Sundays?
+
+--- DOCUMENT_ID: 69bb92b50c142506c80c1256 ---
+TIMESTAMP: 2026-03-19T06:07:49.918Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: A list of academic fields with corresponding numbers and a list of open-access e-journal providers.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Information Technology 10 5 Civil Engineering 4 6 S&H 5 Total 37 Open access E-Journals S.NO Name of Provider Access URL 1 Directory of Open Access Journals http://doaj.org/ 2 BioMed Central http://www.biomedcentral.com/journals 3 Scientific Research Publishing http://www.scirp.org/ 4 Core https://www.core.ac
+KEYWORDS: Information Technology, Civil Engineering, Open Access Journals, E-Journals, Academic Resources
+ENTITIES: Directory of Open Access Journals, BioMed Central, Scientific Research Publishing, Core
+QUERY_VARIATIONS:
+ - What are the available open-access journals for engineering students?
+ - How can I access free academic journals online for my research?
+ - What resources are available for finding open-access e-journals in technology and engineering fields?
+
+--- DOCUMENT_ID: 69bb92c00c142506c80c1259 ---
+TIMESTAMP: 2026-03-19T06:08:00.223Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: The list comprises various academic publishing entities and research consultancies.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Academic publishing entities include Core, Trans stellar journal publication and Research Consultancy, Science Publications, Research India Publication, and International Association of Engineering and Management.
+KEYWORDS: academic publishing, research consultancy, engineering, management, science publications
+ENTITIES: Core, Trans stellar journal, Science Publications, Research India Publication, International Association of Engineering and Management
+QUERY_VARIATIONS:
+ - What are some notable academic publishing entities?
+ - Where can I publish my research in engineering and management?
+ - What research consultancies are available for academic publications?
+
+--- DOCUMENT_ID: 69bb92cb0c142506c80c125c ---
+TIMESTAMP: 2026-03-19T06:08:11.643Z
+TITLE: MSAJCE | Mohamed Sathak A. J. College of Engineering | B.E | B.Tech | M.E | Admissions | Best Top Engineering College In Chennai
+SUMMARY: A list of academic and research resources including associations, research groups, and open-access libraries.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: Association of Engineering and Management Seventh Sense Research Group Google Scholar arXis Scholar Articles Hindawi Publishers CSC Open-Access Library
+KEYWORDS: academic resources, research groups, open-access libraries, engineering, management, scholarly articles
+ENTITIES: Association of Engineering and Management, Seventh Sense Research Group, Google Scholar, arXis, Hindawi Publishers, CSC Open-Access Library
+QUERY_VARIATIONS:
+ - What are some reputable sources for academic research in engineering and management?
+ - Where can I find open-access libraries and research articles related to my field of study?
+ - What academic resources are available for students looking for scholarly articles and research groups?
+

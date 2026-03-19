@@ -43,7 +43,7 @@ const config = {
     uri: process.env.MONGO_URI,
     dbName: process.env.DB_NAME || 'msajce',
     vectorCollection: process.env.VECTOR_COLLECTION || 'vector_store',
-    vectorIndex: 'vectorIndex' // CORRECTED NAME from Atlas
+    vectorIndex: 'vector_index' 
   },
   
   redis: {

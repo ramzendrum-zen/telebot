@@ -1,4 +1,5 @@
 import config from '../config/config.js';
+import { pushLog } from './monitorService.js';
 import logger from '../utils/logger.js';
 
 /**
@@ -40,6 +41,7 @@ export const getAIReponse = async (prompt, modelType = 'cheap') => {
     throw new Error('Invalid response structure from NVIDIA NIM');
   } catch (error) {
     logger.error(`AI Service Error: ${error.message}`);
+    await pushLog('assistant', 'error', `AI Generation Failed`, { error: error.message }).catch(()=>null);
     throw error;
   }
 };

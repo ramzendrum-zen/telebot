@@ -8,6 +8,7 @@ import { decomposeAndSelfQuery } from './selfQueryService.js';
 import { rerankChunks } from './rerankService.js';
 import { generateEmbedding } from './embeddingService.js';
 import { getCache, setCache } from './cacheService.js';
+import { pushLog } from './monitorService.js';
 import logger from '../utils/logger.js';
 
 /**
@@ -32,7 +33,9 @@ export async function processRAGQuery(chatId, rawText) {
   // 4. Query Context & Decomposition
   const memory = await getUserMemory(chatId);
   const contextualQuery = rewriteQuery(normalizedText, memory);
+  await pushLog('assistant', 'rag_step', 'Query Decomposed', { contextual: contextualQuery }).catch(()=>null);
   const subQueries = await decomposeAndSelfQuery(contextualQuery);
+  await pushLog('assistant', 'rag_step', `Decomposed into ${subQueries.length} sub-queries`).catch(()=>null);
 
   // 5. Hybrid Retrieval
   const allChunks = new Map();
@@ -52,8 +55,10 @@ export async function processRAGQuery(chatId, rawText) {
 
   // 6. Cross-Encoder Reranking
   const top5Chunks = await rerankChunks(contextualQuery, mergedTop20);
+  await pushLog('assistant', 'rag_step', `Reranking complete. Top score: ${top5Chunks[0]?.rerankScore || 0}`).catch(()=>null);
 
   if (top5Chunks.length === 0) {
+      await pushLog('assistant', 'info', 'No relevant knowledge found. Returning fallback.').catch(()=>null);
       return { 
         aiReply: "I currently do not have that specific information in the MSAJCE knowledge base. Please contact the administrative office for details.", 
         source: 'no_data', 

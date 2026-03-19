@@ -206,32 +206,72 @@ const Dashboard = () => {
                     )}
 
                     {activePanel === 'analytics' && (
-                        <div className="bg-white border-2 border-slate-100 rounded-3xl shadow-sm overflow-hidden max-w-[1400px] mx-auto animate-in fade-in duration-500">
-                            <table className="w-full text-left table-fixed">
-                                <thead className="text-[9px] text-slate-400 uppercase tracking-widest border-b-2 border-slate-100 bg-slate-50/30">
-                                    <tr>
-                                        <th className="px-8 py-6 font-black w-[25%] whitespace-nowrap">Timestamp</th>
-                                        <th className="px-8 py-6 font-black w-[15%] whitespace-nowrap">Level</th>
-                                        <th className="px-8 py-6 font-black w-[45%] whitespace-nowrap">Payload</th>
-                                        <th className="px-8 py-6 text-right font-black w-[15%] whitespace-nowrap">Node</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-50">
-                                    {botLogs.map((log, i) => (
-                                        <tr key={i} className="hover:bg-slate-50 transition-all font-bold text-slate-900 text-[12px]">
-                                            <td className="px-8 py-5 text-slate-900 font-mono flex items-center gap-3 whitespace-nowrap">
-                                                <Calendar size={12} className="text-indigo-400" /> {new Date(log.timestamp).toLocaleDateString()}
-                                                <Watch size={12} className="text-indigo-400" /> {new Date(log.timestamp).toLocaleTimeString([], { hour12:false })}
-                                            </td>
-                                            <td className="px-8 py-5 whitespace-nowrap">
-                                                <span className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase ${log.level === 'error' ? 'bg-rose-50 text-rose-600 border border-rose-100 shadow-sm shadow-rose-50' : 'bg-slate-50 text-slate-400'}`}>{log.level || 'info'}</span>
-                                            </td>
-                                            <td className={`px-8 py-5 tracking-tight truncate font-black ${log.level === 'error' ? 'text-rose-700' : 'text-slate-900'}`}>{log.message}</td>
-                                            <td className="px-8 py-5 text-right text-slate-200 font-black font-mono whitespace-nowrap italic">NODE_{i}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                        <div className="space-y-6 max-w-[1400px] mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+                            <div className="bg-white border-2 border-slate-100 rounded-3xl shadow-sm overflow-hidden">
+                                <div className="px-8 py-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                                    <div>
+                                        <h3 className="text-sm font-black text-slate-900 tracking-tight">System Telemetry Logs</h3>
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Every kernel step documented_</p>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <div className="px-3 py-1 bg-slate-100 text-[8px] font-black uppercase text-slate-400 rounded-lg">Last 100 Cycles</div>
+                                    </div>
+                                </div>
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left table-fixed">
+                                        <thead className="text-[9px] text-slate-400 uppercase tracking-widest border-b border-slate-100 bg-slate-50/10">
+                                            <tr>
+                                                <th className="px-8 py-5 font-black w-[180px]">Timestamp</th>
+                                                <th className="px-8 py-5 font-black w-[100px]">Node</th>
+                                                <th className="px-8 py-5 font-black">Event Lifecycle & Trace</th>
+                                                <th className="px-8 py-5 text-right font-black w-[120px]">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-50 font-['JetBrains_Mono','monospace']">
+                                            {botLogs.map((log, i) => (
+                                                <tr key={i} className="hover:bg-slate-50/80 transition-all">
+                                                    <td className="px-8 py-5 text-slate-400 text-[10px] font-bold">
+                                                        {new Date(log.timestamp).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                                                        <span className="ml-2 opacity-30">[{new Date(log.timestamp).getMilliseconds()}ms]</span>
+                                                    </td>
+                                                    <td className="px-8 py-5 text-[9px] font-black text-slate-300">KERNEL_0{i+1}</td>
+                                                    <td className="px-8 py-5">
+                                                        <div className="flex flex-col gap-1.5">
+                                                            <div className={`text-[12px] font-bold tracking-tight ${log.type === 'error' ? 'text-rose-600' : log.type === 'rag_step' ? 'text-indigo-600' : 'text-slate-800'}`}>
+                                                                {log.message}
+                                                            </div>
+                                                            {log.metadata && Object.keys(log.metadata).length > 0 && (
+                                                                <div className="bg-slate-50 p-3 rounded-xl border border-slate-100/50">
+                                                                    <div className="grid grid-cols-1 gap-2">
+                                                                        {Object.entries(log.metadata).map(([k, v]) => (
+                                                                            <div key={k} className="flex gap-2 text-[10px]">
+                                                                                <span className="text-slate-400 font-black uppercase tracking-tighter w-20 shrink-0">{k}:</span>
+                                                                                <span className="text-slate-600 truncate break-all overflow-hidden" title={typeof v === 'object' ? JSON.stringify(v) : v}>
+                                                                                    {typeof v === 'object' ? JSON.stringify(v) : v}
+                                                                                </span>
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-8 py-5 text-right">
+                                                        <span className={`px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest ${
+                                                            log.type === 'error' ? 'bg-rose-50 text-rose-500 border border-rose-100' : 
+                                                            log.type === 'rag_step' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' : 
+                                                            log.type === 'intent' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 
+                                                            'bg-slate-50 text-slate-400 border border-slate-100'
+                                                        }`}>
+                                                            {log.type || 'info'}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     )}
 

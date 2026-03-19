@@ -2,42 +2,40 @@ import config from '../config/config.js';
 import logger from '../utils/logger.js';
 
 /**
- * PRODUCTION-GRADE embedding service using Google Gemini text-embedding-004.
- * Output dimensionality fixed to 3072 to match the Atlas vector index definition.
+ * PRODUCTION-GRADE embedding service using OpenRouter openai/text-embedding-3-small.
+ * Reverted to 1536 dimensions as explicitly requested by USER.
  */
 export const generateEmbedding = async (text, inputType = 'passage') => {
   try {
-    if (!text || text.trim().length === 0) return new Array(3072).fill(0);
+    if (!text || text.trim().length === 0) return new Array(1536).fill(0);
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${config.gemini.embeddingModel}:embedContent?key=${config.gemini.apiKey}`;
-
-    const response = await fetch(url, {
+    const response = await fetch('https://openrouter.ai/api/v1/embeddings', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Authorization': `Bearer ${config.openRouter.apiKey}`,
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({
-        content: {
-          parts: [{ text: text.replace(/\n/g, ' ') }]
-        },
-        task_type: inputType === 'query' ? 'RETRIEVAL_QUERY' : 'RETRIEVAL_DOCUMENT',
-        output_dimensionality: 3072 // MATCHING ATLAS 3072-DIM INDEX
+        model: config.openRouter.embeddingModel,
+        input: text.replace(/\n/g, ' ')
       }),
       signal: AbortSignal.timeout(15000)
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`Gemini Embedding Error: ${response.status} - ${errorText}`);
+      throw new Error(`OpenRouter Embedding Error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    if (data && data.embedding && data.embedding.values) {
-        return data.embedding.values;
+    if (data && data.data && data.data[0] && data.data[0].embedding) {
+      return data.data[0].embedding;
     }
 
-    throw new Error('Invalid response structure from Gemini Embedding API');
+    throw new Error('Invalid response structure from OpenRouter Embedding API');
   } catch (error) {
     logger.error(`Embedding Service Error: ${error.message}`);
-    // Return zero-vector to prevent pipeline crashes during quota limits
-    return new Array(3072).fill(0);
+    // Fallback to zero-vector to prevent pipeline crash
+    return new Array(1536).fill(0);
   }
 };
