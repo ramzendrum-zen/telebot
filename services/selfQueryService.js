@@ -1,59 +1,41 @@
-import config from '../config/config.js';
 import logger from '../utils/logger.js';
+import { getAIReponse } from './aiService.js';
 
 export const decomposeAndSelfQuery = async (query) => {
   try {
-    const prompt = `You are a query analysis AI for an academic assistant.
-Given the user's question, decompose it into smaller independent queries if it contains multiple intents.
-Also, assign the best category and extract a dictionary of helpful metadata filters (like bus stops, faculty names, departments).
+    const prompt = `Goal: Decompose this academic question for RAG retrieval. 
+STRICT REQUIREMENT: Preserve all specific intent keywords like "driver", "HOD", "Principal", "timing", "phone".
+Example: "Who is the driver for AR-8?" -> Output Query: "Who is the driver for bus route AR-8?"
 
 User Question: "${query}"
 
-Return a STRICT JSON array of objects using this exact schema (no markdown, no quotes):
+Output EXACT ONLY JSON array (no markdown):
 [
   {
-    "decomposedQuestion": "Single clear question",
-    "category": "transport|faculty|general|admin|infrastructure",
-    "filters": { "key": "value" }
+    "query": "Full question including role/intent",
+    "category": "transport|faculty|general|admin",
+    "filters": { "route": "AR-8", "name": "Principal" }
   }
 ]`;
 
-    const response = await fetch(`${config.nvidia.baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${config.nvidia.apiKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: config.nvidia.models.cheap,
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.1
-      }),
-      signal: AbortSignal.timeout(10000) // 10s timeout
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      const content = data.choices?.[0]?.message?.content || '[]';
-      try {
-        // Handle models that wrap in {"queries": [...]} vs direct array
-        let parsed = JSON.parse(content);
-        if (parsed.queries) parsed = parsed.queries;
-        if (!Array.isArray(parsed)) parsed = [parsed];
+    const content = await getAIReponse(prompt, 'cheap');
+    
+    try {
+        const jsonMatch = content.match(/\[.*\]/s);
+        const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : content);
         
-        return parsed.map(p => ({
-            query: p.decomposedQuestion || query,
+        return (Array.isArray(parsed) ? parsed : [parsed]).map(p => ({
+            query: p.query || p.decomposedQuestion || query,
             category: p.category || 'general',
             filters: p.filters || {}
         }));
-      } catch(e) {
-          logger.warn(`Self-query JSON parse failed: ${e.message}`);
-      }
+    } catch(e) {
+        logger.warn(`Self-query JSON parse failed: ${e.message}`);
     }
   } catch (e) {
     logger.warn(`Query Decomposition failed: ${e.message}`);
   }
   
-  // Fallback to original
+  // Fallback
   return [{ query: query, category: 'general', filters: {} }];
 };

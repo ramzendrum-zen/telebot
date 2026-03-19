@@ -54,8 +54,15 @@ export async function processRAGQuery(chatId, rawText) {
     .slice(0, 20);
 
   // 6. Cross-Encoder Reranking
-  const top5Chunks = await rerankChunks(contextualQuery, mergedTop20);
+  let top5Chunks = await rerankChunks(contextualQuery, mergedTop20);
   await pushLog('assistant', 'rag_step', `Reranking complete. Top score: ${top5Chunks[0]?.rerankScore || 0}`).catch(()=>null);
+
+  // --- SAFETY NET: Catch-All Search if advanced path found NOTHING ---
+  if (top5Chunks.length === 0) {
+      await pushLog('assistant', 'rag_step', 'Advanced search yielded zero. Retrying with raw catch-all...').catch(()=>null);
+      const fallbackChunks = await performHybridSearch(normalizedText, 'general');
+      top5Chunks = fallbackChunks.slice(0, 3);
+  }
 
   if (top5Chunks.length === 0) {
       await pushLog('assistant', 'info', 'No relevant knowledge found. Returning fallback.').catch(()=>null);

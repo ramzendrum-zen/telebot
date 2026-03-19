@@ -1370,3 +1370,283 @@ ENTITIES:
 QUERY_VARIATIONS:
 
 
+--- DOCUMENT_ID: 69bb9db60c142506c80c141b ---
+TIMESTAMP: 2026-03-19T06:54:46.642Z
+TITLE: Bus Route AR-3
+SUMMARY: The driver for bus route AR-3 is Mr. Sathish K.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: The driver for bus route AR-3 is Mr. Sathish K (+91-9789970304).
+KEYWORDS: bus route, driver, contact information
+ENTITIES: Mr. Sathish K, AR-3, +91-9789970304
+QUERY_VARIATIONS:
+ - Who is the driver for bus route AR-3?
+ - What is the contact number of the driver for AR-3 bus route?
+ - Can I get the details of the driver for bus route AR-3?
+
+--- DOCUMENT_ID: 69bb9dc00c142506c80c141e ---
+TIMESTAMP: 2026-03-19T06:54:56.507Z
+TITLE: Bus Route AR-3
+SUMMARY: The AR-3 bus route covers several locations including T. Nagar, Saidapet, Guindy, Velachery, Medavakkam, Camp Road, Mambakkam, and College.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: Bus route AR-3: T. Nagar, Saidapet, Guindy, Velachery, Medavakkam, Camp Road, Mambakkam, College
+KEYWORDS: bus route, AR-3, T. Nagar, Saidapet, Guindy, Velachery, Medavakkam, Camp Road, Mambakkam, College
+ENTITIES: T. Nagar, Saidapet, Guindy, Velachery, Medavakkam, Camp Road, Mambakkam, College, AR-3
+QUERY_VARIATIONS:
+ - What are the stops on the AR-3 bus route?
+ - How do I get to College from T. Nagar by bus?
+ - What bus route goes through Saidapet and Guindy?
+
+--- DOCUMENT_ID: 69bb9dd20c142506c80c1421 ---
+TIMESTAMP: 2026-03-19T06:55:14.911Z
+TITLE: Bus Route AR-3
+SUMMARY: T. Nagar college bus schedule for route AR-3.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: The T. Nagar college bus for route AR-3 starts at 06:20 AM.
+KEYWORDS: bus, schedule, T. Nagar, college, route AR-3
+ENTITIES: T. Nagar, college, route AR-3
+QUERY_VARIATIONS:
+ - What time does the T. Nagar college bus start for route AR-3?
+ - T. Nagar college bus schedule for AR-3 route
+ - When does the bus for route AR-3 leave from T. Nagar college?
+
+--- DOCUMENT_ID: 69bb9dde0c142506c80c1424 ---
+TIMESTAMP: 2026-03-19T06:55:26.958Z
+TITLE: Bus Route AR-5
+SUMMARY: The drivers for bus route AR-5 are Mr. Murugan and Mr. Velu.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: The drivers for bus route AR-5 are Mr. Murugan and Mr. Velu.
+KEYWORDS: bus route, driver, contact information
+ENTITIES: Mr. Murugan, Mr. Velu, AR-5
+QUERY_VARIATIONS:
+ - Who are the drivers for the AR-5 bus route?
+ - What are the contact details of the drivers for bus route AR-5?
+ - Can I get the names and phone numbers of the drivers for the AR-5 bus?
+
+--- DOCUMENT_ID: 69bb9dec0c142506c80c1427 ---
+TIMESTAMP: 2026-03-19T06:55:40.463Z
+TITLE: Bus Route AR-5
+SUMMARY: The AR-5 bus route starts at MMDA School at 6:15 AM and stops at various locations before reaching College
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: Bus route AR-5 path: MMDA School (6:15 AM) → Anna Nagar → Skywalk → Saidapet → Velachery → OMR → Ladies Hostel → College
+KEYWORDS: bus route, AR-5, MMDA School, Anna Nagar, Skywalk, Saidapet, Velachery, OMR, Ladies Hostel, College
+ENTITIES: MMDA School, Anna Nagar, Skywalk, Saidapet, Velachery, OMR, Ladies Hostel, College, AR-5, 6:15 AM
+QUERY_VARIATIONS:
+ - What are the stops for the AR-5 bus route?
+ - Where does the AR-5 bus start and end?
+ - What is the path of the AR-5 bus from MMDA School to College?
+
+--- DOCUMENT_ID: 69bb9dfa0c142506c80c142a ---
+TIMESTAMP: 2026-03-19T06:55:54.741Z
+TITLE: Bus Route AR-5
+SUMMARY: The MMDA school bus for route AR-5 begins its journey at 06:15 AM.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: The MMDA school bus for route AR-5 starts at 06:15 AM.
+KEYWORDS: school bus, MMDA, route AR-5, transportation
+ENTITIES: MMDA, AR-5
+QUERY_VARIATIONS:
+ - What time does the MMDA school bus start for route AR-5?
+ - When does the bus for route AR-5 depart?
+ - At what time can I catch the school bus for route AR-5?
+
+--- DOCUMENT_ID: 69bb9e020c142506c80c142d ---
+TIMESTAMP: 2026-03-19T06:56:02.308Z
+TITLE: Bus Route AR-8
+SUMMARY: Mr. Raju is the driver for the AR-8 bus route.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: The driver for bus route AR-8 is Mr. Raju (+91-9790750906).
+KEYWORDS: bus, driver, route, AR-8, contact
+ENTITIES: Mr. Raju, AR-8, +91-9790750906
+QUERY_VARIATIONS:
+ - Who is the driver of bus route AR-8?
+ - What is the contact number of the AR-8 bus driver?
+ - Can I get the details of the driver for the AR-8 route?
+
+--- DOCUMENT_ID: 69bb9e130c142506c80c1430 ---
+TIMESTAMP: 2026-03-19T06:56:19.589Z
+TITLE: Bus Route AR-8
+SUMMARY: The bus route AR-8 starts at Manjambakkam at 7:10 AM and ends at College, passing through several locations including Anna Nagar and Porur.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: Bus route AR-8 path: Manjambakkam (7:10 AM) → Retteri → Senthil Nagar → Anna Nagar (7:25 AM) → Porur (7:45 AM) → Perungalathur → College.
+KEYWORDS: bus route, AR-8, Manjambakkam, Retteri, Senthil Nagar, Anna Nagar, Porur, Perungalathur, College, transportation, schedule
+ENTITIES: Manjambakkam, Retteri, Senthil Nagar, Anna Nagar, Porur, Perungalathur, College, AR-8
+QUERY_VARIATIONS:
+ - What is the schedule for bus route AR-8 from Manjambakkam to College?
+ - How do I get to College from Manjambakkam using bus route AR-8?
+ - What are the stops and timings for the AR-8 bus route starting from Manjambakkam?
+
+--- DOCUMENT_ID: 69bb9e200c142506c80c1433 ---
+TIMESTAMP: 2026-03-19T06:56:32.348Z
+TITLE: Bus Route AR-8
+SUMMARY: The Manjambakkam college bus for route AR-8 departs at 07:10 AM.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: The Manjambakkam college bus for route AR-8 starts at 07:10 AM.
+KEYWORDS: college bus, route AR-8, Manjambakkam, transportation
+ENTITIES: Manjambakkam, AR-8
+QUERY_VARIATIONS:
+ - What time does the Manjambakkam college bus start for route AR-8?
+ - When does the bus for route AR-8 leave from Manjambakkam college?
+ - What is the departure time of the AR-8 bus from Manjambakkam college?
+
+--- DOCUMENT_ID: 69bb9e280c142506c80c1436 ---
+TIMESTAMP: 2026-03-19T06:56:40.081Z
+TITLE: Mohamed Sathak Trust Overview
+SUMMARY: The Mohamed Sathak Trust provides quality education to rural and disadvantaged students, established in 1973.
+CATEGORY: general
+SOURCE: verified_trust
+CONTENT: The Mohamed Sathak Trust was established in 1973 by the philanthropic Mohamed Sathak Family of Kilakarai. It aims to provide quality education to rural and disadvantaged students.
+KEYWORDS: education, philanthropy, rural students, disadvantaged students
+ENTITIES: Mohamed Sathak Trust, Mohamed Sathak Family, Kilakarai, 1973
+QUERY_VARIATIONS:
+ - What is the Mohamed Sathak Trust and its mission?
+ - How does the Mohamed Sathak Trust support rural education?
+ - What are the goals of the Mohamed Sathak Family in establishing the trust?
+
+--- DOCUMENT_ID: 69bb9e3b0c142506c80c1439 ---
+TIMESTAMP: 2026-03-19T06:56:59.837Z
+TITLE: Trust Leadership
+SUMMARY: The Mohamed Sathak Trust is led by key individuals including Mr. Mohamed Yousuf S.M., Janaba S.M.H. Sharmila, and Janab P.R.L. Hamid Ibrahim.
+CATEGORY: general
+SOURCE: verified_trust
+CONTENT: The Mohamed Sathak Trust is led by Mr. Mohamed Yousuf S.M. (Chairman), Janaba. S.M.H. Sharmila (Secretary), and Janab. P.R.L. Hamid Ibrahim (Executive Director).
+KEYWORDS: Trust leadership, Mohamed Sathak Trust, executive team
+ENTITIES: Mohamed Yousuf S.M., Janaba S.M.H. Sharmila, Janab P.R.L. Hamid Ibrahim, Mohamed Sathak Trust
+QUERY_VARIATIONS:
+ - Who are the key leaders of the Mohamed Sathak Trust?
+ - What are the positions of Mr. Mohamed Yousuf S.M., Janaba S.M.H. Sharmila, and Janab P.R.L. Hamid Ibrahim in the trust?
+ - Who is the executive director of the Mohamed Sathak Trust?
+
+--- DOCUMENT_ID: 69bb9f34769fddbb0c7e683f ---
+TIMESTAMP: 2026-03-19T07:01:08.341Z
+TITLE: Bus Route AR-3
+SUMMARY: The driver for the AR-3 bus route is Mr. Sathish K, who can be contacted at +91-9789970304.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: The driver for bus route AR-3 is Mr. Sathish K (+91-9789970304).
+KEYWORDS: bus route, driver, contact information
+ENTITIES: Mr. Sathish K, AR-3, +91-9789970304
+QUERY_VARIATIONS:
+ - Who is the driver for bus route AR-3 and how can I contact them?
+ - What is the contact information for the driver of the AR-3 bus?
+ - Can I get the phone number of Mr. Sathish K, the driver for route AR-3?
+
+--- DOCUMENT_ID: 69bb9f50769fddbb0c7e6842 ---
+TIMESTAMP: 2026-03-19T07:01:36.541Z
+TITLE: Bus Route AR-3
+SUMMARY: Bus route AR-3 connects T. Nagar to College with several stops in between.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: Bus route AR-3: T. Nagar → Saidapet → Guindy → Velachery → Medavakkam → Camp Road → Mambakkam → College
+KEYWORDS: bus route, AR-3, Chennai, transportation
+ENTITIES: T. Nagar, Saidapet, Guindy, Velachery, Medavakkam, Camp Road, Mambakkam, College
+QUERY_VARIATIONS:
+ - What are the stops on the AR-3 bus route?
+ - How do I get from T. Nagar to College by bus?
+ - What bus route goes from T. Nagar to College with a stop at Guindy?
+
+--- DOCUMENT_ID: 69bb9f5e769fddbb0c7e6845 ---
+TIMESTAMP: 2026-03-19T07:01:50.288Z
+TITLE: Bus Route AR-3
+SUMMARY: The T. Nagar college bus for route AR-3 departs at 06:20 AM.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: T. Nagar college bus starts at 06:20 AM for route AR-3.
+KEYWORDS: college, bus, route, AR-3, T. Nagar
+ENTITIES: T. Nagar, AR-3
+QUERY_VARIATIONS:
+ - What time does the T. Nagar college bus start for route AR-3?
+ - When does the bus for route AR-3 leave from T. Nagar college?
+ - What is the departure time of the AR-3 bus from T. Nagar college?
+
+--- DOCUMENT_ID: 69bb9f68769fddbb0c7e6848 ---
+TIMESTAMP: 2026-03-19T07:02:00.525Z
+TITLE: Bus Route AR-5
+SUMMARY: The bus route AR-5 is driven by either Mr. Murugan or Mr. Velu.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: The driver for bus route AR-5 is Mr. Murugan (+91-9962254425) or Mr. Velu (+91-9940050685).
+KEYWORDS: bus route, driver, contact information
+ENTITIES: Mr. Murugan, Mr. Velu, AR-5
+QUERY_VARIATIONS:
+ - Who drives the AR-5 bus route?
+ - What are the contact details of the drivers for bus route AR-5?
+ - Who are the operators of the AR-5 bus service?
+
+--- DOCUMENT_ID: 69bb9f74769fddbb0c7e684b ---
+TIMESTAMP: 2026-03-19T07:02:12.177Z
+TITLE: Bus Route AR-5
+SUMMARY: The bus route AR-5 starts at MMDA School and ends at College, passing through several locations including Anna Nagar, Skywalk, and Velachery.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: Bus route AR-5 path MMDA School → Anna Nagar → Skywalk → Saidapet → Velachery → OMR → Ladies Hostel → College
+KEYWORDS: bus route, AR-5, MMDA School, Anna Nagar, Skywalk, Saidapet, Velachery, OMR, Ladies Hostel, College
+ENTITIES: MMDA School, Anna Nagar, Skywalk, Saidapet, Velachery, OMR, Ladies Hostel, College
+QUERY_VARIATIONS:
+ - What are the stops on the AR-5 bus route?
+ - How does one get to College from MMDA School using the bus?
+ - What is the path of the AR-5 bus from its starting point to its endpoint?
+
+--- DOCUMENT_ID: 69bb9f88769fddbb0c7e684e ---
+TIMESTAMP: 2026-03-19T07:02:32.564Z
+TITLE: Bus Route AR-5
+SUMMARY: The MMDA school bus for route AR-5 begins its service at 06:15 AM.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: MMDA school bus starts at 06:15 AM for route AR-5.
+KEYWORDS: school bus, MMDA, route AR-5, transportation
+ENTITIES: MMDA, AR-5
+QUERY_VARIATIONS:
+ - What time does the MMDA school bus start for route AR-5?
+ - When does the AR-5 school bus service begin?
+ - At what time can I catch the MMDA bus for route AR-5?
+
+--- DOCUMENT_ID: 69bb9f98769fddbb0c7e6851 ---
+TIMESTAMP: 2026-03-19T07:02:49.047Z
+TITLE: Bus Route AR-8
+SUMMARY: Mr. Raju is the driver for bus route AR-8.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: The driver for bus route AR-8 is Mr. Raju (+91-9790750906).
+KEYWORDS: bus route, driver, contact information
+ENTITIES: Mr. Raju, AR-8
+QUERY_VARIATIONS:
+ - Who is the driver of bus route AR-8?
+ - What is the contact number of the driver for AR-8 bus route?
+ - Can I get the details of the driver for bus route AR-8?
+
+--- DOCUMENT_ID: 69bb9fbc769fddbb0c7e6854 ---
+TIMESTAMP: 2026-03-19T07:03:24.989Z
+TITLE: Bus Route AR-8
+SUMMARY: Bus route AR-8 runs from Manjambakkam to College with stops at Retteri, Senthil Nagar, Anna Nagar, Porur, and Perungalathur.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: Bus route AR-8 path: Manjambakkam (7:10 AM) → Retteri → Senthil Nagar → Anna Nagar (7:25 AM) → Porur (7:45 AM) → Perungalathur → College.
+KEYWORDS: bus route, AR-8, Manjambakkam, Retteri, Senthil Nagar, Anna Nagar, Porur, Perungalathur, College, transportation
+ENTITIES: Manjambakkam, Retteri, Senthil Nagar, Anna Nagar, Porur, Perungalathur, College, AR-8
+QUERY_VARIATIONS:
+ - What is the path of bus route AR-8?
+ - How do I get to College from Manjambakkam using bus route AR-8?
+ - What are the stops on the AR-8 bus route from Manjambakkam to College?
+
+--- DOCUMENT_ID: 69bb9fcd769fddbb0c7e6857 ---
+TIMESTAMP: 2026-03-19T07:03:41.170Z
+TITLE: Bus Route AR-8
+SUMMARY: The Manjambakkam college bus for route AR-8 starts at 07:10 AM.
+CATEGORY: transport
+SOURCE: verified_transport
+CONTENT: Manjambakkam college bus starts at 07:10 AM for route AR-8.
+KEYWORDS: college bus, route AR-8, Manjambakkam
+ENTITIES: Manjambakkam, AR-8
+QUERY_VARIATIONS:
+ - What time does the Manjambakkam college bus start for route AR-8?
+ - Manjambakkam college bus schedule for AR-8
+ - When does the AR-8 bus from Manjambakkam college depart?
+
