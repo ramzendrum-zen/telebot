@@ -16,8 +16,6 @@ const ENTITY_LOOKUP_MAP = {
   principal:      'admin_principal',
   'college head': 'admin_principal',
   warden:         'admin_principal',
-  contact:        'admin_contact',
-  'phone number': 'admin_contact',
   address:        'admin_contact',
   'campus size':  'admin_campus_facts',
   location:       'admin_campus_facts',
@@ -64,7 +62,7 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 6: NORMALIZE QUERY ─────────────────────────────────────────────
   const { normalizedText, cacheKey } = normalizeQueryBasic(rawText);
-  const redisKey = `v36:rag:${cacheKey}`;
+  const redisKey = `v37:rag:${cacheKey}`;
   log('STEP-6', `Normalized: "${normalizedText}" | CacheKey: ${cacheKey}`);
   const totalTokens = { prompt: 0, completion: 0, total: 0 };
 

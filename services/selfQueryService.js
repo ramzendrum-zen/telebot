@@ -3,19 +3,22 @@ import { getAIReponse } from './aiService.js';
 
 export const decomposeAndSelfQuery = async (query) => {
   try {
-    const prompt = `Goal: Decompose this academic question for RAG retrieval. 
-STRICT REQUIREMENT: Preserve all specific intent keywords like "driver", "HOD", "Principal", "timing", "phone".
-MULTI-PART QUERIES: If the user asks multiple things (using 'and', 'also', etc.), split them into small, independent sub-queries.
-SUBJECT EXTRACTION: Identify the primary entity/subject (e.g., "AR-8", "Principal", "Hostel").
+    const prompt = `Goal: Decompose this question for RAG retrieval.
+STRICT RULES:
+1. Preserve specific intent keywords: "driver", "HOD", "Principal", "timing", "phone", "contact".
+2. Route numbers with spaces ("ar 5", "ar 8", "r 22") must be written as "AR-5", "AR-8", "R-22" in the output query.
+3. Driver contact queries ("raju contact", "ar8 driver contact", "contact velu", "how to contact [name]") → category = "transport".
+4. Scholarship, fee, hostel, faculty queries → category = "general" or "admin".
+5. If multi-part, split into independent sub-queries.
 
 User Question: "${query}"
 
-Output EXACT ONLY JSON (no markdown):
+Output EXACT JSON only (no markdown, no explanation):
 {
-  "subject": "The primary subject (entity/noun)",
+  "subject": "Primary entity (e.g. AR-8, Yogesh, Principal, Raju)",
   "queries": [
     {
-      "query": "Independent question 1",
+      "query": "Rewritten independent question",
       "category": "transport|faculty|general|admin",
       "filters": {}
     }
