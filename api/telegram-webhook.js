@@ -3,7 +3,7 @@ import connectDB from '../database/mongo.js';
 import { getCache, setCache } from '../services/cacheService.js';
 import { performHybridSearch } from '../services/retrievalService.js';
 import { getAIReponse } from '../services/aiService.js';
-import { normalizeText, buildPrompt } from '../utils/promptBuilder.js';
+import { normalizeText } from '../utils/promptBuilder.js';
 import { getUserMemory, setUserMemory, rewriteQuery } from '../services/historyService.js';
 import { pushLog, updateMetrics } from '../services/monitorService.js';
 import { normalizeQueryBasic } from '../services/normalizationService.js';
