@@ -201,11 +201,11 @@ export async function processRAGQuery(chatId, rawText) {
   }
 
   // ─── STEP 10: CONTEXT VALIDATION ─────────────────────────────────────────
-  if (top5Chunks.length === 0) {
-    log('STEP-10', 'CONTEXT EMPTY — all retrieval paths exhausted');
-    await pushLog('assistant', 'error', 'CONTEXT EMPTY ERROR').catch(() => null);
+  if (!top5Chunks || top5Chunks.length < 2) {
+    log('STEP-10', 'CONTEXT INSUFFICIENT — less than 2 chunks found');
+    await pushLog('assistant', 'error', 'CONTEXT INSUFFICIENT ERROR').catch(() => null);
     return {
-      aiReply: "I currently do not have that information in the MSAJCE knowledge base. Please contact the college directly at +91 99400 04500.",
+      aiReply: "I don't have enough information to answer that accurately.",
       source: 'no_data',
       latency: Date.now() - startTime
     };
