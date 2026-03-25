@@ -1,6 +1,6 @@
 import { performHybridSearch, directEntityLookup } from './retrievalService.js';
 import { getAIReponse } from './aiService.js';
-import { buildPrompt } from '../utils/promptBuilder.js';
+import { buildReasoningPrompt, buildOutputFilterPrompt } from '../utils/promptBuilder.js';
 import { getUserMemory, setUserMemory, rewriteQuery } from './historyService.js';
 import { normalizeQueryBasic } from './normalizationService.js';
 import { checkSemanticCache, storeInSemanticCache } from './faqLearningService.js';
@@ -211,40 +211,37 @@ export async function processRAGQuery(chatId, rawText) {
     };
   }
 
-  // ─── LLM GENERATION — STRICT CONTEXT MODE ────────────────────────────────
-  const finalPrompt = buildPrompt(contextualQuery, top5Chunks);
-  let { content: aiReply, usage } = await getAIReponse(finalPrompt);
-  totalTokens.prompt += usage.prompt_tokens;
-  totalTokens.completion += usage.completion_tokens;
-  totalTokens.total += usage.total_tokens;
-  log('TOKENS', `Pass-1 | P: ${usage.prompt_tokens} | C: ${usage.completion_tokens} | T: ${usage.total_tokens}`);
+  // ─── STAGE 1: CORE REASONING LAYER (HIDDEN) ──────────────────────────────
+  const chatHistoryContext = `Last Topic: ${memory.last_topic || 'None'}\nLast Entity: ${memory.last_entity || 'None'}\nLast Question: ${memory.last_question || 'None'}`;
+  
+  const reasoningPrompt = buildReasoningPrompt(contextualQuery, top5Chunks, chatHistoryContext);
+  let { content: rawReasoningAnswer, usage: reasoningUsage } = await getAIReponse(reasoningPrompt);
+  
+  totalTokens.prompt += reasoningUsage.prompt_tokens;
+  totalTokens.completion += reasoningUsage.completion_tokens;
+  totalTokens.total += reasoningUsage.total_tokens;
+  log('TOKENS', `Reasoning Layer | P: ${reasoningUsage.prompt_tokens} | C: ${reasoningUsage.completion_tokens} | T: ${reasoningUsage.total_tokens}`);
 
-  // ─── STEP 11: RESPONSE VALIDATION — re-generate if LLM ignored context ───
-  if (detectContextIgnored(aiReply, top5Chunks)) {
-    log('STEP-11', 'LLM CONTEXT IGNORE ERROR detected. Forcing re-generation with ANALYTICAL REASONING prompt.');
-    const analyticalPrompt = `REASONING ERROR: You said information is not available, but RELEVANT DATA is present below. 
-Analyze and infer the answer. Do NOT fallback.
-
-${finalPrompt}`;
+  // Fallback Check in Reasoning Layer
+  if (detectContextIgnored(rawReasoningAnswer, top5Chunks)) {
+    log('STEP-11', 'LLM CONTEXT IGNORE ERROR detected. Forcing re-generation.');
+    const analyticalPrompt = `REASONING ERROR: You said information is not available, but RELEVANT DATA is present below. Analyze and infer the answer. Do NOT fallback.\n\n${reasoningPrompt}`;
     const retry = await getAIReponse(analyticalPrompt);
-    aiReply = retry.content;
+    rawReasoningAnswer = retry.content;
     totalTokens.prompt += retry.usage.prompt_tokens;
     totalTokens.completion += retry.usage.completion_tokens;
     totalTokens.total += retry.usage.total_tokens;
-    log('TOKENS', `Pass-2 (Retry) | P: ${retry.usage.prompt_tokens} | C: ${retry.usage.completion_tokens} | T: ${retry.usage.total_tokens}`);
+    log('TOKENS', `Reasoning-Retry | P: ${retry.usage.prompt_tokens} | C: ${retry.usage.completion_tokens} | T: ${retry.usage.total_tokens}`);
   }
 
-  // ─── STEP 12: BULLET FORMAT GUARD ─────────────────────────────────────────
-  if (!aiReply.includes('•') && !aiReply.includes('-') && aiReply.length > 50) {
-    log('STEP-12', 'Non-bullet format detected. Forcing conversion to bullets.');
-    const bulletPrompt = `Rewrite this information into exactly 3-6 clean, structured bullet-point format like a Professional Assistant:\n\n${aiReply}`;
-    const guard = await getAIReponse(bulletPrompt, 'cheap');
-    aiReply = guard.content;
-    totalTokens.prompt += guard.usage.prompt_tokens;
-    totalTokens.completion += guard.usage.completion_tokens;
-    totalTokens.total += guard.usage.total_tokens;
-    log('TOKENS', `Formatting Guard | P: ${guard.usage.prompt_tokens} | C: ${guard.usage.completion_tokens} | T: ${guard.usage.total_tokens}`);
-  }
+  // ─── STAGE 2: UX OUTPUT FILTER LAYER (VISIBLE) ───────────────────────────
+  const outputFilterPrompt = buildOutputFilterPrompt(rawReasoningAnswer, chatHistoryContext);
+  let { content: aiReply, usage: filterUsage } = await getAIReponse(outputFilterPrompt, 'cheap'); // Use cheaper model for fast cleaning if needed, else same DB
+  
+  totalTokens.prompt += filterUsage.prompt_tokens;
+  totalTokens.completion += filterUsage.completion_tokens;
+  totalTokens.total += filterUsage.total_tokens;
+  log('TOKENS', `Output Filter Layer | P: ${filterUsage.prompt_tokens} | C: ${filterUsage.completion_tokens} | T: ${filterUsage.total_tokens}`);
 
   // ─── CACHE + LEARN ────────────────────────────────────────────────────────
   await setCache(redisKey, aiReply);
