@@ -1,3 +1,4 @@
+import fetch from 'node-fetch';
 import config from '../config/config.js';
 import logger from '../utils/logger.js';
 
@@ -24,8 +25,7 @@ export const rerankChunks = async (query, chunks, limit = config.rag.finalTopK) 
         model: config.nvidia.models.reranker,
         query: { text: query },
         passages
-      }),
-      signal: AbortSignal.timeout(4000)
+      })
     });
 
     if (response.ok) {

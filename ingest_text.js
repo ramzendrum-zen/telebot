@@ -41,7 +41,7 @@ export async function ingestTextKnowledge(title, rawContent, source = "manual_te
     console.log(`🚀 Starting Ingestion for: ${title}`);
     
     // Step 2: Intelligent Chunking
-    const rawChunks = splitContent(rawContent, 800, 80);
+    const rawChunks = await splitContent(rawContent);
     console.log(`📦 Split into ${rawChunks.length} chunks.`);
 
     for (let i = 0; i < rawChunks.length; i++) {

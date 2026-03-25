@@ -96,8 +96,7 @@ async function sendTelegramMessage(chatId, text) {
         text: text,
         parse_mode: 'Markdown',
         reply_markup: { remove_keyboard: true }
-      }),
-      signal: AbortSignal.timeout(10000)
+      })
     });
 
     if (!response.ok && response.status === 400) {
@@ -109,8 +108,7 @@ async function sendTelegramMessage(chatId, text) {
           chat_id: chatId, 
           text: text,
           reply_markup: { remove_keyboard: true }
-        }),
-        signal: AbortSignal.timeout(10000)
+        })
       });
     }
   } catch (error) {

@@ -116,3 +116,126 @@ Return only the clean bullet-point answer.
 No headings.
 No explanations.`;
 };
+
+// ──────────────────────────────────────────────────────────
+// NEXT-LEVEL UPGRADES: SEMANTIC CHUNKING, INTENT, AND QUERY REWRITING
+// ──────────────────────────────────────────────────────────
+
+/**
+ * 1. SEMANTIC CHUNKING PROMPT
+ * Used in ingestionService.js to split raw data intelligently.
+ */
+export const buildSemanticChunkingPrompt = (rawText) => {
+  return `You are a data processing assistant.
+
+Your task is to split the given text into semantically meaningful chunks.
+
+========================
+RULES
+=====
+
+1. Each chunk must represent ONE clear topic or idea.
+2. Do NOT split randomly by length.
+3. Do NOT mix multiple topics in one chunk.
+4. Keep related sentences together.
+5. Preserve important details (numbers, names, facts).
+6. Each chunk should be self-contained and understandable on its own.
+7. Avoid very small chunks unless necessary.
+8. Avoid very large chunks that contain multiple topics.
+
+========================
+OUTPUT FORMAT
+=============
+
+Return a JSON array like this:
+
+[
+  {
+    "title": "Short topic title",
+    "content": "Clean, well-structured text for that topic"
+  }
+]
+
+========================
+INPUT
+=====
+
+Text:
+${rawText}`;
+};
+
+/**
+ * 2. INTENT CLASSIFIER PROMPT
+ * Replaces regex mathing in intentService.js.
+ */
+export const buildIntentClassifierPrompt = (question) => {
+  return `You are an intent classification system.
+
+Classify the user query into ONE of the following:
+
+* "rag" -> for explanations, descriptions, general knowledge
+* "structured" -> for exact data like counts, lists, specific facts
+* "live" -> for time-sensitive or real-time information
+
+========================
+RULES
+=====
+
+1. Choose ONLY one intent.
+2. Do NOT explain your reasoning.
+3. Focus on what the user is asking, not keywords alone.
+4. If unsure, choose the closest matching intent.
+
+========================
+OUTPUT FORMAT
+=============
+
+Return JSON only:
+{
+  "intent": "rag | structured | live",
+  "confidence": 0.0 to 1.0
+}
+
+========================
+INPUT
+=====
+
+Query:
+${question}`;
+};
+
+/**
+ * 3. QUERY REWRITING PROMPT (FOR MEMORY)
+ * Fixes pronoun resolution and implicit context.
+ */
+export const buildQueryRewritingPrompt = (question, chatHistory) => {
+  return `You are a query rewriting assistant.
+
+Your task is to rewrite the user's query into a clear, standalone question.
+
+========================
+RULES
+=====
+
+1. Resolve references like: him, her, it, they, that, those
+2. Use the conversation history to replace them with the correct subject.
+3. Keep the meaning EXACTLY the same.
+4. Do NOT add new information.
+5. Do NOT explain anything.
+
+========================
+OUTPUT FORMAT
+=============
+
+Return ONLY the rewritten query as plain text.
+
+========================
+INPUT
+=====
+
+Chat History:
+${chatHistory}
+
+User Query:
+${question}`;
+};

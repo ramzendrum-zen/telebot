@@ -1,22 +1,23 @@
-/**
- * Detects the user's intent based on keywords and patterns.
- */
-export const detectIntent = (query) => {
-  const q = query.toLowerCase();
-  
-  if (/\b(bus|route|stop|driver|timing|travel|transport|reach|go to|ar-?\d+|r-?\d+|mtc|570|519|102|Central|Broadway|T\. Nagar|Tambaram)\b/i.test(q)) {
-    return 'transport';
-  }
-  
-  if (/\b(who is|principal|hod|professor|dr\.|faculty|staff|dean|leader|boss|runs|control|top person|head of)\b/.test(q)) {
-    return 'faculty';
-  }
+import { buildIntentClassifierPrompt } from '../utils/promptBuilder.js';
+import { getAIReponse } from './aiService.js';
+import logger from '../utils/logger.js';
 
-  if (/\b(fee|admission|cutoff|placement|recruit|package|salary|job|cost|scholarship)\b/.test(q)) {
-    return 'admission_placement';
+/**
+ * Detects the user's intent using LLM Classification.
+ */
+export const detectIntent = async (query) => {
+  const prompt = buildIntentClassifierPrompt(query);
+  try {
+    const response = await getAIReponse(prompt, 'cheap');
+    const jsonMatch = response.content.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) return 'rag'; // Default fallback
+    const parsed = JSON.parse(jsonMatch[0]);
+    logger.info(`Intent Detected: ${parsed.intent} (Confidence: ${parsed.confidence})`);
+    return parsed.intent;
+  } catch (error) {
+    logger.error(`Intent LLM Failed: ${error.message}`);
+    return 'rag';
   }
-  
-  return 'general';
 };
 
 /**

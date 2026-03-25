@@ -1,0 +1,158 @@
+======================================================
+MSAJCE TELEGRAM BOTS - SYSTEM ARCHITECTURE & DATA FLOW
+======================================================
+
+This document provides a comprehensive overview of the entire system architecture, the workflows for both bots (Assistant and Grievance), and the exact data formats used at every step.
+
+========================
+1. SYSTEM ARCHITECTURE
+========================
+The application is a stateless Node.js (Express) backend hosted on Vercel Serverless Functions.
+
+Core Technologies:
+- Hosting: Vercel Serverless (API Routes: `/api/telegram-webhook` and `/api/complaint-webhook`)
+- Primary Database: MongoDB Atlas (Clusters handle both vector embeddings and structured complaint data)
+- In-Memory Cache/Sessions/Logs: Upstash Redis (Handles fast lookups, user state management, rate limiting, and interaction telemetry)
+- AI & LLM Services: NVIDIA NIM (Provides fast inference for `nv-rerank-qa-mistral` and LLM via `meta/llama-3.1-70b-instruct`)
+- Messaging Frontend: Telegram Bot API (Receives webhooks)
+
+========================
+2. ACADEMIC ASSISTANT BOT WORKFLOW (RAG PIPELINE)
+========================
+Endpoint: `https://msajce-bot.vercel.app/api/telegram-webhook`
+Purpose: Answer student/parent queries accurately based exclusively on the MSAJCE knowledge base.
+
+Step-by-Step Flow:
+1. Message Received: A user sends a message. Telegram POSTs this JSON payload to the webhook.
+2. Verification & State: The bot checks Redis for the user's recent message history to provide multi-turn conversation context.
+3. Intent Recognition: The input is processed by `intentService`.
+   - If it's a greeting ("/start", "hello"), it answers immediately from a hardcoded template.
+   - If it requires knowledge, it triggers the RAG (Retrieval-Augmented Generation) pipeline.
+4. Query Embedding: The user's query is converted into a 1536-dimensional vector using an embedding model (e.g., `nomic-embed-text`).
+5. Vector Search (Retrieval): `ragService` queries MongoDB Atlas using a Vector Search index. Atlas calculates the semantic similarity (Cosine Distance) and returns the top matching chunks.
+6. Keyword/Entity Search: The `ragService` also queries the Redis cache/MongoDB for exact keyword matches (e.g., "admission fees") to catch edge cases that vectors might miss.
+7. Reranking: The top retrieved chunks (usually top 10) are sent to NVIDIA's `nv-rerank-qa-mistral` model. The reranker scores each chunk based on relevance to the user's specific query and returns the absolute best 3-5 chunks.
+8. LLM Instruction Setup: The final retrieved chunks are combined into a strict prompting template: "You are the MSAJCE Academic Assistant... Answer the user's question using ONLY the following context..."
+9. LLM Generation: The context and user query are sent to the LLM (LLaMA 3.1 70B via NVIDIA API).
+10. Delivery & Logging: The generated answer is sent to the Telegram API. The entire interaction (latency, chunk matches, token usage) is logged in Redis (`bot_live_logs_v2`).
+
+========================
+3. GRIEVANCE BOT WORKFLOW
+========================
+Endpoint: `https://msajce-bot.vercel.app/api/complaint-webhook`
+Purpose: Allow students to securely file and track complaints/grievances.
+
+Step-by-Step Flow:
+1. Message Received: User initiates contact.
+2. Session State Machine: Because complaints require a step-by-step wizard (Name -> Dept -> Complaint details -> OTP), `complaintService` uses Redis to track the user's current "State".
+   - State 0: Awaiting Name
+   - State 1: Awaiting Department
+   - State 2: Awaiting Issue details
+   - State 3: Awaiting Verification (OTP/Email confirmation)
+3. Data Collection: As the user replies, the bot collects the data and updates the Redis session JSON object.
+4. Validation: To prevent spam, the user must verify their identity (e.g., entering an OTP or verifying an email). 
+5. Registration: Once verified, the complete JSON object is written to the MongoDB `complaints` collection, and a unique Ticket ID is generated.
+6. Confirmation: The bot sends the Ticket ID to the user for future tracking.
+
+========================
+4. INGESTION DATA FORMAT (BEFORE DATABASE)
+========================
+Before data becomes an embedding in MongoDB, it represents raw web-scraped text.
+The backend processing (`ingestionService.js`) takes raw unstructured HTML from the college site, breaks it into 250-400 character chunks, and uses an AI to structure it.
+
+Example Raw Text File format (`knowledge_structured.txt`):
+---------------------------------------------------------
+--- DOCUMENT_ID: 69bb97280c142506c80c1307 ---
+TIMESTAMP: 2026-03-19T06:26:49.042Z
+TITLE: MSAJCE | Admissions | Best Engineering College
+SUMMARY: The college offers transportation services, including buses and an ambulance.
+CATEGORY: scraped
+SOURCE: scraped
+CONTENT: The college is located near the CMDA Bus station, which is operated by the state transport service. The institute operates 22 buses...
+KEYWORDS: transportation, college, buses, ambulance
+ENTITIES: CMDA Bus station, Tata ACE
+QUERY_VARIATIONS:
+ - How does the college support student transportation?
+ - What transportation options are available?
+
+========================
+5. MONGODB DATABASE DATA FORMAT (VECTOR STORE)
+========================
+When `ingest_core_knowledge.js` processes the raw structured text above, it calculates the embeddings and saves it into the `vector_store` collection in MongoDB.
+
+Example JSON Object in MongoDB (`vector_store` collection):
+---------------------------------------------------------
+{
+  "_id": ObjectId("65f9a72b9a7b1c3e34a78122"),
+  "source": "college_source",
+  "category": "general",
+  "title": "MSAJCE Knowledge: The college is located near...",
+  
+  // The raw text fed into the LLM as context
+  "content": "The college is located near the CMDA Bus station... The institute operates 22 buses...",
+  "text": "The college is located near the CMDA Bus station... The institute operates 22 buses...",
+  
+  // The multi-dimensional mathematical representation of the text 
+  // Evaluated by the Vector Search Index
+  "embedding": [
+    0.01235,
+    -0.04561,
+    0.07891,
+    ... // (1533 numbers in total for Nomic embeddings)
+  ],
+  
+  // Traceability metadata
+  "metadata": {
+    "file": "knowledge_structured.txt",
+    "timestamp": "2026-03-25T14:30:00.000Z"
+  }
+}
+
+========================
+6. MONGODB DATABASE DATA FORMAT (COMPLAINTS)
+========================
+When a user finishes the Grievance Bot wizard, their verified ticket is saved to the `complaints` MongoDB collection.
+
+Example JSON Object in MongoDB (`complaints` collection):
+---------------------------------------------------------
+{
+  "_id": ObjectId("660b45abc23498f394a12001"),
+  "ticket_id": "GRV-20260325-A7B2",
+  "telegram_user_id": 7770158141,
+  "student_name": "Antigravity",
+  "department": "Computer Science (CSE)",
+  "issue_category": "Hostel Facilities",
+  "complaint_description": "The WiFi in the third block has been disconnecting frequently since Monday.",
+  "status": "OPEN", // OPEN, IN_PROGRESS, RESOLVED, CLOSED
+  "created_at": "2026-03-25T15:45:00.000Z",
+  "resolved_at": null,
+  "admin_notes": ""
+}
+
+========================
+7. REDIS TELEMETRY FORMAT (BOT LOGS)
+========================
+Every interaction with the Assistant Bot is logged to Upstash Redis as a stringified JSON within a Redis List or Hash for real-time monitoring.
+
+Example JSON Log in Redis (`bot_live_logs_v2`):
+---------------------------------------------------------
+{
+  "timestamp": "2026-03-25T19:35:10.123Z",
+  "user_id": 7770158141,
+  "query": "Are there any buses to T. Nagar?",
+  "intent": "rag_query",
+  "retrieval": {
+    "num_chunks_found": 3,
+    "top_match_score": 0.892,
+    "rerank_latency_ms": 120
+  },
+  "generation": {
+    "llm_latency_ms": 850,
+    "total_latency_ms": 1100,
+    "tokens_prompt": 450,
+    "tokens_completion": 85
+  },
+  "response": "Yes, bus route 19 and 519 run from T. Nagar to the campus daily.",
+  "errors": null
+}
+======================================================

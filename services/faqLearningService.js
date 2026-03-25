@@ -9,7 +9,7 @@ export const checkSemanticCache = async (queryEmbedding) => {
     const results = await FAQCache.aggregate([
       {
         "$vectorSearch": {
-          "index": "faq_vector_index", // Requires an index configured on this collection
+          "index": "faq_vector_index", 
           "path": "embedding",
           "queryVector": queryEmbedding,
           "numCandidates": 50,
@@ -24,7 +24,7 @@ export const checkSemanticCache = async (queryEmbedding) => {
           "score": { "$meta": "vectorSearchScore" }
         }
       }
-    ]).toArray();
+    ]);
 
     if (results.length > 0 && results[0].score >= config.rag.faqSimilarityThreshold) {
       // Hit! Update usage count

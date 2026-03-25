@@ -1,41 +1,30 @@
 import { getAIReponse } from './aiService.js';
 import logger from '../utils/logger.js';
 
+import { buildSemanticChunkingPrompt } from '../utils/promptBuilder.js';
+
 /**
- * Recursive Character Splitting Logic for Small RAG (Facts & Dates)
- * Target: 250-400 chars. No mid-sentence splits.
+ * Intelligent Semantic Chunking Logic for RAG
+ * Splits content into meaningful, complete ideas rather than random char limits.
  */
-export const splitContent = (text, chunkSize = 325, overlapSize = 60) => {
-    const chunks = [];
-    let start = 0;
-
-    while (start < text.length) {
-        let end = start + chunkSize;
-        if (end > text.length) end = text.length;
-
-        // Boundary Logic: Avoid splitting sentences. 
-        if (end < text.length) {
-            const findLast = (str, chars, maxSearch) => {
-                for (let i = 0; i < maxSearch; i++) {
-                    if (chars.includes(str[end - i])) return end - i + 1;
-                }
-                return end;
-            };
-            end = findLast(text, ['.', '\n', '!', '?'], 150);
-        }
-
-        chunks.push(text.slice(start, end).trim());
-        const nextStart = end - overlapSize;
-        // Safety: Ensure we always move forward
-        if (nextStart <= start) {
-            start = end;
-        } else {
-            start = nextStart;
-        }
-        if (start >= text.length) break;
+export const splitContent = async (text) => {
+    const prompt = buildSemanticChunkingPrompt(text);
+    
+    try {
+        const response = await getAIReponse(prompt, 'cheap');
+        const jsonMatch = response.content.match(/\[[\s\S]*\]/);
+        
+        if (!jsonMatch) throw new Error("No JSON array returned for Semantic Chunking");
+        
+        const semanticChunks = JSON.parse(jsonMatch[0]);
+        // Map back to array of strings for downstream compatibility, 
+        // or return objects if downstream supports it. Let's return strings.
+        return semanticChunks.map(chunk => `[${chunk.title}] ${chunk.content}`);
+    } catch (error) {
+        logger.error(`Semantic Chunking Error: ${error.message}`);
+        // Fallback to basic regex splitting
+        return text.split(/\n\n+/).filter(b => b.trim().length > 50);
     }
-
-    return chunks;
 };
 
 /**

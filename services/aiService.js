@@ -1,3 +1,4 @@
+import fetch from 'node-fetch';
 import config from '../config/config.js';
 import { pushLog } from './monitorService.js';
 import logger from '../utils/logger.js';
@@ -29,8 +30,7 @@ export const getAIReponse = async (prompt, modelType = 'cheap') => {
         temperature: 0.1,
         max_tokens: 800,
         stream: false
-      }),
-      signal: AbortSignal.timeout(60000) // 60 second timeout
+      })
     });
 
     if (!response.ok) {

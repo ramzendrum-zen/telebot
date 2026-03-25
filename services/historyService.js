@@ -37,69 +37,27 @@ export const setUserMemory = async (chatId, entity, topic = 'general', question 
   }
 };
 
-export const rewriteQuery = (query, memory) => {
-  const { last_entity, last_topic } = memory;
-  if (!last_entity && !last_topic) return query;
+import { buildQueryRewritingPrompt } from '../utils/promptBuilder.js';
+import { getAIReponse } from './aiService.js';
+
+export const rewriteQuery = async (query, memory) => {
+  const { last_entity, last_topic, last_question } = memory;
+  if (!last_entity && !last_topic && !last_question) return query; // No memory, return query as is
   
-  const q = query.toLowerCase().trim();
-  const words = q.split(/\s+/);
+  // Format history as single block for LLM
+  const historyString = `Last Question: ${last_question || 'None'}
+Last Answer Context Topic: ${last_topic || 'None'}
+Last Answer Context Entity: ${last_entity || 'None'}`;
 
-  // 1. GREETING/SOCIAL DETECTION: Never rewrite
-  const greetings = /\b(hi|hello|hey|hlo|name is|i am|this is)\b/i;
-  if (greetings.test(q)) return query;
-
-  // 2. NAMED ENTITY RESET: "who is X", "what is X", "tell about X", "info about X"
-  // If user explicitly names a new subject → hard topic reset, no context bind.
-  const namedEntityQuery = /\b(who is|who are|what is|tell me about|tell about|info (about|on)|details (of|about)|about)\s+\w+/i;
-  if (namedEntityQuery.test(query)) {
-    logger.info(`Named Entity Reset: "${query}" — treating as fresh query`);
-    return query;
-  }
-
-  // 3. PROPER NOUN DETECTION: "yogesh", "srinivasan", "raju" typed alone
-  // If all meaningful words are proper nouns (start with capital in original), reset context.
-  const meaningfulWords = query.trim().split(/\s+/).filter(w => w.length > 2);
-  const hasProperNoun = meaningfulWords.some(w => /^[A-Z]/.test(w));
-  if (hasProperNoun && words.length <= 4) {
-    logger.info(`Proper Noun Reset: "${query}" — treating as fresh query`);
-    return query;
-  }
-
-  // 5. ROUTE MISMATCH RESET: Different route number = fully fresh query
-  // Matches any pattern like ar5, r22, ar-8, R22, etc.
-  const routePattern = /\b(ar-?\d+|r-?\d+)\b/i;
-  const queryHasRoute = routePattern.test(query);
-  const lastEntityHasRoute = routePattern.test(last_entity || '');
-
-  if (queryHasRoute) {
-    // Extract the route number from the current query and from memory
-    const queryRoute = (query.match(routePattern) || [])[0]?.toLowerCase().replace(/[-\s]/g, '');
-    const lastRoute = ((last_entity || '').match(routePattern) || [])[0]?.toLowerCase().replace(/[-\s]/g, '');
-    // If it's a different route OR there's any route in the query, always treat as fresh
-    if (!lastEntityHasRoute || queryRoute !== lastRoute) {
-      logger.info(`Route Mismatch Reset: "${query}" (query: ${queryRoute}, memory: ${lastRoute}) — fresh query`);
+  const rewritePrompt = buildQueryRewritingPrompt(query, historyString);
+  
+  try {
+      const response = await getAIReponse(rewritePrompt, 'cheap'); // use fast model
+      const rewrittenQuery = response.content.trim().replace(/^"|"$/g, ''); // strip quotes just in case
+      logger.info(`AI Rewrote Query: "${query}" -> "${rewrittenQuery}"`);
+      return rewrittenQuery;
+  } catch (error) {
+      logger.error(`AI Query Rewrite failed, falling back to original: ${error.message}`);
       return query;
-    }
   }
-
-  // 6. PRONOUN/HOOK DETECTION: him/her/them/they/more/detail
-  // NOTE: "it" is removed to avoid clash with "IT department" (Information Technology)
-  const pronouns = /\b(him|her|them|they|he|she|his|hers|that|this|the timing|phone|contact|more|detail|list)\b/i;
-  const hasPronoun = pronouns.test(q);
-
-  // 7. TOPIC OVERRIDE: If the current query already names a core topic, do NOT bind context.
-  const topicKeywords = /\b(cse|it|ece|eee|mech|civil|scholarship|hostel|fee|placement|club|event)\b/i;
-  const hasTopicInQuery = topicKeywords.test(q);
-
-  // 8. SHORT VAGUE FOLLOW-UPS ONLY: "timing?", "contact?", "fees?"
-  // EXCLUDE words that are likely to be fresh queries.
-  const isShortFollowUp = words.length <= 3 && !/who|what|which|bus|principal|fee|hostel|scholarship|admission/i.test(q);
-
-  if ((hasPronoun || isShortFollowUp) && !hasTopicInQuery) {
-    const context = last_entity || last_topic;
-    logger.info(`Context Bound: "${query}" -> "${query} about ${context}"`);
-    return `${query} about ${context}`;
-  }
-  
-  return query;
 };

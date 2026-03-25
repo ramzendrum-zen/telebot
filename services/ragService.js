@@ -95,16 +95,23 @@ export async function processRAGQuery(chatId, rawText) {
     const entityChunks = await directEntityLookup(entityDocId);
     if (entityChunks.length > 0) {
       const memory = await getUserMemory(chatId);
-      const finalPrompt = buildPrompt(normalizedText, entityChunks);
-      const { content: aiReply, usage } = await getAIReponse(finalPrompt);
-      totalTokens.prompt += usage.prompt_tokens;
-      totalTokens.completion += usage.completion_tokens;
-      totalTokens.total += usage.total_tokens;
-      log('TOKENS', `Direct | P: ${usage.prompt_tokens} | C: ${usage.completion_tokens} | T: ${usage.total_tokens}`);
+      const chatHistoryContext = `Last Topic: ${memory.last_topic || 'None'}\nLast Entity: ${memory.last_entity || 'None'}`;
+      
+      const reasoningPrompt = buildReasoningPrompt(normalizedText, entityChunks, chatHistoryContext);
+      const { content: rawReasoning, usage: reasoningUsage } = await getAIReponse(reasoningPrompt);
+      
+      const outputFilterPrompt = buildOutputFilterPrompt(rawReasoning, chatHistoryContext);
+      const { content: aiReply, usage: filterUsage } = await getAIReponse(outputFilterPrompt, 'cheap');
+
+      totalTokens.prompt += (reasoningUsage.prompt_tokens + filterUsage.prompt_tokens);
+      totalTokens.completion += (reasoningUsage.completion_tokens + filterUsage.completion_tokens);
+      totalTokens.total += (reasoningUsage.total_tokens + filterUsage.total_tokens);
+      
+      log('TOKENS', `Direct Entity | P: ${totalTokens.prompt} | C: ${totalTokens.completion} | T: ${totalTokens.total}`);
       await setUserMemory(chatId, normalizedText, 'admin', rawText).catch(() => null);
       await setCache(redisKey, aiReply);
       await pushLog('assistant', 'info', `Direct: ${rawText.slice(0, 50)}`, { query: rawText, tokens: totalTokens });
-      return { aiReply, source: 'direct_entity', latency: Date.now() - startTime };
+      return { aiReply, source: 'direct_entity', latency: Date.now() - startTime, chunkCount: entityChunks.length, totalTokens };
     }
   }
 
@@ -126,7 +133,7 @@ export async function processRAGQuery(chatId, rawText) {
   // ─── STEP 7: QUERY DECOMPOSITION + CONTEXT REWRITE ───────────────────────
   // ─── STEP 7: QUERY DECOMPOSITION (only for complex requests) ─────────────────
   const memory = await getUserMemory(chatId);
-  const contextualQuery = rewriteQuery(normalizedText, memory);
+  const contextualQuery = await rewriteQuery(normalizedText, memory);
   log('STEP-7', `Context rewrite: "${contextualQuery}"`);
   
   let subject = null;
