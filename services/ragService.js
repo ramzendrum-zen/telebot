@@ -167,50 +167,34 @@ export async function processRAGQuery(chatId, rawText) {
 
   // ─── STEP 8: RERANKING ENFORCEMENT ───────────────────────────────────────
   const isBroadQuery = intent.type === 'location' || intent.type === 'list' || rawText.toLowerCase().includes('which bus');
-  const recallLimit = isBroadQuery ? 40 : 20;
+  const recallLimit = config.rag.recallLimit || 40;
   
-  let mergedTop20 = Array.from(allChunks.values())
+  let mergedTop40 = Array.from(allChunks.values())
     .sort((a, b) => (b.score || 0) - (a.score || 0))
     .slice(0, recallLimit);
 
-  log('STEP-8', `Sending ${mergedTop20.length} chunks to Reranker (${isBroadQuery ? 'HIGH-RECALL' : 'Standard'})`);
-  let top5Chunks = await rerankChunks(contextualQuery, mergedTop20);
+  log('STEP-8', `Sending ${mergedTop40.length} chunks to Reranker (${isBroadQuery ? 'HIGH-RECALL' : 'Standard'})`);
+  let top20Chunks = await rerankChunks(contextualQuery, mergedTop40);
   
   // CRITICAL: Ensure verified data is NOT omitted even if reranker score is lower
   const verifiedInPool = Array.from(allChunks.values()).filter(c => c.source?.includes('verified'));
   verifiedInPool.forEach(vc => {
-    if (!top5Chunks.some(tc => tc._id?.toString() === vc._id?.toString())) {
-        top5Chunks.push(vc);
+    if (!top20Chunks.some(tc => tc._id?.toString() === vc._id?.toString())) {
+        top20Chunks.push(vc);
     }
   });
 
-  // Re-sort and take final 7
-  top5Chunks = top5Chunks.sort((a, b) => (b.rerankScore || b.score || 0) - (a.rerankScore || a.score || 0)).slice(0, config.rag.finalTopK || 7);
+  // Re-sort and take final context (up to 3k tokens)
+  top20Chunks = top20Chunks.sort((a, b) => (b.rerankScore || b.score || 0) - (a.rerankScore || a.score || 0)).slice(0, config.rag.finalTopK || 20);
 
-  log('STEP-8', `Reranker completed. Top score: ${top5Chunks[0]?.rerankScore || top5Chunks[0]?.score || 0}`);
+  log('STEP-8', `Reranker completed. Top score: ${top20Chunks[0]?.rerankScore || top20Chunks[0]?.score || 0}`);
 
-  // ─── STEP 9: CONFIDENCE SCORING — targeted retry ─────────────────────────
-  const topScore = top5Chunks[0]?.rerankScore || top5Chunks[0]?.score || 0;
-  const isTransportQuery = /\b(bus|route|ar-?\d+|r-?\d+|van|driver|stop|timing)\b/i.test(contextualQuery);
-
-  if (topScore < 5 && top5Chunks.length < 3) {
-    const retryCategory = isTransportQuery ? 'transport' : 'general';
-    log('STEP-9', `Confidence check FAILED (Score: ${topScore}). Scanning category: ${retryCategory}...`);
-    const broadChunks = await performHybridSearch(contextualQuery, retryCategory, {});
-    broadChunks.forEach(c => {
-      const id = c._id?.toString() || (c.content || '').slice(0, 30);
-      if (!allChunks.has(id)) allChunks.set(id, c);
-    });
-    
-    mergedTop20 = Array.from(allChunks.values())
-      .sort((a, b) => (b.score || 0) - (a.score || 0))
-      .slice(0, 20);
-    top5Chunks = await rerankChunks(contextualQuery, mergedTop20);
-    log('STEP-9', `Retry done. Found ${top5Chunks.length} chunks.`);
-  }
+  // ─── STEP 9: CONFIDENCE CHECK ─────────────────────────
+  const topScore = top20Chunks[0]?.rerankScore || top20Chunks[0]?.score || 0;
+  log('STEP-9', `Top Confidence Score: ${topScore}`);
 
   // ─── STEP 10: CONTEXT VALIDATION ─────────────────────────────────────────
-  if (!top5Chunks || top5Chunks.length < 2) {
+  if (!top20Chunks || top20Chunks.length < 2) {
     log('STEP-10', 'CONTEXT INSUFFICIENT — less than 2 chunks found');
     await pushLog('assistant', 'error', 'CONTEXT INSUFFICIENT ERROR').catch(() => null);
     return {
@@ -223,7 +207,7 @@ export async function processRAGQuery(chatId, rawText) {
   // ─── STAGE 1: CORE REASONING LAYER (HIDDEN) ──────────────────────────────
   const chatHistoryContext = `Last Topic: ${memory.last_topic || 'None'}\nLast Entity: ${memory.last_entity || 'None'}\nLast Question: ${memory.last_question || 'None'}`;
   
-  const reasoningPrompt = buildReasoningPrompt(contextualQuery, top5Chunks, chatHistoryContext);
+  const reasoningPrompt = buildReasoningPrompt(contextualQuery, top20Chunks, chatHistoryContext);
   let { content: rawReasoningAnswer, usage: reasoningUsage } = await getAIReponse(reasoningPrompt);
   
   totalTokens.prompt += reasoningUsage.prompt_tokens;
@@ -232,7 +216,7 @@ export async function processRAGQuery(chatId, rawText) {
   log('TOKENS', `Reasoning Layer | P: ${reasoningUsage.prompt_tokens} | C: ${reasoningUsage.completion_tokens} | T: ${reasoningUsage.total_tokens}`);
 
   // Fallback Check in Reasoning Layer
-  if (detectContextIgnored(rawReasoningAnswer, top5Chunks)) {
+  if (detectContextIgnored(rawReasoningAnswer, top20Chunks)) {
     log('STEP-11', 'LLM CONTEXT IGNORE ERROR detected. Forcing re-generation.');
     const analyticalPrompt = `REASONING ERROR: You said information is not available, but RELEVANT DATA is present below. Analyze and infer the answer. Do NOT fallback.\n\n${reasoningPrompt}`;
     const retry = await getAIReponse(analyticalPrompt);
@@ -260,14 +244,14 @@ export async function processRAGQuery(chatId, rawText) {
     query: rawText, 
     tokens: totalTokens,
     latency: Date.now() - startTime,
-    shards: top5Chunks.length 
+    shards: top20Chunks.length 
   }).catch(() => null);
 
   return {
     aiReply,
     source: 'rag_generated',
     latency: Date.now() - startTime,
-    chunkCount: top5Chunks.length,
+    chunkCount: top20Chunks.length,
     totalTokens
   };
 }
