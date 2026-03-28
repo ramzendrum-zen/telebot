@@ -149,83 +149,133 @@ const generateUserId = async () => {
  * REDESIGNED PROFESSIONAL EMAIL TEMPLATE
  */
 const getProfessionalEmailTemplate = (grvId, user, state, dept, isEmergency = false) => {
-  const accentColor = isEmergency ? '#ef4444' : '#3b82f6';
-  const urgencyLabel = isEmergency ? 'CRITICAL EMERGENCY' : 'NORMAL COMPLAINT';
+  const accentColor = isEmergency ? '#d32f2f' : '#1a73e8';
+  const bgColor = '#f4f7f6';
+  const cardColor = '#ffffff';
+  const textColor = '#202124';
+  const labelColor = '#5f6368';
+  const borderColor = '#dadce0';
+
+  const profilePhotoUrl = "https://imgs.search.brave.com/1xWoYBccqsvvI6tAIO2guAtDBBBk8BDXHeN2rQD1Dss/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5saWNkbi5jb20v/ZG1zL2ltYWdlL3Yy/L0Q0RDAzQVFGRVA3/akp1VzBIUXcvcHJv/ZmlsZS1kaXNwbGF5/cGhvdG8tc2hyaW5r/XzIwMF8yMDAvcHJv/ZmlsZS1kaXNwbGF5/cGhvdG8tc2hyaW5r/XzIwMF8yMDAvMC8x/NzI5NjA5Njc5ODc3/P2U9MjE0NzQ4MzY0/NyZ2PWJldGEmdD1U/TVdodHhCcFhLWU5h/WFlRS2JxNDI2bnFM/RU5QWjdtcldwcExU/Nm1rR3hZ";
+
+  const urgencyLabel = isEmergency ? 'CRITICAL EMERGENCY' : 'Standard Grievance';
+
   const emergencyHeader = isEmergency ? `
-        <div style="background-color: #ef4444; color: #ffffff; padding: 12px; text-align: center; font-weight: 900; font-size: 14px; letter-spacing: 3px; border-radius: 12px 12px 0 0;">
-            🚨 PRIORITY: ${urgencyLabel}
-        </div>
-    ` : '';
+    <div style="background-color: ${accentColor}; color: #ffffff; padding: 12px 20px; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; text-align: center;">
+       🚨 Priority Alert: Immediate Action Required
+    </div>
+  ` : '';
 
   return `
-    <div style="background-color: #f8fafc; color: #1e293b; font-family: 'Inter', -apple-system, sans-serif; padding: 40px 20px;">
-        <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #e2e8f0;">
-            ${emergencyHeader}
-            
-            <div style="padding: 32px;">
-                <div style="display: flex; align-items: center; margin-bottom: 24px;">
-                    <div style="background: ${accentColor}; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; margin-right: 12px;">M</div>
-                    <div style="font-weight: 800; font-size: 20px; letter-spacing: -0.5px; color: #0f172a;">MSAJCE <span style="color: ${accentColor};">ADMIN</span></div>
-                </div>
+    <div style="background-color: ${bgColor}; padding: 30px 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: ${textColor}; line-height: 1.5;">
+      
+      <div style="max-width: 600px; margin: 0 auto; background-color: ${cardColor}; border-radius: 8px; overflow: hidden; border: 1px solid ${borderColor}; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+        ${emergencyHeader}
 
-                <div style="border-bottom: 1px solid #f1f5f9; padding-bottom: 20px; margin-bottom: 24px;">
-                    <div style="font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px;">Ticket ID</div>
-                    <div style="font-size: 20px; font-weight: 800; color: ${accentColor}; font-family: 'JetBrains Mono', monospace;">${grvId}</div>
-                </div>
-
-                <div style="margin-bottom: 32px;">
-                    <h2 style="font-size: 24px; font-weight: 800; color: #0f172a; margin: 0 0 8px 0;">${isEmergency ? state.incident_type : state.category}</h2>
-                    <p style="font-size: 14px; color: #64748b; margin: 0;">Routed to: <strong style="color: #475569;">${dept}</strong></p>
-                </div>
-
-                <div style="background: #f8fafc; border-radius: 12px; padding: 20px; margin-bottom: 32px; border: 1px solid #f1f5f9;">
-                    <h3 style="font-size: 11px; font-weight: 700; color: ${accentColor}; margin: 0 0 12px 0; text-transform: uppercase;">Issue Description</h3>
-                    <div style="font-size: 15px; line-height: 1.6; color: #334155;">${state.description}</div>
-                    ${isEmergency && state.location ? `
-                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px dotted #cbd5e1;">
-                         <div style="font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 4px;">LOCATION</div>
-                         <div style="font-size: 14px; color: #0f172a; font-weight: 600;">📍 ${state.location}</div>
-                    </div>` : ''}
-                </div>
-
-                <div style="margin-bottom: 32px;">
-                    <h3 style="font-size: 11px; font-weight: 700; color: #94a3b8; margin: 0 0 16px 0; text-transform: uppercase; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">Initiator Metadata</h3>
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <tr>
-                            <td style="padding: 8px 0; font-size: 13px; color: #64748b; font-weight: 500;">Name</td>
-                            <td style="padding: 8px 0; font-size: 13px; color: #0f172a; font-weight: 700; text-align: right;">${state.is_anonymous ? '🎭 ANONYMOUS' : (user?.name || 'Unknown User')}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px 0; font-size: 13px; color: #64748b; font-weight: 500;">College ID</td>
-                            <td style="padding: 8px 0; font-size: 13px; color: #0f172a; font-weight: 700; text-align: right;">${state.is_anonymous ? 'REDACTED' : (user?.register_number || user?.employee_id || 'N/A')}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px 0; font-size: 13px; color: #64748b; font-weight: 500;">Department</td>
-                            <td style="padding: 8px 0; font-size: 13px; color: #0f172a; font-weight: 700; text-align: right;">${user?.department || 'N/A'}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px 0; font-size: 13px; color: #64748b; font-weight: 500;">Role</td>
-                            <td style="padding: 8px 0; font-size: 13px; color: #0f172a; font-weight: 700; text-align: right;">${(user?.role || 'student').toUpperCase()}</td>
-                        </tr>
-                        ${user?.phone && !state.is_anonymous ? `
-                        <tr>
-                            <td style="padding: 8px 0; font-size: 13px; color: #64748b; font-weight: 500;">Contact Phone</td>
-                            <td style="padding: 8px 0; font-size: 13px; color: #ef4444; font-weight: 800; text-align: right;">${user.phone}</td>
-                        </tr>` : ''}
-                    </table>
-                </div>
-
-                <div style="text-align: center;">
-                    <a href="https://telebot-ram.vercel.app/admin" style="display: inline-block; background: #0f172a; color: white; padding: 14px 28px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">Proceed to Review Ticket</a>
-                </div>
-            </div>
-
-            <div style="background: #f8fafc; padding: 20px; text-align: center; border-top: 1px solid #f1f5f9;">
-                <p style="font-size: 12px; color: #94a3b8; margin: 0; font-weight: 500;">Sent via MSAJCE Automated Grievance Oracle. Confidential.</p>
-            </div>
+        <!-- Header -->
+        <div style="padding: 30px 40px 20px 40px; border-bottom: 2px solid #f1f3f4;">
+           <table width="100%" cellpadding="0" cellspacing="0" border="0">
+             <tr>
+               <td style="vertical-align: middle;">
+                 <h1 style="margin: 0; font-size: 20px; color: ${accentColor}; font-weight: 600;">MSAJCE Grievance Portal</h1>
+                 <p style="margin: 4px 0 0 0; font-size: 13px; color: ${labelColor};">New Ticket Submitted for Review</p>
+               </td>
+               <td align="right" style="vertical-align: middle;">
+                 <a href="https://www.linkedin.com/in/msajce/" target="_blank">
+                   <img src="${profilePhotoUrl}" alt="MSAJCE Logo" style="width: 48px; height: 48px; border-radius: 6px; border: 1px solid ${borderColor};" />
+                 </a>
+               </td>
+             </tr>
+           </table>
         </div>
+
+        <div style="padding: 30px 40px;">
+
+          <!-- Core Ticket Details -->
+          <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 25px;">
+            <tr>
+              <td width="50%" style="padding-bottom: 15px;">
+                <div style="font-size: 12px; color: ${labelColor}; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Ticket ID</div>
+                <div style="font-size: 16px; font-weight: 600; color: ${textColor}; margin-top: 4px;">${grvId}</div>
+              </td>
+              <td width="50%" style="padding-bottom: 15px;">
+                <div style="font-size: 12px; color: ${labelColor}; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Routed Department</div>
+                <div style="font-size: 16px; font-weight: 600; color: ${textColor}; margin-top: 4px;">${dept}</div>
+              </td>
+            </tr>
+            <tr>
+              <td width="50%" style="padding-bottom: 5px;">
+                <div style="font-size: 12px; color: ${labelColor}; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Category</div>
+                <div style="font-size: 15px; color: ${textColor}; margin-top: 4px;">${isEmergency ? state.incident_type : state.category}</div>
+              </td>
+              <td width="50%" style="padding-bottom: 5px;">
+                <div style="font-size: 12px; color: ${labelColor}; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Priority Status</div>
+                <div style="font-size: 13px; font-weight: 600; color: ${accentColor}; margin-top: 4px; display: inline-block; padding: 4px 10px; border-radius: 4px; background-color: ${isEmergency ? '#fdecea' : '#e8f0fe'};">${urgencyLabel}</div>
+              </td>
+            </tr>
+          </table>
+
+          <!-- Description Box -->
+          <div style="margin-bottom: 30px;">
+            <div style="font-size: 13px; color: ${labelColor}; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; border-bottom: 1px solid ${borderColor}; padding-bottom: 8px; margin-bottom: 12px;">Issue Description</div>
+            <div style="font-size: 15px; color: #3c4043; line-height: 1.6; background-color: #f8f9fa; padding: 18px; border-radius: 6px; border-left: 4px solid ${accentColor};">
+              ${state.description}
+              ${isEmergency && state.location ? `
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed ${borderColor};">
+                  <strong style="color: #d32f2f; font-size: 13px;">📍 LOCATION:</strong>
+                  <span style="font-size: 14px; color: ${textColor}; margin-left: 4px;">${state.location}</span>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+
+          <!-- Initiator Info -->
+          <div>
+            <div style="font-size: 13px; color: ${labelColor}; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; border-bottom: 1px solid ${borderColor}; padding-bottom: 8px; margin-bottom: 12px;">Initiator Details</div>
+            <table width="100%" cellpadding="10" cellspacing="0" border="0" style="font-size: 14px; color: ${textColor};">
+              <tr>
+                <td style="width: 35%; color: ${labelColor}; border-bottom: 1px solid #f1f3f4; padding-left: 0;"><strong>Name</strong></td>
+                <td style="width: 65%; border-bottom: 1px solid #f1f3f4;">${state.is_anonymous ? '<span style="color: #80868b; font-style: italic;">Anonymous</span>' : (user?.name || 'Unknown')}</td>
+              </tr>
+              <tr>
+                <td style="width: 35%; color: ${labelColor}; border-bottom: 1px solid #f1f3f4; padding-left: 0;"><strong>College ID</strong></td>
+                <td style="width: 65%; border-bottom: 1px solid #f1f3f4;">${state.is_anonymous ? '<span style="color: #80868b; font-style: italic;">Redacted</span>' : (user?.register_number || user?.employee_id || 'N/A')}</td>
+              </tr>
+              <tr>
+                <td style="width: 35%; color: ${labelColor}; border-bottom: 1px solid #f1f3f4; padding-left: 0;"><strong>Department</strong></td>
+                <td style="width: 65%; border-bottom: 1px solid #f1f3f4;">${user?.department || 'N/A'}</td>
+              </tr>
+              <tr>
+                <td style="width: 35%; color: ${labelColor}; border-bottom: 1px solid #f1f3f4; padding-left: 0;"><strong>Role</strong></td>
+                <td style="width: 65%; border-bottom: 1px solid #f1f3f4; text-transform: capitalize;">${user?.role || 'student'}</td>
+              </tr>
+              ${user?.phone && !state.is_anonymous ? `
+                <tr>
+                  <td style="width: 35%; color: ${labelColor}; border-bottom: 1px solid #f1f3f4; padding-left: 0;"><strong>Contact</strong></td>
+                  <td style="width: 65%; border-bottom: 1px solid #f1f3f4;"><a href="tel:${user.phone}" style="color: #1a73e8; text-decoration: none;">${user.phone}</a></td>
+                </tr>
+              ` : ''}
+            </table>
+          </div>
+
+          <!-- Buttons -->
+          <div style="text-align: center; margin-top: 35px;">
+            <a href="https://telebot-ram.vercel.app/admin" style="display: inline-block; background-color: ${accentColor}; color: #ffffff; text-decoration: none; padding: 13px 32px; border-radius: 4px; font-weight: 500; font-size: 15px; letter-spacing: 0.5px;">Review Ticket</a>
+          </div>
+        </div>
+        
+        <!-- Footer -->
+        <div style="background-color: #f8f9fa; padding: 20px 40px; text-align: center; border-top: 1px solid ${borderColor}; color: #80868b; font-size: 12px;">
+          <p style="margin: 0 0 8px 0;">This email was securely processed by the MSAJCE Internal Oracle.</p>
+          <p style="margin: 0;">
+            <a href="https://www.linkedin.com/in/msajce/" target="_blank" style="color: #1a73e8; text-decoration: none;">MSAJCE Official LinkedIn</a>
+            &nbsp;&nbsp;•&nbsp;&nbsp; © ${new Date().getFullYear()} MSAJCE
+          </p>
+        </div>
+
+      </div>
     </div>
-    `;
+  `;
 };
 
 /**
@@ -321,12 +371,24 @@ export const handleVerificationFlow = async (chatId, text, message) => {
     case 'review_details':
       if (text.includes('Correct')) {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const profilePhotoUrl = "https://imgs.search.brave.com/1xWoYBccqsvvI6tAIO2guAtDBBBk8BDXHeN2rQD1Dss/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5saWNkbi5jb20v/ZG1zL2ltYWdlL3Yy/L0Q0RDAzQVFGRVA3/akp1VzBIUXcvcHJv/ZmlsZS1kaXNwbGF5/cGhvdG8tc2hyaW5r/XzIwMF8yMDAvcHJv/ZmlsZS1kaXNwbGF5/cGhvdG8tc2hyaW5r/XzIwMF8yMDAvMC8x/NzI5NjA5Njc5ODc3/P2U9MjE0NzQ4MzY0/NyZ2PWJldGEmdD1U/TVdodHhCcFhLWU5h/WFlRS2JxNDI2bnFM/RU5QWjdtcldwcExU/Nm1rR3hZ";
         const html = `
-            <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
-              <h2 style="color: #2563eb;">MSAJCE Verification</h2>
-              <p>Your OTP for the Grievance Portal is:</p>
-              <div style="font-size: 32px; font-weight: 800; letter-spacing: 5px; color: #1e293b; padding: 10px 0;">${otp}</div>
-              <p style="color: #64748b; font-size: 12px;">This code expires in 10 minutes.</p>
+            <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 30px; border: 1px solid #e5e7eb; border-radius: 8px; background-color: #ffffff; text-align: center; color: #374151;">
+              <a href="https://www.linkedin.com/in/msajce/" target="_blank" style="text-decoration: none;">
+                <img src="${profilePhotoUrl}" alt="MSAJCE Profile" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #e5e7eb; margin-bottom: 15px;" />
+              </a>
+              <h2 style="margin: 0 0 10px 0; color: #111827; font-size: 20px;">MSAJCE Verification</h2>
+              <p style="margin: 0 0 20px 0; font-size: 14px; color: #6b7280;">Your Secure OTP for the Grievance Portal</p>
+              
+              <div style="background-color: #f3f4f6; padding: 20px; border-radius: 6px; margin-bottom: 25px;">
+                <div style="font-size: 36px; font-weight: 700; letter-spacing: 8px; color: #111827;">${otp}</div>
+              </div>
+              
+              <p style="margin: 0; font-size: 13px; color: #6b7280;">This verification code expires in 10 minutes.</p>
+              <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #9ca3af;">
+                <p style="margin: 0;">Automated message from MSAJCE Portal.</p>
+                <p style="margin: 5px 0 0 0;"><a href="https://www.linkedin.com/in/msajce/" style="color: #4f46e5; text-decoration: none;">Follow MSAJCE on LinkedIn</a></p>
+              </div>
             </div>
           `;
         const emailSent = await sendEmail(nextState.email, "MSAJCE Portal Security Code", html);

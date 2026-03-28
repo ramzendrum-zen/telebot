@@ -27,6 +27,8 @@ const ENTITY_LOOKUP_MAP = {
   institutions:   'trust_institutions_list',
   'csi president': 'student_yogesh',
   'yogesh':       'student_yogesh',
+  'abdul gafoor': 'staff_abdul_gafoor',
+  'transport convener': 'staff_abdul_gafoor',
   'it hod':       'hod_it',
   'hod it':       'hod_it',
   'cse seats':    'seats_cse',
@@ -98,7 +100,7 @@ export async function processRAGQuery(chatId, rawText) {
       const chatHistoryContext = `Last Topic: ${memory.last_topic || 'None'}\nLast Entity: ${memory.last_entity || 'None'}`;
       
       const reasoningPrompt = buildReasoningPrompt(normalizedText, entityChunks, chatHistoryContext);
-      const { content: rawReasoning, usage: reasoningUsage } = await getAIReponse(reasoningPrompt);
+      const { content: rawReasoning, usage: reasoningUsage } = await getAIReponse(reasoningPrompt, 'advanced'); // Use advanced for critical entities
       
       const outputFilterPrompt = buildOutputFilterPrompt(rawReasoning, chatHistoryContext);
       const { content: aiReply, usage: filterUsage } = await getAIReponse(outputFilterPrompt, 'cheap');
@@ -108,7 +110,7 @@ export async function processRAGQuery(chatId, rawText) {
       totalTokens.total += (reasoningUsage.total_tokens + filterUsage.total_tokens);
       
       log('TOKENS', `Direct Entity | P: ${totalTokens.prompt} | C: ${totalTokens.completion} | T: ${totalTokens.total}`);
-      await setUserMemory(chatId, normalizedText, 'admin', rawText).catch(() => null);
+      await setUserMemory(chatId, entityDocId, 'profile', rawText).catch(() => null);
       await setCache(redisKey, aiReply);
       await pushLog('assistant', 'info', `Direct: ${rawText.slice(0, 50)}`, { query: rawText, tokens: totalTokens });
       return { aiReply, source: 'direct_entity', latency: Date.now() - startTime, chunkCount: entityChunks.length, totalTokens };

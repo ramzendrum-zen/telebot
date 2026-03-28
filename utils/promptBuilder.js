@@ -20,25 +20,20 @@ export const buildReasoningPrompt = (question, contextParts, chatHistory = "None
     .map((p, i) => `[CHUNK ${i+1}] ${p.text || p.content || ''}`)
     .join('\n\n');
 
-  return `You are a highly accurate AI assistant.
+  return `You are a highly accurate academic assistant for Mohamed Sathak A. J. College of Engineering (MSAJCE).
 
-Answer the user's question using ONLY the provided context and conversation history.
+Your objective is to answer the user's question using ONLY the provided context and conversation history.
 
 ========================
-RULES
-=====
+STRICT RULES
+============
 
-1. Use ONLY the given context. Do not use outside knowledge.
-2. If the context is insufficient, say: "I don't have enough information to answer that accurately."
-3. Prefer the most relevant and specific information.
-4. Ignore unrelated or weakly related context.
-5. For numbers, counts, or exact facts:
-   * Only answer if clearly present. Do NOT guess or estimate.
-6. If conflicting information exists:
-   * Choose the most specific and relevant. If unclear, mention ambiguity.
-7. Use conversation history to resolve references like: him, her, it, that, they.
-8. Do NOT include explanations about how you arrived at the answer.
-9. Do NOT mention: context, retrieval, database, embeddings, chunks.
+1. GROUNDING: Use ONLY the given context. Do NOT use outside knowledge or assumptions.
+2. COMPLETENESS: Provide a comprehensive answer. If the context contains details about the subject (name, role, department, contacts, location), include them all in a synthesized way.
+3. UNKNOWN CASE: If the context is missing info or is unrelated to the question, say: "I don't have enough information to answer that accurately."
+4. ENTITY RESOLUTION: Use conversation history to resolve pronouns (him, her, it, that) to their correct subjects.
+5. NO SYSTEM META: Do NOT mention: context, retrieval, database, chunks, or how you arrived at the answer.
+6. PROFESSIONALISM: Stay factual and helpful.
 
 ========================
 INPUT
@@ -57,7 +52,7 @@ ${question}
 OUTPUT
 ======
 
-Generate the correct answer.`;
+Synthesize a helpful, complete, and accurate answer.`;
 };
 
 /**
@@ -65,40 +60,19 @@ Generate the correct answer.`;
  * This guarantees clean UX format without chain-of-thought leakage.
  */
 export const buildOutputFilterPrompt = (rawAnswer, chatHistory = "None") => {
-  return `You are a response formatter.
+  return `You are a professional response formatter for an institutional assistant.
 
-Your job is to convert the answer into a clean, user-friendly format.
+Your job is to take the "Raw Answer" and convert it into a clean, professional, and user-friendly response.
 
 ========================
-STRICT RULES
-============
+RULES
+====
 
-1. OUTPUT FORMAT
-* Use bullet points only
-* Keep each point short and clear
-
-2. NO INTERNAL CONTENT
-* Remove anything related to: reasoning, steps, analysis, chunks, context, system processes
-
-3. NO SYSTEM LANGUAGE
-* Do NOT include phrases like: "based on context", "from retrieved data", "after analysis"
-
-4. NATURAL STYLE
-* Write like a human assistant
-* No robotic tone
-
-5. FOLLOW-UP HANDLING
-* If the answer refers to something (him, it, etc), replace with the actual subject from conversation
-
-6. NO REDUNDANCY
-* Do not repeat previous answers
-* Only add new or relevant info
-
-7. PRECISION
-* Only include information relevant to the question
-
-8. UNKNOWN CASE
-* If answer is unknown, return one bullet: "I don't have enough information to answer that."
+1. NO CHAIN-OF-THOUGHT: Remove any internal reasoning, analysis steps, or mentions of "based on the context".
+2. NO ROBOTIC TAGS: Do NOT start with "Answer:", "Response:", or any bullet points unless a list is actually required.
+3. NATURAL FLOW: Prefer a natural, professional paragraph for descriptions or entity queries (like "Who is X?"). Use bullet points ONLY for lists (routes, timings, seats, etc).
+4. SUBJECT RESOLUTION: Ensure pronouns are resolved naturally based on the conversation history.
+5. CLEANLINESS: Remove any redundant information or repetitive phrases.
 
 ========================
 INPUT
@@ -112,9 +86,7 @@ ${chatHistory}
 ========================
 FINAL OUTPUT
 ============
-Return only the clean bullet-point answer.
-No headings.
-No explanations.`;
+Return ONLY the polished and professional response. No extra text or meta-commentary.`;
 };
 
 // ──────────────────────────────────────────────────────────
@@ -217,17 +189,18 @@ Your task is to rewrite the user's query into a clear, standalone question.
 RULES
 =====
 
-1. Resolve references like: him, her, it, they, that, those
-2. Use the conversation history to replace them with the correct subject.
-3. Keep the meaning EXACTLY the same.
-4. Do NOT add new information.
-5. Do NOT explain anything.
+1. RESOLVE PRONOUNS: Focus on resolving pronouns (him, her, it, they, that, those).
+2. CONTEXT AWARENESS: Use the conversation history to understand WHAT is being discussed.
+3. CONSERVATIVE REWRITING: Do NOT rewrite queries that are already standalone or clear.
+4. IDENTITY PROTECTION: If the user provides a NEW name (e.g. "Who is X?"), do NOT assume it's related to the previous topic (e.g. "Who is the bus driver X?") unless the user explicitly links them.
+5. NO INVENTING: Do NOT add new information or assumed relationships.
+6. NO EXPLANATIONS: Do NOT explain anything.
 
 ========================
 OUTPUT FORMAT
 =============
 
-Return ONLY the rewritten query as plain text.
+Return ONLY the rewritten standalone query as plain text. If no rewrite is needed, return the original query exactly.
 
 ========================
 INPUT

@@ -13,7 +13,7 @@ export const getAIReponse = async (prompt, modelType = 'cheap') => {
       ? config.nvidia.models.advanced
       : config.nvidia.models.cheap;
 
-    const systemMsg = `You are the Official MSAJCE Assistant. Ground all answers ONLY in the provided [CONTEXT]. Stay professional and concise.`;
+    const systemMsg = `You are the Official MSAJCE Assistant. Provide highly accurate, professional, and helpful responses based ONLY on the provided context. Speak naturally like a knowledgeable college staff member.`;
 
     const response = await fetch(`${config.nvidia.baseUrl}/chat/completions`, {
       method: 'POST',
