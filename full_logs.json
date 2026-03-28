@@ -1,0 +1,1031 @@
+[
+  {
+    "timestamp": "2026-03-28T11:31:05.853Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: Tell me Abt him",
+    "metadata": {
+      "latency": 4000,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-28T11:31:05.022Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: Tell me Abt him",
+    "metadata": {
+      "query": "Tell me Abt him",
+      "tokens": {
+        "prompt": 2402,
+        "completion": 12,
+        "total": 2414
+      },
+      "latency": 3164,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-28T11:31:04.153Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [Yogesh R, Dr. Elliss Yogesh R, MSAJCE Knowledge: Professor Department of IT 971..., MSAJCE Knowledge: Mohamed Sathak A. J. College o..., MSAJCE Knowledge: The Mohamed Sathak Trust is le..., MSAJCE Knowledge: The Mohamed Sathak Trust is le..., MSAJCE Knowledge: cal Lead, Cognizant. 22.03.23 ..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: The Mohamed Sathak Trust is le..., MSAJCE Knowledge: NSS and YRC are involved in Un..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: ege of Engineering 9150575066 ..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb997f0c142..., MSAJCE Knowledge: reening Camp 26.06.2023 View 3..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb97d294a71..., MSAJCE Knowledge: --- SOURCE: https://www.msajce...]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-28T11:30:54.577Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: Who is yogesh",
+    "metadata": {
+      "latency": 2230,
+      "source": "direct_entity",
+      "chunks": 1
+    }
+  },
+  {
+    "timestamp": "2026-03-28T11:30:53.913Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "Direct: Who is yogesh",
+    "metadata": {
+      "query": "Who is yogesh",
+      "tokens": {
+        "prompt": 656,
+        "completion": 12,
+        "total": 668
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-28T11:30:51.083Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: Who is abdul gafoor",
+    "metadata": {
+      "latency": 6026,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-28T11:30:50.192Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: Who is abdul gafoor",
+    "metadata": {
+      "query": "Who is abdul gafoor",
+      "tokens": {
+        "prompt": 1193,
+        "completion": 25,
+        "total": 1218
+      },
+      "latency": 5132,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-28T11:30:49.261Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [Mr. A. ABDUL GAFOOR, College Contact Information, Dr. D. WESLIN, Dr. Elliss Yogesh R, Dr. I. MANJU, MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9a790c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9aeb0c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb995e0c142..., Dr. K.S. SRINIVASAN, Dr. K. P. SANTHOSH NATHAN, Yogesh R, MSAJCE Knowledge: Contact information is availab..., MSAJCE Knowledge: omain.com contact@yourdomain.c..., MSAJCE Knowledge: Inks opening hours are Monday ..., MSAJCE Knowledge: The staff in charge of buses a..., MSAJCE Knowledge: The establishment is open Mond..., MSAJCE Knowledge: omain.com contact@yourdomain.c..., MSAJCE Knowledge: Scholarship opportunities are ..., MSAJCE Knowledge: omain.com contact@yourdomain.c..., MSAJCE Knowledge: NSS and YRC are involved in Un...]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-28T11:25:00.260Z",
+    "bot": "grievance",
+    "type": "info",
+    "message": "Grievance Cmd: ✅ Submit Complaint",
+    "metadata": {
+      "latency": 1818
+    }
+  },
+  {
+    "timestamp": "2026-03-28T11:24:56.493Z",
+    "bot": "grievance",
+    "type": "info",
+    "message": "Grievance Cmd: ➡ Skip / Finish",
+    "metadata": {
+      "latency": 1432
+    }
+  },
+  {
+    "timestamp": "2026-03-28T11:24:55.992Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: Contact details for ar5 driver",
+    "metadata": {
+      "latency": 5431,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-28T11:24:55.166Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: Contact details for ar5 driver",
+    "metadata": {
+      "query": "Contact details for ar5 driver",
+      "tokens": {
+        "prompt": 1447,
+        "completion": 55,
+        "total": 1502
+      },
+      "latency": 4605,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-28T11:24:54.074Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [AR-5, AR-5, AR-3, AR-4, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-28T11:24:39.508Z",
+    "bot": "grievance",
+    "type": "info",
+    "message": "Grievance Cmd: No food",
+    "metadata": {
+      "latency": 3273
+    }
+  },
+  {
+    "timestamp": "2026-03-28T11:24:31.423Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: Ar5 route",
+    "metadata": {
+      "latency": 7571,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-28T11:24:30.577Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: Ar5 route",
+    "metadata": {
+      "query": "Ar5 route",
+      "tokens": {
+        "prompt": 2079,
+        "completion": 337,
+        "total": 2416
+      },
+      "latency": 6721,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-28T11:24:30.309Z",
+    "bot": "grievance",
+    "type": "info",
+    "message": "Grievance Cmd: 🍱 Mess",
+    "metadata": {
+      "latency": 1216
+    }
+  },
+  {
+    "timestamp": "2026-03-28T11:24:27.899Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [MSAJCE Knowledge: The driver for bus route AR-5 ..., MSAJCE Knowledge: The MMDA school bus for route ..., MSAJCE Knowledge: The drivers for bus route AR-5..., MSAJCE Knowledge: Bus route AR-5 path: MMDA Scho..., MSAJCE Knowledge: The driver for bus route AR-5 ..., MSAJCE Knowledge: Bus route AR-5 path: MMDA Scho..., MSAJCE Knowledge: Bus route AR-5 path MMDA Schoo..., MSAJCE Knowledge: MMDA school bus starts at 06:1..., MSAJCE Knowledge: MMDA school bus starts at 06:1..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9dec0c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba0b71ccb9..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9dfa0c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9f88769fd..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba0c01ccb9..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9f74769fd..., AR-3, AR-4, AR-5, AR-6, AR-7]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-28T11:24:27.700Z",
+    "bot": "grievance",
+    "type": "info",
+    "message": "Grievance Cmd: 🎭 Anonymous",
+    "metadata": {
+      "latency": 1219
+    }
+  },
+  {
+    "timestamp": "2026-03-28T11:24:23.123Z",
+    "bot": "grievance",
+    "type": "info",
+    "message": "Grievance Cmd: 📝 Register Complaint",
+    "metadata": {
+      "latency": 4643
+    }
+  },
+  {
+    "timestamp": "2026-03-25T17:38:52.502Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: What are the bus routes?",
+    "metadata": {
+      "latency": 3560,
+      "source": "redis"
+    }
+  },
+  {
+    "timestamp": "2026-03-25T17:35:39.988Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: What are the bus routes?",
+    "metadata": {
+      "latency": 3552,
+      "source": "redis"
+    }
+  },
+  {
+    "timestamp": "2026-03-25T17:29:22.232Z",
+    "bot": "assistant",
+    "type": "error",
+    "message": "Failure: NVIDIA AI API Error: 500 - {\"type\":\"urn:inference-",
+    "metadata": {
+      "latency": 3065
+    }
+  },
+  {
+    "timestamp": "2026-03-25T17:29:21.857Z",
+    "bot": "assistant",
+    "type": "error",
+    "message": "AI Generation Failed",
+    "metadata": {
+      "error": "NVIDIA AI API Error: 500 - {\"type\":\"urn:inference-connection:problem-details:internal-server-error\",\"title\":\"Internal Server Error\",\"status\":500,\"detail\":\"Inference connection error while making inference request\"}"
+    }
+  },
+  {
+    "timestamp": "2026-03-25T17:29:21.530Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [MSAJCE Knowledge: The driver for bus route AR-8 ..., MSAJCE Knowledge: The driver for bus route AR-8 ..., MSAJCE Knowledge: The driver for bus route AR-8 ..., MSAJCE Knowledge: The Manjambakkam college bus f..., MSAJCE Knowledge: Manjambakkam college bus start..., MSAJCE Knowledge: Manjambakkam college bus start..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9e020c142..., MSAJCE Knowledge: Bus route AR-8 path: Manjambak..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba0fb1ccb9..., MSAJCE Knowledge: Bus route AR-8 path: Manjambak..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9e130c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba0c71ccb9..., AR-8, MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9fcd769fd..., AR-8, MSAJCE Knowledge: --- SOURCE: https://www.msajce...]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T17:25:43.047Z",
+    "bot": "assistant",
+    "type": "error",
+    "message": "Failure: buildPrompt is not defined",
+    "metadata": {
+      "latency": 602
+    }
+  },
+  {
+    "timestamp": "2026-03-25T17:25:35.657Z",
+    "bot": "assistant",
+    "type": "error",
+    "message": "Failure: buildPrompt is not defined",
+    "metadata": {
+      "latency": 603
+    }
+  },
+  {
+    "timestamp": "2026-03-25T17:25:30.396Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: Ar8 ?",
+    "metadata": {
+      "latency": 4720,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T17:25:29.558Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: Ar8 ?",
+    "metadata": {
+      "query": "Ar8 ?",
+      "tokens": {
+        "prompt": 1932,
+        "completion": 24,
+        "total": 1956
+      },
+      "latency": 3881,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T17:25:28.637Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [MSAJCE Knowledge: The driver for bus route AR-8 ..., MSAJCE Knowledge: The driver for bus route AR-8 ..., MSAJCE Knowledge: The driver for bus route AR-8 ..., MSAJCE Knowledge: Bus route AR-8 path: Manjambak..., MSAJCE Knowledge: Bus route AR-8 path: Manjambak..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9e020c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba0c71ccb9..., MSAJCE Knowledge: The Manjambakkam college bus f..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9f98769fd..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba0fb1ccb9..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9e130c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9fcd769fd..., MSAJCE Knowledge: Manjambakkam college bus start..., MSAJCE Knowledge: Manjambakkam college bus start..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9fbc769fd..., AR-3, AR-4, AR-5, AR-6, AR-7]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T17:25:24.755Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: Ar5 route",
+    "metadata": {
+      "latency": 6732,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T17:25:23.906Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: Ar5 route",
+    "metadata": {
+      "query": "Ar5 route",
+      "tokens": {
+        "prompt": 2319,
+        "completion": 321,
+        "total": 2640
+      },
+      "latency": 5883,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T17:25:21.415Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [AR-5, AR-3, AR-4, AR-6, AR-7, AR-8, AR-9, R-20, R-21, R-22, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T17:25:10.938Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: Ar5 route details for now?",
+    "metadata": {
+      "latency": 6906,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T17:25:10.080Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: Ar5 route details for now?",
+    "metadata": {
+      "query": "Ar5 route details for now?",
+      "tokens": {
+        "prompt": 1577,
+        "completion": 325,
+        "total": 1902
+      },
+      "latency": 6036,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T17:25:07.619Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [AR-5, AR-3, AR-4, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T17:18:06.275Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: Ar6 route?",
+    "metadata": {
+      "latency": 5257,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T17:18:05.431Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: Ar6 route?",
+    "metadata": {
+      "query": "Ar6 route?",
+      "tokens": {
+        "prompt": 1829,
+        "completion": 24,
+        "total": 1853
+      },
+      "latency": 4413,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T17:18:04.475Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [AR-6, MSAJCE Knowledge: The driver for bus route AR-3 ..., MSAJCE Knowledge: The driver for bus route AR-3 ..., MSAJCE Knowledge: The drivers for bus route AR-5..., College Contact Information, MSAJCE Knowledge: Bus route AR-5 path: MMDA Scho..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9dec0c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9f34769fd..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9dd20c142..., AR-3, AR-4, AR-5, AR-6, AR-6, AR-6, AR-6, AR-6, AR-6, AR-6, AR-6]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T17:17:59.575Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: Tell me about information technology department",
+    "metadata": {
+      "latency": 2628,
+      "source": "redis"
+    }
+  },
+  {
+    "timestamp": "2026-03-25T17:16:28.361Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: What are the bus routes?",
+    "metadata": {
+      "latency": 3680,
+      "source": "redis"
+    }
+  },
+  {
+    "timestamp": "2026-03-25T17:13:44.463Z",
+    "bot": "assistant",
+    "type": "error",
+    "message": "CONTEXT INSUFFICIENT ERROR",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T17:03:35.429Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: What are the bus routes?",
+    "metadata": {
+      "latency": 3850,
+      "source": "redis"
+    }
+  },
+  {
+    "timestamp": "2026-03-25T17:00:28.213Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: What are the bus routes?",
+    "metadata": {
+      "latency": 3724,
+      "source": "redis"
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:51:49.672Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: Give me about information technology department",
+    "metadata": {
+      "latency": 6710,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:51:48.805Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: Give me about information technology department",
+    "metadata": {
+      "query": "Give me about information technology department",
+      "tokens": {
+        "prompt": 4679,
+        "completion": 107,
+        "total": 4786
+      },
+      "latency": 5842,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:51:47.572Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [AR-3, AR-4, AR-5, AR-6, AR-7, AR-3, AR-3, R-22, R-22, R-22, R-22, R-22, R-22, R-22, R-22, R-22, R-22, R-22, R-22, R-22]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T16:51:46.358Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [MSAJCE Knowledge: Contact information is availab..., MSAJCE Knowledge: For contact information, pleas..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: Technology Centre hosts variou..., MSAJCE Knowledge: Technology business incubators..., MSAJCE Knowledge: The staff in charge of buses a..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb995e0c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb99690c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9a790c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9a870c142..., MSAJCE Knowledge: omain.com contact@yourdomain.c..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9aeb0c142..., MSAJCE Knowledge: Useful Links: Opening Hours: M..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9b0d0c142..., MSAJCE Knowledge: omain.com contact@yourdomain.c..., MSAJCE Knowledge: Inks opening hours are Monday ..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9c410c142...]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T16:51:08.353Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: About Information technology",
+    "metadata": {
+      "latency": 678,
+      "source": "redis"
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:50:54.677Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: Tell me Abt IT department",
+    "metadata": {
+      "latency": 6770,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:50:53.837Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: Tell me Abt IT department",
+    "metadata": {
+      "query": "Tell me Abt IT department",
+      "tokens": {
+        "prompt": 2131,
+        "completion": 54,
+        "total": 2185
+      },
+      "latency": 4109,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:50:52.934Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [Dr. D. WESLIN, Dr. Elliss Yogesh R, MSAJCE Knowledge: A committee is formed to take ..., MSAJCE Knowledge: Long-term career development i..., MSAJCE Knowledge: Adaptation in the banking and ..., Dr. K.S. SRINIVASAN, Dr. I. MANJU, Dr. K. P. SANTHOSH NATHAN, Mr. A. ABDUL GAFOOR, Yogesh R, College Contact Information, AR-3, AR-5, AR-6, AR-9, R-20, R-21, R-22, MSAJCE Knowledge: Department of Physical Educati..., MSAJCE Knowledge: Professor Department of IT 971...]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T16:39:59.613Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: What are the bus routes?",
+    "metadata": {
+      "latency": 8878,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:39:57.791Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: What are the bus routes?",
+    "metadata": {
+      "query": "What are the bus routes?",
+      "tokens": {
+        "prompt": 1876,
+        "completion": 237,
+        "total": 2113
+      },
+      "latency": 5081,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:39:55.808Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [AR-3, AR-4, AR-5, AR-6, AR-7, AR-5, AR-6, MSAJCE Knowledge: --- DOCUMENT_ID: 69bba0b71ccb9..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9dec0c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9f88769fd..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba0c01ccb9..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9dfa0c142..., MSAJCE Knowledge: Bus routes include: 102 Broadw..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba05b1ccb9..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9db60c142..., MSAJCE Knowledge: S ROUTE AS FOLLOWS SNO BUS ROU..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba09d1ccb9..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9dde0c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba08a1ccb9..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9f68769fd...]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T16:09:44.411Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: Abt Information technology",
+    "metadata": {
+      "latency": 6607,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:09:43.587Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: Abt Information technology",
+    "metadata": {
+      "query": "Abt Information technology",
+      "tokens": {
+        "prompt": 1399,
+        "completion": 468,
+        "total": 1867
+      },
+      "latency": 5783,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:09:40.634Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [Seats in IT Department, MSAJCE Knowledge: Technology business incubators..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., College Contact Information, MSAJCE Knowledge: Education of professionals rel..., MSAJCE Knowledge: CSI's Educational Directorate ..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9c110c142..., Seats in ECE Department, Seats in VLSI Design, MSAJCE Knowledge: Technology Centre hosts variou..., MSAJCE Knowledge: Contact information is availab..., MSAJCE Knowledge: For contact information, pleas..., MSAJCE Knowledge: The Computer Society of India ..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: Long-term career development i..., MSAJCE Knowledge: Session as area of choice amon..., MSAJCE Knowledge: Adaptation in the banking and ..., MSAJCE Knowledge: Training and skill updating pr...]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T16:09:08.968Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: It goes tambaram right?",
+    "metadata": {
+      "latency": 5157,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:09:08.135Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: It goes tambaram right?",
+    "metadata": {
+      "query": "It goes tambaram right?",
+      "tokens": {
+        "prompt": 1148,
+        "completion": 70,
+        "total": 1218
+      },
+      "latency": 4325,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:09:07.171Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [R-21, 105, Dr. D. WESLIN, Dr. Elliss Yogesh R, MSAJCE Knowledge: Bus routes include: 102 Broadw..., 519, 19, 570, 570S, 102, 102X, MSAJCE Knowledge: Transportation options through..., MSAJCE Knowledge: T. Nagar Thiruporur OMR, Madhi..., R-21, Dr. K.S. SRINIVASAN, Dr. I. MANJU, Dr. K. P. SANTHOSH NATHAN, Mr. A. ABDUL GAFOOR, Yogesh R, College Contact Information]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T16:08:54.589Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: R21 route",
+    "metadata": {
+      "latency": 5687,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:08:53.746Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: R21 route",
+    "metadata": {
+      "query": "R21 route",
+      "tokens": {
+        "prompt": 1982,
+        "completion": 219,
+        "total": 2201
+      },
+      "latency": 4843,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:08:51.927Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [R-21, R-21, R-21, MSAJCE Knowledge: S ROUTE AS FOLLOWS SNO BUS ROU..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9e020c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba0c71ccb9..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9f98769fd..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba05b1ccb9..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9dfa0c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9db60c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9f88769fd..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba0b71ccb9..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba0c01ccb9..., AR-3, AR-4, AR-5, AR-6, AR-7, AR-8, AR-9]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T16:08:43.630Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: R21",
+    "metadata": {
+      "latency": 4363,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:08:42.753Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: R21",
+    "metadata": {
+      "query": "R21",
+      "tokens": {
+        "prompt": 915,
+        "completion": 30,
+        "total": 945
+      },
+      "latency": 3485,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:08:41.968Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [R-21, R-21, R-21, R-21, R-21, R-21, R-21, R-21, R-21, R-21, R-21, R-21, R-21, R-21, R-21, R-21, R-21, R-21, MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: o (+01) – 234 567 890 www.your...]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T16:08:18.946Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: Which bus will go tambaram",
+    "metadata": {
+      "latency": 5199,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:08:18.089Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: Which bus will go tambaram",
+    "metadata": {
+      "query": "Which bus will go tambaram",
+      "tokens": {
+        "prompt": 1620,
+        "completion": 143,
+        "total": 1763
+      },
+      "latency": 4341,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:08:16.655Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [105, 570, 519, 102, AR-3, AR-4, AR-5, AR-6, AR-7, R-21, AR-5, AR-6, MSAJCE Knowledge: Bus routes include: 102 Broadw..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9e130c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9dc00c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba0fb1ccb9..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9e200c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba0941ccb9..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9fcd769fd..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9f5e769fd...]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T16:08:07.647Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: Ar5 driver numver",
+    "metadata": {
+      "latency": 7089,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:08:06.788Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: Ar5 driver numver",
+    "metadata": {
+      "query": "Ar5 driver numver",
+      "tokens": {
+        "prompt": 1050,
+        "completion": 33,
+        "total": 1083
+      },
+      "latency": 4351,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:08:05.929Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-5, AR-3, AR-4]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T16:02:26.750Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: Who is srinivasan",
+    "metadata": {
+      "latency": 5436,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:02:25.884Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: Who is srinivasan",
+    "metadata": {
+      "query": "Who is srinivasan",
+      "tokens": {
+        "prompt": 3768,
+        "completion": 121,
+        "total": 3889
+      },
+      "latency": 4570,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:02:24.377Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [Dr. K.S. SRINIVASAN, MSAJCE Knowledge: Award (SBC) from CSI Kancheepu..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: Interactive Session on Innovat..., MSAJCE Knowledge: willing to come forward and pa..., Yogesh R, MSAJCE Knowledge: The CSI Kancheepuram Chapter a..., MSAJCE Knowledge: Name: Mr. M. Janakiraman. Qual..., MSAJCE Knowledge: 27 Joint Secretary Shivam Vish..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9b350c142..., Dr. K. P. SANTHOSH NATHAN, MSAJCE Knowledge: Seriously for the betterment o..., MSAJCE Knowledge: The driver for bus route AR-3 ..., MSAJCE Knowledge: Thiruvallur districts provide ..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9f34769fd..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: --- SOURCE: https://www.msajce...]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T16:02:12.324Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: Who is vimalathiyan",
+    "metadata": {
+      "latency": 5570,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:02:11.496Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: Who is vimalathiyan",
+    "metadata": {
+      "query": "Who is vimalathiyan",
+      "tokens": {
+        "prompt": 1415,
+        "completion": 62,
+        "total": 1477
+      },
+      "latency": 2915,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:02:10.536Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [MSAJCE Knowledge: The driver for bus route AR-5 ..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9f68769fd..., MSAJCE Knowledge: Interactive Session on Innovat..., MSAJCE Knowledge: The CSI Kancheepuram Chapter a..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9dde0c142..., MSAJCE Knowledge: Thiruvallur districts provide ..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba09d1ccb9..., MSAJCE Knowledge: The driver for bus route AR-5 ..., MSAJCE Knowledge: The drivers for bus route AR-5..., AR-5, MSAJCE Knowledge: Adaptation in the banking and ..., AR-5, MSAJCE Knowledge: T. Nagar Thiruporur OMR, Madhi..., 570, MSAJCE Knowledge: Bus routes include: 102 Broadw...]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T16:01:41.751Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: Who is yogesh",
+    "metadata": {
+      "latency": 2452,
+      "source": "direct_entity"
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:01:40.867Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "Direct: Who is yogesh",
+    "metadata": {
+      "query": "Who is yogesh",
+      "tokens": {
+        "prompt": 487,
+        "completion": 58,
+        "total": 545
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:01:30.666Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: Who is abdul gafoor",
+    "metadata": {
+      "latency": 4546,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:01:29.782Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: Who is abdul gafoor",
+    "metadata": {
+      "query": "Who is abdul gafoor",
+      "tokens": {
+        "prompt": 6231,
+        "completion": 34,
+        "total": 6265
+      },
+      "latency": 3662,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:01:28.840Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [Mr. A. ABDUL GAFOOR, MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: The staff in charge of buses a..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: unities were valuable in prepa..., MSAJCE Knowledge: Shaped my professional journey..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb97a094a71..., MSAJCE Knowledge: cal Lead, Cognizant. 22.03.23 ..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb97d294a71..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., Dr. D. WESLIN, MSAJCE Knowledge: --- SOURCE: https://www.msajce..., Dr. I. MANJU, Dr. Elliss Yogesh R, MSAJCE Knowledge: --- SOURCE: https://www.msajce..., College Contact Information, MSAJCE Knowledge: --- DOCUMENT_ID: 69bba007769fd...]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T16:01:15.440Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: Ar5 route details?",
+    "metadata": {
+      "latency": 6138,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:01:14.595Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: Ar5 route details?",
+    "metadata": {
+      "query": "Ar5 route details?",
+      "tokens": {
+        "prompt": 1469,
+        "completion": 280,
+        "total": 1749
+      },
+      "latency": 5286,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T16:01:12.537Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [AR-5, MSAJCE Knowledge: The driver for bus route AR-5 ..., MSAJCE Knowledge: The driver for bus route AR-5 ..., MSAJCE Knowledge: The drivers for bus route AR-5..., MSAJCE Knowledge: Bus route AR-5 path: MMDA Scho..., MSAJCE Knowledge: Bus route AR-5 path: MMDA Scho..., MSAJCE Knowledge: Bus route AR-5 path MMDA Schoo..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba0b71ccb9..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9dec0c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9f74769fd..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9dfa0c142..., MSAJCE Knowledge: MMDA school bus starts at 06:1..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9f88769fd..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9f68769fd..., AR-3, AR-4, AR-5, AR-5, AR-5, AR-5]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T14:58:30.550Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: Ar 6 route",
+    "metadata": {
+      "latency": 4918,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T14:58:29.723Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: Ar 6 route",
+    "metadata": {
+      "query": "Ar 6 route",
+      "tokens": {
+        "prompt": 1626,
+        "completion": 46,
+        "total": 1672
+      },
+      "latency": 4087,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T14:58:28.764Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [AR-6, AR-3, AR-4, AR-5, AR-7, AR-6, 19, 519, 221H, 102X, 102S, 102, B19, 570, 570S, 105, AR-3, AR-3, AR-3, AR-3]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T14:09:54.560Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [Seats in CSE Department, Seats in ECE Department, Seats in Cyber Security, Seats in CSBS Department, Seats in EEE Department, Seats in Civil Department, Seats in Mech Department, Seats in VLSI Design, Seats in AI & DS Department, Seats in IT Department, Seats in AI & ML Department, MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: Professor Department of IT 971..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: Incubation services encompass ..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: --- SOURCE: https://www.msajce...]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T14:09:53.965Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [AR-3, AR-4, AR-5, AR-6, AR-7, MSAJCE Knowledge: The driver for bus route AR-5 ..., MSAJCE Knowledge: The drivers for bus route AR-5..., MSAJCE Knowledge: The driver for bus route AR-5 ..., 19, 519, 221H, 102X, 102S, 102, B19, 570, 570S, 105, MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9dde0c142..., MSAJCE Knowledge: The driver for bus route AR-3 ...]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T14:09:52.129Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: For contact information, pleas..., MSAJCE Knowledge: The college is located near th..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9d530c142..., Seats in Cyber Security, Seats in CSBS Department, Seats in Civil Department, Seats in AI & DS Department, MSAJCE Knowledge: Co-curricular activities, indu..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb992f0c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb97e60c142..., MSAJCE Knowledge: CE, One Ambulance for the bene..., MSAJCE Knowledge: Incubation services encompass ..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb973e0c142..., MSAJCE Knowledge: --- SOURCE: https://www.msajce...]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T14:01:39.838Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [Seats in CSE Department, Seats in ECE Department, Seats in Cyber Security, Seats in CSBS Department, Seats in EEE Department, Seats in Civil Department, Seats in Mech Department, Seats in VLSI Design, Seats in AI & DS Department, Seats in IT Department, Seats in AI & ML Department, MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: Professor Department of IT 971..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: Incubation services encompass ..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: --- SOURCE: https://www.msajce...]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T14:01:38.933Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [AR-3, AR-4, AR-5, AR-6, AR-7, MSAJCE Knowledge: The driver for bus route AR-5 ..., MSAJCE Knowledge: The drivers for bus route AR-5..., MSAJCE Knowledge: The driver for bus route AR-5 ..., 19, 519, 221H, 102X, 102S, 102, B19, 570, 570S, 105, MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9dde0c142..., MSAJCE Knowledge: The driver for bus route AR-3 ...]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T14:01:36.815Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: For contact information, pleas..., MSAJCE Knowledge: The college is located near th..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9d530c142..., Seats in Cyber Security, Seats in CSBS Department, Seats in Civil Department, Seats in AI & DS Department, MSAJCE Knowledge: Co-curricular activities, indu..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb992f0c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb97e60c142..., MSAJCE Knowledge: CE, One Ambulance for the bene..., MSAJCE Knowledge: Incubation services encompass ..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb973e0c142..., MSAJCE Knowledge: --- SOURCE: https://www.msajce...]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T13:47:23.875Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG Query: What are the bus routes?",
+    "metadata": {
+      "latency": 7117,
+      "source": "rag_generated",
+      "chunks": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T13:47:22.123Z",
+    "bot": "assistant",
+    "type": "info",
+    "message": "RAG: What are the bus routes?",
+    "metadata": {
+      "query": "What are the bus routes?",
+      "tokens": {
+        "prompt": 1876,
+        "completion": 241,
+        "total": 2117
+      },
+      "latency": 5355,
+      "shards": 7
+    }
+  },
+  {
+    "timestamp": "2026-03-25T13:47:20.123Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [AR-3, AR-4, AR-5, AR-6, AR-7, AR-5, AR-6, MSAJCE Knowledge: --- DOCUMENT_ID: 69bba0b71ccb9..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9dec0c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9f88769fd..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba0c01ccb9..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9dfa0c142..., MSAJCE Knowledge: Bus routes include: 102 Broadw..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba05b1ccb9..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9db60c142..., MSAJCE Knowledge: S ROUTE AS FOLLOWS SNO BUS ROU..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba09d1ccb9..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9dde0c142..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bba08a1ccb9..., MSAJCE Knowledge: --- DOCUMENT_ID: 69bb9f68769fd...]",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-03-25T13:45:16.155Z",
+    "bot": "rag_step",
+    "type": "Found Chunks: [Seats in CSE Department, Seats in ECE Department, Seats in Cyber Security, Seats in CSBS Department, Seats in EEE Department, Seats in Civil Department, Seats in Mech Department, Seats in VLSI Design, Seats in AI & DS Department, Seats in IT Department, Seats in AI & ML Department, MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: Professor Department of IT 971..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: Incubation services encompass ..., MSAJCE Knowledge: --- SOURCE: https://www.msajce..., MSAJCE Knowledge: --- SOURCE: https://www.msajce...]",
+    "metadata": {}
+  }
+]

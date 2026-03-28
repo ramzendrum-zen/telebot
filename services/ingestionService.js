@@ -1,87 +1,68 @@
 import { getAIReponse } from './aiService.js';
 import logger from '../utils/logger.js';
-
-import { buildSemanticChunkingPrompt } from '../utils/promptBuilder.js';
-
-/**
- * Intelligent Semantic Chunking Logic for RAG
- * Splits content into meaningful, complete ideas rather than random char limits.
- */
-export const splitContent = async (text) => {
-    const prompt = buildSemanticChunkingPrompt(text);
-    
-    try {
-        const response = await getAIReponse(prompt, 'cheap');
-        const jsonMatch = response.content.match(/\[[\s\S]*\]/);
-        
-        if (!jsonMatch) throw new Error("No JSON array returned for Semantic Chunking");
-        
-        const semanticChunks = JSON.parse(jsonMatch[0]);
-        // Map back to array of strings for downstream compatibility, 
-        // or return objects if downstream supports it. Let's return strings.
-        return semanticChunks.map(chunk => `[${chunk.title}] ${chunk.content}`);
-    } catch (error) {
-        logger.error(`Semantic Chunking Error: ${error.message}`);
-        // Fallback to basic regex splitting
-        return text.split(/\n\n+/).filter(b => b.trim().length > 50);
-    }
-};
+import { generateEmbedding } from './embeddingService.js';
 
 /**
- * MASTER PROMPT: "Data Engineering Expert" for RAG Ingestion
+ * PROJECT PHOENIX: HIGH-PRECISION INGESTION ENGINE
+ * 
+ * Objectives:
+ * 1. Semantic Cleaning (Boilerplate removal)
+ * 2. Deep Entity Extraction (People, Roles, Depts)
+ * 3. 1536-Dimension Vectorization
  */
-export const cleanAndEnrichChunk = async (chunkContent, metadata = {}) => {
-    const prompt = `
-        Role: You are a Data Engineering Expert specializing in RAG pipelines. 
-        Task: Clean, normalize, and structure this data chunk for a 1536-dimension vector database.
 
-        Input: "${chunkContent}"
+export const processRawData = async (text, source = 'admin_upload', category = 'general') => {
+    logger.info(`Phoenix Ingestion: Processing block from ${source}`);
 
-        Step 1: Cleaning & Normalization
-        * Remove Noise: Strip HTML, boilerplate, extra whitespace.
-        * Fix Errors: Correct encoding and normalize punctuation.
-        * Standardization: Professional academic tone.
+    // Step 1: Cleaning and Enrichment
+    const enrichmentPrompt = `
+        Role: Senior Data Scientist at MSAJCE. 
+        Task: Clean and structure this knowledge chunk for a production-grade RAG system.
 
-        Step 2: Semantic Enrichment
-        * Summary: 1-sentence description.
-        * KEYWORDS: High-impact topics (comma-separated).
-        * ENTITIES: Specific names, locations, dates (comma-separated).
-        * QUERY_VARIATIONS: Generate 3 ways a student might ask for this specific info.
+        Input Text: "${text}"
+
+        STRICT RULES:
+        1. Clean all noise (headers, IDs, weird formatting).
+        2. Identify ALL specific entities (People Names, Department Names, Roles).
+        3. Determine the most accurate category (transport | admission | departments | staff | student | extracurricular | infrastructure).
 
         Output JSON:
         {
-          "content": "semantically dense cleaned string",
-          "summary": "1-sentence summary",
-          "keywords": ["key1", "key2"],
-          "entities": ["entity1", "entity2"],
-          "query_variations": ["var1", "var2", "var3"],
-          "metadata": ${JSON.stringify(metadata)}
+          "clean_text": "polishes, dense factual content",
+          "subject_name": "Full name of main person if mentioned",
+          "subject_role": "Their precise role",
+          "department": "Main department involved",
+          "category": "suggested category",
+          "tags": ["extracted", "keywords"]
         }
     `;
 
     try {
-        const raw = await getAIReponse(prompt, 'cheap');
-        const jsonMatch = raw.match(/\{[\s\S]*\}/);
-        if (!jsonMatch) throw new Error("No JSON matched in AI response");
-        return JSON.parse(jsonMatch[0]);
-    } catch (error) {
-        logger.error(`Enrichment Error: ${error.message}`);
-        return {
-            content: chunkContent,
-            summary: "",
-            keywords: [],
-            metadata
-        };
-    }
-};
+        const aiResponse = await getAIReponse(enrichmentPrompt, 'cheap');
+        const jsonMatch = aiResponse.content.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) throw new Error("Inconsistent AI Response format");
+        
+        const data = JSON.parse(jsonMatch[0]);
 
-/**
- * Step 4 (Optional): Upsert to Pinecone
- * Placeholder for future activation if API keys are provided.
- */
-export const upsertToPinecone = async (id, embedding, metadata) => {
-    if (!process.env.PINECONE_API_KEY) return null;
-    // Implementation would go here
-    logger.info(`Pinecone Upsert: ${id}`);
-    return true;
+        // Step 2: Vectorization
+        const embedding = await generateEmbedding(data.clean_text, 'document');
+
+        return {
+            content: data.clean_text,
+            category: data.category || category,
+            metadata: {
+                name: data.subject_name || null,
+                role: data.subject_role || null,
+                department: data.department || null,
+                tags: data.tags || [],
+                source: source,
+                ingested_at: new Date()
+            },
+            embedding: embedding,
+            is_phoenix: true
+        };
+    } catch (e) {
+        logger.error(`Phoenix Ingestion Failure: ${e.message}`);
+        return null;
+    }
 };

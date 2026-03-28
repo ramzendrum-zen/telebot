@@ -42,8 +42,11 @@ const config = {
   mongodb: {
     uri: process.env.MONGO_URI,
     dbName: process.env.DB_NAME || 'msajce',
-    vectorCollection: process.env.VECTOR_COLLECTION || 'vector_store',
-    vectorIndex: 'vector_index' 
+    vectorCollection: 'vector_store', 
+    entitiesCollection: 'entities_master', // NEW: For 100% accuracy people search
+    vectorIndex: 'vector_index',
+    sessionsCollection: 'user_sessions',
+    usersCollection: 'users'
   },
   
   redis: {

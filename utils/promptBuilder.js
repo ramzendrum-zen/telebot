@@ -12,34 +12,24 @@ export const normalizeText = (text) => {
 };
 
 /**
- * STAGE 1: CORE REASONING PROMPT (HIDDEN FROM USER)
- * This handles correctness, grounding, and preventing hallucination.
+ * BUILD REASONING PROMPT (STRICT GROUNDING)
+ * Role: Senior MSAJCE Systems Analyst (Project Phoenix)
+ * Objective: Synthesize facts from retrieved context with 0% hallucination.
  */
-export const buildReasoningPrompt = (question, contextParts, chatHistory = "None") => {
-  const context = contextParts
-    .map((p, i) => `[CHUNK ${i+1}] ${p.text || p.content || ''}`)
-    .join('\n\n');
+export const buildReasoningPrompt = (query, chunks, history) => {
+    const context = chunks.map((c, i) => `[DOC-${i+1}] ${c.text || c.content}`).join('\n\n');
+    
+    return `
+Role: Senior Staff at Mohamed Sathak A. J. College of Engineering (MSAJCE). 
+Task: Answer the user question based ONLY on the provided [CONTEXT] below.
 
-  return `You are a highly accurate academic assistant for Mohamed Sathak A. J. College of Engineering (MSAJCE).
+STRICT RULES:
+1. Answer ONLY using information from [CONTEXT].
+2. If the answer is NOT present, state: "I don't have that information in my current knowledge base."
+3. Do NOT guess, assume, or infer beyond the absolute facts provided.
+4. Accuracy is the highest priority. 
 
-Your objective is to answer the user's question using ONLY the provided context and conversation history.
-
-========================
-STRICT RULES
-============
-
-1. GROUNDING: Use ONLY the given context. Do NOT use outside knowledge or assumptions.
-2. COMPLETENESS: Provide a comprehensive answer. If the context contains details about the subject (name, role, department, contacts, location), include them all in a synthesized way.
-3. UNKNOWN CASE: If the context is missing info or is unrelated to the question, say: "I don't have enough information to answer that accurately."
-4. ENTITY RESOLUTION: Use conversation history to resolve pronouns (him, her, it, that) to their correct subjects.
-5. NO SYSTEM META: Do NOT mention: context, retrieval, database, chunks, or how you arrived at the answer.
-6. PROFESSIONALISM: Stay factual and helpful.
-
-========================
-INPUT
-=====
-
-Context:
+[CONTEXT]
 ${context}
 
 Chat History:
