@@ -101,34 +101,58 @@ export const detectEntities = async (query) => {
 
 
 // -----------------------------
-// SIMPLE IN-MEMORY CACHE
+// SMART TTL CACHE (Hardening Step 1 & 2)
 // -----------------------------
 const queryCache = new Map();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+const getFromCache = (query) => {
+    const key = normalize(query);
+    const entry = queryCache.get(key);
+    if (!entry) return null;
+    if (Date.now() - entry.time > CACHE_TTL) {
+        queryCache.delete(key);
+        return null;
+    }
+    return entry.value;
+};
+
+const setInCache = (query, value) => {
+    const key = normalize(query);
+    queryCache.set(key, { value, time: Date.now() });
+};
 
 // -----------------------------
-// INTENT SPLITTER
+// INTENT SPLITTER (Hardening Step 3)
 // -----------------------------
 function splitQuery(query) {
-    const lower = query.toLowerCase();
+    const lower = query.toLowerCase().trim();
     
-    // Split by connectors
+    // Check for explicit multi-intent connectors
     const parts = lower.split(/\s+and\s+|[,&]|\s+also\s+/).map(s => s.trim());
     
     let entityPart = null;
     let ragPart = null;
 
     parts.forEach(p => {
-        if (
+        const isEntity = (
             p.includes("who") || p.includes("hod") ||
             p.includes("principal") || p.includes("director") ||
             p.includes("president") || p.includes("warden") ||
-            p.includes("head")
-        ) {
+            p.includes("head") || p.includes("is ")
+        );
+
+        if (isEntity && !entityPart) {
             entityPart = p;
-        } else {
+        } else if (!ragPart) {
             ragPart = p;
         }
     });
+
+    // Fallback: If no split happened, assign based on first match
+    if (!entityPart && !ragPart) {
+        ragPart = lower;
+    }
 
     return { entityPart, ragPart };
 }
@@ -136,7 +160,7 @@ function splitQuery(query) {
 // -----------------------------
 // DEPARTMENT DETECTION
 // -----------------------------
-const DEPARTMENTS = ["it", "cse", "mech", "eee", "civil", "ece", "admin", "hostel"];
+const DEPARTMENTS = ["it", "cse", "mech", "eee", "civil", "ece", "admin", "hostel", "placement"];
 
 function detectDepartment(query) {
     const q = query.toLowerCase();
@@ -154,9 +178,16 @@ function rankEntities(query, results) {
     return results
         .map(r => {
             let score = 0;
-            if (q.includes(r.normalized_name)) score += 5;
+            // Name match
+            if (q.includes(r.normalized_name)) score += 10;
+            // Alias match
             (r.normalized_aliases || []).forEach(a => {
-                if (q.includes(a)) score += 3;
+                if (q.includes(a)) score += 5;
+            });
+            // Partial name match
+            const tokens = q.split(' ');
+            tokens.forEach(t => {
+                if (t.length > 3 && r.normalized_name.includes(t)) score += 2;
             });
             return { ...r, matchScore: score };
         })
@@ -164,13 +195,14 @@ function rankEntities(query, results) {
 }
 
 /**
- * PRODUCTION-GRADE HYBRID SEARCH (Final Layer)
+ * PRODUCTION-GRADE HYBRID SEARCH (Final Hardening)
  */
 export const performHybridSearch = async (queryText) => {
-    // Cache Check
-    if (queryCache.has(queryText)) {
-        logger.info(`Cache HIT: ${queryText}`);
-        return queryCache.get(queryText);
+    // 1. Smart Cache Check
+    const cached = getFromCache(queryText);
+    if (cached) {
+        logger.info(`Smart Cache HIT: ${queryText}`);
+        return cached;
     }
 
     const { entityPart, ragPart } = splitQuery(queryText);
@@ -193,12 +225,13 @@ export const performHybridSearch = async (queryText) => {
                 rawData = detection.data;
             }
 
-            // Refine by department if requested
+            // Department Filtering
             if (dept) {
-                rawData = rawData.filter(e => 
+                const deptFiltered = rawData.filter(e => 
                     (e.department && e.department.toUpperCase() === dept) || 
                     (e.role && e.role.toUpperCase().includes(dept))
                 );
+                if (deptFiltered.length > 0) rawData = deptFiltered;
             }
 
             if (rawData.length > 0) {
@@ -218,7 +251,7 @@ export const performHybridSearch = async (queryText) => {
 
     // ─── STAGE 2: RAG FLOW ─────────────────────────────
     if (ragPart) {
-        logger.info(`RAG System START: ${ragPart}`);
+        logger.info(`RAG START: ${ragPart}`);
         const vectorColl = db.collection(config.mongodb.vectorCollection);
         const embedding = await generateEmbedding(ragPart, 'query');
         
@@ -244,8 +277,8 @@ export const performHybridSearch = async (queryText) => {
             const reranked = await rerankChunks(ragPart, candidates);
             const top5 = reranked.slice(0, 5);
 
-            // Dynamic Threshold
-            const threshold = ragPart.length < 20 ? 0.65 : 0.75;
+            // Dynamic Thresholding
+            const threshold = ragPart.length < 15 ? 0.65 : 0.75;
             const topScore = top5[0]?.rerankScore || top5[0]?.score || 0;
 
             if (topScore >= threshold) {
@@ -253,7 +286,7 @@ export const performHybridSearch = async (queryText) => {
                     text: c.text || c.content,
                     metadata: c.metadata || {},
                     category: c.category,
-                    score: c.rerankScore || c.score
+                    score: topScore
                 }));
             }
         }
@@ -263,11 +296,13 @@ export const performHybridSearch = async (queryText) => {
         type: 'hybrid',
         entityResponse: entityResult,
         ragResults: ragResults,
-        hasResults: !!(entityResult || ragResults.length > 0)
+        hasResults: !!(entityResult || ragResults.length > 0),
+        timestamp: Date.now()
     };
 
-    // Store in cache
-    queryCache.set(queryText, finalResponse);
+    // Store in Smart Cache
+    setInCache(queryText, finalResponse);
     return finalResponse;
 };
+
 

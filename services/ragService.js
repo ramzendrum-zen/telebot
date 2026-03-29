@@ -5,14 +5,29 @@ import { getUserMemory, setUserMemory } from './historyService.js';
 import { pushLog } from './monitorService.js';
 import { normalize } from '../utils/textUtils.js';
 import logger from '../utils/logger.js';
+import mongoose from 'mongoose';
+
+// -----------------------------
+// BASIC RATE LIMITER
+// -----------------------------
+const userRequests = new Map();
+const RATE_LIMIT_MS = 1500; // 1.5 seconds between requests
 
 export async function processRAGQuery(chatId, rawText) {
   const startTime = Date.now();
   const normalizedQuery = normalize(rawText);
   
+  // 1. Rate Limiting Check
+  const lastReq = userRequests.get(chatId) || 0;
+  if (Date.now() - lastReq < RATE_LIMIT_MS) {
+      return { aiReply: "Slow down! Please wait a moment between questions.", source: 'rate_limit' };
+  }
+  userRequests.set(chatId, Date.now());
+
   try {
     const memory = await getUserMemory(chatId);
     const searchData = await performHybridSearch(rawText);
+    const db = mongoose.connection.db;
 
     // ─── STAGE 1: HYBRID HANDLING (Entity + RAG) ────────
     if (searchData.type === 'hybrid') {
@@ -22,8 +37,7 @@ export async function processRAGQuery(chatId, rawText) {
       // A. Entity Processing (Deterministic)
       if (searchData.entityResponse) {
         const ent = searchData.entityResponse;
-        entityPart = `Name: ${ent.name}\nRole: ${ent.role}\nDepartment: ${ent.department}`;
-        // If content is role-based but specific detail exists, add it
+        entityPart = `*Staff Record Found*\nName: ${ent.name}\nRole: ${ent.role}\nDepartment: ${ent.department}`;
         if (ent.content && ent.content.length > 5 && !ent.content.includes(ent.name)) {
             entityPart += `\n${ent.content}`;
         }
@@ -41,8 +55,16 @@ export async function processRAGQuery(chatId, rawText) {
         ragPart = filteredReply;
       }
 
-      // C. Rejection Logic (Step 8 Hybrid)
+      // C. Failure Analytics (Hardening Step 6)
       if (!entityPart && !ragPart) {
+        // Log failure to DB for future dataset training
+        db.collection('failed_queries').insertOne({
+            query: rawText,
+            normalized: normalizedQuery,
+            timestamp: new Date(),
+            chatId
+        }).catch(() => null);
+
         return {
           aiReply: "I couldn’t find that in the MSAJCE data. Try asking about staff, departments, transport, or facilities.",
           source: 'no_data_hybrid',
@@ -50,8 +72,12 @@ export async function processRAGQuery(chatId, rawText) {
         };
       }
 
-      // D. Combined Response (Production Grade)
-      const aiReply = [entityPart, ragPart].filter(p => p.length > 0).join('\n\n').trim();
+      // D. Combined Response (Production Grade UX)
+      let finalParts = [];
+      if (entityPart) finalParts.push(`[Entity Result]\n${entityPart}`);
+      if (ragPart) finalParts.push(`[Information]\n${ragPart}`);
+
+      const aiReply = finalParts.join('\n\n').trim();
 
       // Memory & Logging
       if (searchData.entityResponse) {
@@ -62,15 +88,15 @@ export async function processRAGQuery(chatId, rawText) {
           latency: Date.now() - startTime,
           path: 'HYBRID_FINAL',
           entity: !!entityPart,
-          rag: !!ragPart
+          rag: !!ragPart,
+          cached: !!searchData.timestamp && (Date.now() - searchData.timestamp > 100)
       });
 
       return { aiReply, source: 'hybrid_final', latency: Date.now() - startTime };
     }
 
-    // Fallback Rejection
     return {
-      aiReply: "I couldn’t find that in the MSAJCE data. Try asking about staff, departments, transport, or facilities.",
+      aiReply: "I couldn’t find that in the MSAJCE data.",
       source: 'fallback_rejection',
       latency: Date.now() - startTime
     };
@@ -84,5 +110,6 @@ export async function processRAGQuery(chatId, rawText) {
     };
   }
 }
+
 
 
