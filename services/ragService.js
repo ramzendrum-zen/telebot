@@ -25,28 +25,39 @@ export async function processRAGQuery(chatId, rawText) {
     // 2. High-Precision Retrieval (Entity-Aware)
     const searchData = await performHybridSearch(normalizedText);
 
-    // ─── STAGE 1: ENTITY MATCH HANDLING ─────────────────────
+    // ─── STAGE 1: ENTITY MATCH HANDLING (FIX 3) ────────────────
     if (searchData.type === 'entity') {
-      const { results, confidence } = searchData;
+      const { results, subtype } = searchData;
+      
+      logger.info(`Routing to ENTITY path: ${subtype} match.`);
 
       if (results.length === 1) {
-          // SINGLE MATCH: 100% Accuracy (No Reasoning Layer)
-          const person = results[0];
-          const aiReply = `Information for ${person.metadata.name}:\n\n- Role: ${person.metadata.role}\n- Department: ${person.metadata.department}\n\n${person.text.split('. ').slice(1, 3).join('. ')}`;
+          // SINGLE MATCH: 100% Accuracy (No Reasoning Layer - FIX 4 & 5)
+          const person = results[0].metadata;
+          const aiReply = `• *Information for ${person.name}:*\n\n- *Role:* ${person.role}\n- *Department:* ${person.department}`;
           
-          await setUserMemory(chatId, person.metadata.name, 'profile', rawText);
-          await pushLog('assistant', 'info', `Entity HIT: ${person.metadata.name}`, { latency: Date.now() - startTime });
+          await setUserMemory(chatId, person.name, 'profile', rawText);
+          await pushLog('assistant', 'info', `Entity HIT: ${person.name}`, { 
+              latency: Date.now() - startTime,
+              path: 'ENTITY_DIRECT'
+          });
           
           return { aiReply, source: 'entity_exact', latency: Date.now() - startTime };
       } else {
           // MULTIPLE MATCHES: Professional Clarification
-          const names = results.map(r => r.metadata.name).join(' or ');
-          const aiReply = `I found multiple people matching your request: ${names}. Which one did you mean? (e.g. ${results[0].metadata.name})`;
+          const names = results.map(r => r.metadata.name).join(', ');
+          const aiReply = `• I found multiple people matching your request: ${names}.\n• Which department are you referring to? (e.g., IT, CSE)`;
           
-          await pushLog('assistant', 'info', `Entity AMBIGUOUS: ${results.length}`, { latency: Date.now() - startTime });
+          await pushLog('assistant', 'info', `Entity AMBIGUOUS: ${results.length}`, { 
+              latency: Date.now() - startTime,
+              path: 'ENTITY_AMBIGUOUS'
+          });
           return { aiReply, source: 'entity_disambiguate', latency: Date.now() - startTime };
       }
     }
+
+    logger.info(`Routing to RAG path.`);
+
 
     // ─── STAGE 2: RAG HANDLING ──────────────────────────────
     if (!searchData.results || searchData.results.length === 0) {

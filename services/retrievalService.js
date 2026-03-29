@@ -10,45 +10,39 @@ import logger from '../utils/logger.js';
  * Pipeline 2: RAG (Transport, Admission, General)
  */
 
+const ROLE_KEYWORDS = {
+  principal: "Principal",
+  hod: "HOD",
+  director: "Director",
+  president: "Student President",
+  warden: "Warden"
+};
+
 export const detectEntities = async (query) => {
     const db = mongoose.connection.db;
     const coll = db.collection(config.mongodb.entitiesCollection || 'entities_master');
-    
-    // Clean query: remove 'who is', 'tell me about', etc.
-    const stopWords = ['who', 'is', 'what', 'the', 'tell', 'me', 'about', 'r', 'are', 'u', 'you', 'can', 'please'];
-    let q = query.toLowerCase().replace(/[?.,!]/g, '').trim();
-    const words = q.split(/\s+/).filter(w => !stopWords.includes(w));
-    const cleanQ = words.join(' ');
+    const q = query.toLowerCase().trim();
 
-    if (!cleanQ && q.length > 2) {
-        // Fallback for very short queries that became empty after stopword removal
-    } else {
-        q = cleanQ;
-    }
-
-    // 1. Exact Name/Normalized Name Match
-    let match = await coll.findOne({ $or: [{ normalized_name: q }, { aliases: q }] });
-    if (match) return { type: 'entity', data: [match], confidence: 'high' };
-
-    // 2. Regex Match (Is the name/alias in the query?)
-    // We search for entities where the name is mentioned in the clean query
+    // 1. Direct Name/Alias Regex Match (Highest Priority)
     const allEntities = await coll.find({}).toArray();
-    const matches = allEntities.filter(e => {
+    const nameMatches = allEntities.filter(e => {
         const name = e.name.toLowerCase();
-        const normalized = e.normalized_name.toLowerCase();
-        const matchesQuery = q.includes(name) || q.includes(normalized) || e.aliases.some(a => q.includes(a.toLowerCase()));
-        return matchesQuery;
+        const aliases = (e.aliases || []).map(a => a.toLowerCase());
+        return q.includes(name) || aliases.some(a => q.includes(a));
     });
 
-    if (matches.length > 0) {
-        return { type: 'entity', data: matches, confidence: matches.length === 1 ? 'high' : 'medium' };
+    if (nameMatches.length > 0) {
+        return { type: 'entity', subtype: 'person', data: nameMatches, confidence: 'high' };
     }
 
-    // 3. Keyword Match on Role (HOD, Principal)
-    const keywords = q.split(/\s+/).filter(w => w.length > 2);
-    if (keywords.length > 0) {
-        const roleMatch = await coll.find({ keywords: { $in: keywords } }).toArray();
-        if (roleMatch.length > 0) return { type: 'entity', data: roleMatch, confidence: roleMatch.length === 1 ? 'high' : 'medium' };
+    // 2. Strict Role Match
+    for (const [key, roleValue] of Object.entries(ROLE_KEYWORDS)) {
+        if (q.includes(key)) {
+            const roleMatches = await coll.find({ role: roleValue }).toArray();
+            if (roleMatches.length > 0) {
+                return { type: 'entity', subtype: 'role', value: roleValue, data: roleMatches, confidence: 'high' };
+            }
+        }
     }
 
     return { type: 'rag', confidence: 'none' };
@@ -64,6 +58,7 @@ export const performHybridSearch = async (queryText) => {
         logger.info(`Entity System HIT: Found ${entityResult.data.length} matches.`);
         return {
             type: 'entity',
+            subtype: entityResult.subtype,
             results: entityResult.data.map(e => ({
                 text: `Information for ${e.name}: ${e.content || `Role: ${e.role}, Department: ${e.department}`}`,
                 metadata: { name: e.name, role: e.role, department: e.department },
@@ -103,9 +98,9 @@ export const performHybridSearch = async (queryText) => {
     const reranked = await rerankChunks(queryText, candidates);
     const top5 = reranked.slice(0, 5);
 
-    // Hard Validation (Lowered threshold from 0.60 to 0.40)
+    // Hard Validation (Increased to 0.75 for strict accuracy as requested)
     const topScore = top5[0]?.rerankScore || top5[0]?.score || 0;
-    if (topScore < 0.40) { 
+    if (topScore < 0.75) { 
         logger.warn(`RAG Reject: Top score ${topScore.toFixed(2)} below threshold.`);
         return { type: 'rag', results: [], failure: 'insufficient_confidence' };
     }
