@@ -14,85 +14,65 @@ export async function processRAGQuery(chatId, rawText) {
     const memory = await getUserMemory(chatId);
     const searchData = await performHybridSearch(rawText);
 
-    // ─── STAGE 1: ENTITY MATCH HANDLING (Upgrade Pack) ────────
-    if (searchData.type === 'multi_entity') {
-      const { entities } = searchData;
-      
-      logger.info(`Routing to MULTI-ENTITY path: ${entities.length} detected.`);
+    // ─── STAGE 1: HYBRID HANDLING (Entity + RAG) ────────
+    if (searchData.type === 'hybrid') {
+      let entityPart = '';
+      let ragPart = '';
 
-      let combinedResponse = '';
-      const detectedNames = [];
-
-      for (const ent of entities) {
-          const results = ent.data;
-          
-          if (results.length === 1) {
-              const person = results[0];
-              const label = ent.subtype === 'role' ? `${person.role} (${person.department || 'Admin'})` : person.name;
-              combinedResponse += `• *${label}*\n${person.content}\n\n`;
-              detectedNames.push(person.name);
-          } else {
-              const names = results.map(r => r.name).join(', ');
-              combinedResponse += `• I found multiple people matching "${ent.query_segment}": ${names}. Please specify the department.\n\n`;
-          }
+      // A. Entity Processing (Deterministic)
+      if (searchData.entityResponse) {
+        const ent = searchData.entityResponse;
+        entityPart = `Name: ${ent.name}\nRole: ${ent.role}\nDepartment: ${ent.department}`;
+        // If content is role-based but specific detail exists, add it
+        if (ent.content && ent.content.length > 5 && !ent.content.includes(ent.name)) {
+            entityPart += `\n${ent.content}`;
+        }
       }
 
-      const aiReply = combinedResponse.trim();
-      
-      // Update memory with the first one detected
-      if (detectedNames.length > 0) {
-          await setUserMemory(chatId, detectedNames[0], 'profile', rawText);
+      // B. RAG Processing (Generative)
+      if (searchData.ragResults && searchData.ragResults.length > 0) {
+        const chatHistoryContext = `Last Question: ${memory.last_question || 'None'}\nLast Topic: ${memory.last_topic || 'None'}`;
+        const reasoningPrompt = buildReasoningPrompt(rawText, searchData.ragResults, chatHistoryContext);
+        
+        const { content: rawReasoning } = await getAIReponse(reasoningPrompt, 'advanced');
+        const outputPrompt = buildOutputFilterPrompt(rawReasoning, chatHistoryContext);
+        const { content: filteredReply } = await getAIReponse(outputPrompt, 'cheap');
+        
+        ragPart = filteredReply;
       }
 
-      await pushLog('assistant', 'info', `Entity HIT: ${detectedNames.join(', ')}`, { 
+      // C. Rejection Logic (Step 8 Hybrid)
+      if (!entityPart && !ragPart) {
+        return {
+          aiReply: "I couldn’t find that in the MSAJCE data. Try asking about staff, departments, transport, or facilities.",
+          source: 'no_data_hybrid',
+          latency: Date.now() - startTime
+        };
+      }
+
+      // D. Combined Response (Production Grade)
+      const aiReply = [entityPart, ragPart].filter(p => p.length > 0).join('\n\n').trim();
+
+      // Memory & Logging
+      if (searchData.entityResponse) {
+        await setUserMemory(chatId, searchData.entityResponse.name, 'profile', rawText);
+      }
+
+      await pushLog('assistant', 'info', `Hybrid HIT: ${rawText.slice(0, 30)}`, { 
           latency: Date.now() - startTime,
-          path: 'ENTITY_UPGRADE',
-          normalized_query: normalizedQuery,
-          entities_count: entities.length,
-          confidence: 'high'
+          path: 'HYBRID_FINAL',
+          entity: !!entityPart,
+          rag: !!ragPart
       });
-      
-      return { aiReply, source: 'entity_upgrade', latency: Date.now() - startTime };
+
+      return { aiReply, source: 'hybrid_final', latency: Date.now() - startTime };
     }
 
-    // ─── STAGE 2: RAG HANDLING ──────────────────────────────
-    // Step 8: Enhanced Rejection Logic
-    if (!searchData.results || searchData.results.length === 0) {
-       logger.warn(`RAG Reject: No data found for "${rawText}"`);
-       return {
-         aiReply: "I couldn’t find that in the MSAJCE data. Try asking about staff, departments, transport, or facilities.",
-         source: 'no_data',
-         latency: Date.now() - startTime
-       };
-    }
-
-    // Stage 3: CORE REASONING (No fallback for entities happens here)
-    const chatHistoryContext = `Last Question: ${memory.last_question || 'None'}\nLast Topic: ${memory.last_topic || 'None'}`;
-    const reasoningPrompt = buildReasoningPrompt(rawText, searchData.results, chatHistoryContext);
-    
-    const { content: rawReasoning } = await getAIReponse(reasoningPrompt, 'advanced');
-
-    // Stage 4: UX OUTPUT FILTERING
-    const outputPrompt = buildOutputFilterPrompt(rawReasoning, chatHistoryContext);
-    const { content: aiReply } = await getAIReponse(outputPrompt, 'cheap');
-
-    // Logging & Memory
-    const topChunk = searchData.results[0];
-    await setUserMemory(chatId, topChunk.metadata?.name || 'general', topChunk.category || 'general', rawText);
-
-    await pushLog('assistant', 'info', `RAG Query: ${rawText.slice(0, 30)}`, { 
-        latency: Date.now() - startTime,
-        retrieval_path: 'RAG',
-        normalized_query: normalizedQuery,
-        top_score: searchData.results[0].score.toFixed(2),
-        match_confidence: 'medium'
-    }).catch(() => null);
-
+    // Fallback Rejection
     return {
-      aiReply,
-      source: 'rag_phoenix',
-      latency: Date.now() - startTime,
-      chunkCount: searchData.results.length
+      aiReply: "I couldn’t find that in the MSAJCE data. Try asking about staff, departments, transport, or facilities.",
+      source: 'fallback_rejection',
+      latency: Date.now() - startTime
     };
 
   } catch (error) {
@@ -104,4 +84,5 @@ export async function processRAGQuery(chatId, rawText) {
     };
   }
 }
+
 

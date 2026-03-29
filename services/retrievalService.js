@@ -100,71 +100,174 @@ export const detectEntities = async (query) => {
 };
 
 
-export const performHybridSearch = async (queryText) => {
-    const db = mongoose.connection.db;
-    const vectorColl = db.collection(config.mongodb.vectorCollection);
+// -----------------------------
+// SIMPLE IN-MEMORY CACHE
+// -----------------------------
+const queryCache = new Map();
 
-    // ─── PIPELINE 1: ENTITY FIRST ───────────────────────────
-    const entityResult = await detectEntities(queryText);
-    if (entityResult.type === 'entity') {
-        logger.info(`Entity System HIT: Found ${entityResult.data.length} matches.`);
-        return {
-            type: 'entity',
-            subtype: entityResult.subtype,
-            results: entityResult.data.map(e => ({
-                text: `Information for ${e.name}: ${e.content || `Role: ${e.role}, Department: ${e.department}`}`,
-                metadata: { name: e.name, role: e.role, department: e.department },
-                source: 'entities_master',
-                score: 1.0
-            })),
-            confidence: entityResult.confidence
-        };
+// -----------------------------
+// INTENT SPLITTER
+// -----------------------------
+function splitQuery(query) {
+    const lower = query.toLowerCase();
+    
+    // Split by connectors
+    const parts = lower.split(/\s+and\s+|[,&]|\s+also\s+/).map(s => s.trim());
+    
+    let entityPart = null;
+    let ragPart = null;
+
+    parts.forEach(p => {
+        if (
+            p.includes("who") || p.includes("hod") ||
+            p.includes("principal") || p.includes("director") ||
+            p.includes("president") || p.includes("warden") ||
+            p.includes("head")
+        ) {
+            entityPart = p;
+        } else {
+            ragPart = p;
+        }
+    });
+
+    return { entityPart, ragPart };
+}
+
+// -----------------------------
+// DEPARTMENT DETECTION
+// -----------------------------
+const DEPARTMENTS = ["it", "cse", "mech", "eee", "civil", "ece", "admin", "hostel"];
+
+function detectDepartment(query) {
+    const q = query.toLowerCase();
+    for (const dept of DEPARTMENTS) {
+        if (q.includes(dept)) return dept.toUpperCase();
+    }
+    return null;
+}
+
+// -----------------------------
+// ENTITY RANKING
+// -----------------------------
+function rankEntities(query, results) {
+    const q = normalize(query);
+    return results
+        .map(r => {
+            let score = 0;
+            if (q.includes(r.normalized_name)) score += 5;
+            (r.normalized_aliases || []).forEach(a => {
+                if (q.includes(a)) score += 3;
+            });
+            return { ...r, matchScore: score };
+        })
+        .sort((a, b) => b.matchScore - a.matchScore);
+}
+
+/**
+ * PRODUCTION-GRADE HYBRID SEARCH (Final Layer)
+ */
+export const performHybridSearch = async (queryText) => {
+    // Cache Check
+    if (queryCache.has(queryText)) {
+        logger.info(`Cache HIT: ${queryText}`);
+        return queryCache.get(queryText);
     }
 
-    // ─── PIPELINE 2: RAG SYSTEM ─────────────────────────────
-    logger.info(`RAG System START: ${queryText}`);
-    const embedding = await generateEmbedding(queryText, 'query');
-    
-    // Stage 1: Vector Search (Top 15 as requested)
-    const candidates = await vectorColl.aggregate([
-        {
-            "$vectorSearch": {
-                "index": config.mongodb.vectorIndex,
-                "path": "embedding",
-                "queryVector": embedding,
-                "numCandidates": 100,
-                "limit": 15
+    const { entityPart, ragPart } = splitQuery(queryText);
+    const db = mongoose.connection.db;
+    const coll = db.collection(config.mongodb.entitiesCollection || 'entities_master');
+
+    let entityResult = null;
+    let ragResults = [];
+
+    // ─── STAGE 1: ENTITY FLOW ───────────────────────────
+    if (entityPart) {
+        const detection = await detectEntities(entityPart);
+        const dept = detectDepartment(entityPart);
+
+        if (detection.type === 'multi_entity' || detection.type === 'entity') {
+            let rawData = [];
+            if (detection.type === 'multi_entity') {
+                rawData = detection.entities.flatMap(e => e.data);
+            } else if (detection.data) {
+                rawData = detection.data;
             }
-        },
-        {
-            "$project": {
-                "text": 1, "content": 1, "title": 1, "category": 1, 
-                "score": { "$meta": "vectorSearchScore" }
+
+            // Refine by department if requested
+            if (dept) {
+                rawData = rawData.filter(e => 
+                    (e.department && e.department.toUpperCase() === dept) || 
+                    (e.role && e.role.toUpperCase().includes(dept))
+                );
+            }
+
+            if (rawData.length > 0) {
+                const ranked = rankEntities(entityPart, rawData);
+                const top = ranked[0];
+                entityResult = {
+                    type: 'entity',
+                    name: top.name,
+                    role: top.role,
+                    department: top.department,
+                    content: top.content,
+                    source: 'entities_master'
+                };
             }
         }
-    ]).toArray();
-
-    if (candidates.length === 0) return { type: 'rag', results: [], confidence: 'none' };
-
-    // Stage 2: Rerank (Top 5 as requested)
-    const reranked = await rerankChunks(queryText, candidates);
-    const top5 = reranked.slice(0, 5);
-
-    // Hard Validation (Increased to 0.75 for strict accuracy as requested)
-    const topScore = top5[0]?.rerankScore || top5[0]?.score || 0;
-    if (topScore < 0.75) { 
-        logger.warn(`RAG Reject: Top score ${topScore.toFixed(2)} below threshold.`);
-        return { type: 'rag', results: [], failure: 'insufficient_confidence' };
     }
 
-    return { 
-        type: 'rag', 
-        results: top5.map(c => ({
-            text: c.text || c.content,
-            metadata: c.metadata || {},
-            category: c.category,
-            score: c.rerankScore || c.score
-        })),
-        confidence: 'high'
+    // ─── STAGE 2: RAG FLOW ─────────────────────────────
+    if (ragPart) {
+        logger.info(`RAG System START: ${ragPart}`);
+        const vectorColl = db.collection(config.mongodb.vectorCollection);
+        const embedding = await generateEmbedding(ragPart, 'query');
+        
+        const candidates = await vectorColl.aggregate([
+            {
+                "$vectorSearch": {
+                    "index": config.mongodb.vectorIndex,
+                    "path": "embedding",
+                    "queryVector": embedding,
+                    "numCandidates": 100,
+                    "limit": 15
+                }
+            },
+            {
+                "$project": {
+                    "text": 1, "content": 1, "title": 1, "category": 1, 
+                    "score": { "$meta": "vectorSearchScore" }
+                }
+            }
+        ]).toArray();
+
+        if (candidates.length > 0) {
+            const reranked = await rerankChunks(ragPart, candidates);
+            const top5 = reranked.slice(0, 5);
+
+            // Dynamic Threshold
+            const threshold = ragPart.length < 20 ? 0.65 : 0.75;
+            const topScore = top5[0]?.rerankScore || top5[0]?.score || 0;
+
+            if (topScore >= threshold) {
+                ragResults = top5.map(c => ({
+                    text: c.text || c.content,
+                    metadata: c.metadata || {},
+                    category: c.category,
+                    score: c.rerankScore || c.score
+                }));
+            }
+        }
+    }
+
+    const finalResponse = {
+        type: 'hybrid',
+        entityResponse: entityResult,
+        ragResults: ragResults,
+        hasResults: !!(entityResult || ragResults.length > 0)
     };
+
+    // Store in cache
+    queryCache.set(queryText, finalResponse);
+    return finalResponse;
 };
+
