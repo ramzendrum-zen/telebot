@@ -3,95 +3,89 @@ import { getAIReponse } from './aiService.js';
 import { buildReasoningPrompt, buildOutputFilterPrompt } from '../utils/promptBuilder.js';
 import { getUserMemory, setUserMemory } from './historyService.js';
 import { pushLog } from './monitorService.js';
+import { normalize } from '../utils/textUtils.js';
 import logger from '../utils/logger.js';
 
-/**
- * PROJECT PHOENIX: PRODUCTION RAG & ENTITY ENGINE
- * 
- * Objectives:
- * 1. Final entity accuracy (0% hallucination)
- * 2. 0 manual patching (No map required)
- * 3. Exact matching for people.
- * 4. RAG for general questions.
- */
 export async function processRAGQuery(chatId, rawText) {
   const startTime = Date.now();
-  const normalizedText = rawText.trim();
+  const normalizedQuery = normalize(rawText);
   
   try {
-    // 1. Contextualize Query (Resolves pronouns from memory)
     const memory = await getUserMemory(chatId);
-    
-    // 2. High-Precision Retrieval (Entity-Aware)
-    const searchData = await performHybridSearch(normalizedText);
+    const searchData = await performHybridSearch(rawText);
 
-    // ─── STAGE 1: ENTITY MATCH HANDLING (FIX 3) ────────────────
-    if (searchData.type === 'entity') {
-      const { results, subtype } = searchData;
+    // ─── STAGE 1: ENTITY MATCH HANDLING (Upgrade Pack) ────────
+    if (searchData.type === 'multi_entity') {
+      const { entities } = searchData;
       
-      logger.info(`Routing to ENTITY path: ${subtype} match.`);
+      logger.info(`Routing to MULTI-ENTITY path: ${entities.length} detected.`);
 
-      if (results.length === 1) {
-          // SINGLE MATCH: 100% Accuracy (No Reasoning Layer - FIX 4 & 5)
-          const person = results[0].metadata;
-          const aiReply = `• *Information for ${person.name}:*\n\n- *Role:* ${person.role}\n- *Department:* ${person.department}`;
+      let combinedResponse = '';
+      const detectedNames = [];
+
+      for (const ent of entities) {
+          const results = ent.data;
           
-          await setUserMemory(chatId, person.name, 'profile', rawText);
-          await pushLog('assistant', 'info', `Entity HIT: ${person.name}`, { 
-              latency: Date.now() - startTime,
-              path: 'ENTITY_DIRECT'
-          });
-          
-          return { aiReply, source: 'entity_exact', latency: Date.now() - startTime };
-      } else {
-          // MULTIPLE MATCHES: Professional Clarification
-          const names = results.map(r => r.metadata.name).join(', ');
-          const aiReply = `• I found multiple people matching your request: ${names}.\n• Which department are you referring to? (e.g., IT, CSE)`;
-          
-          await pushLog('assistant', 'info', `Entity AMBIGUOUS: ${results.length}`, { 
-              latency: Date.now() - startTime,
-              path: 'ENTITY_AMBIGUOUS'
-          });
-          return { aiReply, source: 'entity_disambiguate', latency: Date.now() - startTime };
+          if (results.length === 1) {
+              const person = results[0];
+              const label = ent.subtype === 'role' ? `${person.role} (${person.department || 'Admin'})` : person.name;
+              combinedResponse += `• *${label}*\n${person.content}\n\n`;
+              detectedNames.push(person.name);
+          } else {
+              const names = results.map(r => r.name).join(', ');
+              combinedResponse += `• I found multiple people matching "${ent.query_segment}": ${names}. Please specify the department.\n\n`;
+          }
       }
+
+      const aiReply = combinedResponse.trim();
+      
+      // Update memory with the first one detected
+      if (detectedNames.length > 0) {
+          await setUserMemory(chatId, detectedNames[0], 'profile', rawText);
+      }
+
+      await pushLog('assistant', 'info', `Entity HIT: ${detectedNames.join(', ')}`, { 
+          latency: Date.now() - startTime,
+          path: 'ENTITY_UPGRADE',
+          normalized_query: normalizedQuery,
+          entities_count: entities.length,
+          confidence: 'high'
+      });
+      
+      return { aiReply, source: 'entity_upgrade', latency: Date.now() - startTime };
     }
 
-    logger.info(`Routing to RAG path.`);
-
-
     // ─── STAGE 2: RAG HANDLING ──────────────────────────────
+    // Step 8: Enhanced Rejection Logic
     if (!searchData.results || searchData.results.length === 0) {
-       logger.warn(`Phoenix RAG: No data or rejected (failure: ${searchData.failure})`);
+       logger.warn(`RAG Reject: No data found for "${rawText}"`);
        return {
-         aiReply: "I'm sorry, I don't have that specific information in the official MSAJCE database.",
+         aiReply: "I couldn’t find that in the MSAJCE data. Try asking about staff, departments, transport, or facilities.",
          source: 'no_data',
          latency: Date.now() - startTime
        };
     }
 
-    // 3. Stage 1: CORE REASONING (Strict Grounding)
+    // Stage 3: CORE REASONING (No fallback for entities happens here)
     const chatHistoryContext = `Last Question: ${memory.last_question || 'None'}\nLast Topic: ${memory.last_topic || 'None'}`;
-    const reasoningPrompt = buildReasoningPrompt(normalizedText, searchData.results, chatHistoryContext);
+    const reasoningPrompt = buildReasoningPrompt(rawText, searchData.results, chatHistoryContext);
     
-    const { content: rawReasoning, usage: usage1 } = await getAIReponse(reasoningPrompt, 'advanced');
+    const { content: rawReasoning } = await getAIReponse(reasoningPrompt, 'advanced');
 
-    // 4. Stage 2: UX OUTPUT FILTERING
+    // Stage 4: UX OUTPUT FILTERING
     const outputPrompt = buildOutputFilterPrompt(rawReasoning, chatHistoryContext);
-    const { content: aiReply, usage: usage2 } = await getAIReponse(outputPrompt, 'cheap');
+    const { content: aiReply } = await getAIReponse(outputPrompt, 'cheap');
 
-    // 5. MEMORY UPDATE
+    // Logging & Memory
     const topChunk = searchData.results[0];
-    const detectedEntity = topChunk.metadata?.name || normalizedText.slice(0, 20);
-    await setUserMemory(chatId, detectedEntity, topChunk.category || 'general', normalizedText);
+    await setUserMemory(chatId, topChunk.metadata?.name || 'general', topChunk.category || 'general', rawText);
 
-    // 6. MANDATORY PHOENIX LOGGING
-    await pushLog('assistant', 'info', `Phoenix Query: ${rawText.slice(0, 30)}`, { 
+    await pushLog('assistant', 'info', `RAG Query: ${rawText.slice(0, 30)}`, { 
         latency: Date.now() - startTime,
-        retrieval_type: searchData.type || 'rag',
-        detected_entities: searchData.type === 'entity' ? searchData.results.map(r => r.metadata.name) : [],
-        scores: searchData.results.map(r => r.score.toFixed(2)),
-        selected_documents: searchData.results.map(r => r.metadata.name || r.category || 'general'),
-        rejection_reason: searchData.failure || 'none'
+        retrieval_path: 'RAG',
+        normalized_query: normalizedQuery,
+        top_score: searchData.results[0].score.toFixed(2),
+        match_confidence: 'medium'
     }).catch(() => null);
 
     return {
@@ -102,11 +96,12 @@ export async function processRAGQuery(chatId, rawText) {
     };
 
   } catch (error) {
-    logger.error(`Phoenix RAG System Error: ${error.message}`);
+    logger.error(`RAG System Error: ${error.message}`);
     return { 
-        aiReply: "I'm sorry, I encountered an error while searching for that information. Please try again soon.", 
+        aiReply: "I'm having trouble connecting right now. Please try again later.", 
         source: 'error',
         latency: Date.now() - startTime 
     };
   }
 }
+
