@@ -33,10 +33,10 @@ STRICT RULES:
 ${context}
 
 Chat History:
-${chatHistory}
+${history}
 
 User Question:
-${question}
+${query}
 
 ========================
 OUTPUT

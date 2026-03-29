@@ -13,25 +13,43 @@ import logger from '../utils/logger.js';
 export const detectEntities = async (query) => {
     const db = mongoose.connection.db;
     const coll = db.collection(config.mongodb.entitiesCollection || 'entities_master');
-    const q = query.toLowerCase().trim();
+    
+    // Clean query: remove 'who is', 'tell me about', etc.
+    const stopWords = ['who', 'is', 'what', 'the', 'tell', 'me', 'about', 'r', 'are', 'u', 'you', 'can', 'please'];
+    let q = query.toLowerCase().replace(/[?.,!]/g, '').trim();
+    const words = q.split(/\s+/).filter(w => !stopWords.includes(w));
+    const cleanQ = words.join(' ');
+
+    if (!cleanQ && q.length > 2) {
+        // Fallback for very short queries that became empty after stopword removal
+    } else {
+        q = cleanQ;
+    }
 
     // 1. Exact Name/Normalized Name Match
     let match = await coll.findOne({ $or: [{ normalized_name: q }, { aliases: q }] });
     if (match) return { type: 'entity', data: [match], confidence: 'high' };
 
-    // 2. Regex Match on Names/Aliases
-    const regexMatch = await coll.find({
-        $or: [
-            { name: { $regex: q, $options: 'i' } },
-            { aliases: { $elemMatch: { $regex: q, $options: 'i' } } }
-        ]
-    }).limit(3).toArray();
-    if (regexMatch.length > 0) return { type: 'entity', data: regexMatch, confidence: regexMatch.length === 1 ? 'high' : 'medium' };
+    // 2. Regex Match (Is the name/alias in the query?)
+    // We search for entities where the name is mentioned in the clean query
+    const allEntities = await coll.find({}).toArray();
+    const matches = allEntities.filter(e => {
+        const name = e.name.toLowerCase();
+        const normalized = e.normalized_name.toLowerCase();
+        const matchesQuery = q.includes(name) || q.includes(normalized) || e.aliases.some(a => q.includes(a.toLowerCase()));
+        return matchesQuery;
+    });
+
+    if (matches.length > 0) {
+        return { type: 'entity', data: matches, confidence: matches.length === 1 ? 'high' : 'medium' };
+    }
 
     // 3. Keyword Match on Role (HOD, Principal)
     const keywords = q.split(/\s+/).filter(w => w.length > 2);
-    const roleMatch = await coll.find({ keywords: { $in: keywords } }).toArray();
-    if (roleMatch.length > 0) return { type: 'entity', data: roleMatch, confidence: roleMatch.length === 1 ? 'high' : 'medium' };
+    if (keywords.length > 0) {
+        const roleMatch = await coll.find({ keywords: { $in: keywords } }).toArray();
+        if (roleMatch.length > 0) return { type: 'entity', data: roleMatch, confidence: roleMatch.length === 1 ? 'high' : 'medium' };
+    }
 
     return { type: 'rag', confidence: 'none' };
 };
@@ -85,10 +103,9 @@ export const performHybridSearch = async (queryText) => {
     const reranked = await rerankChunks(queryText, candidates);
     const top5 = reranked.slice(0, 5);
 
-    // Hard Validation (Score > 0.75 or whatever threshold)
-    // Using 0.75 as per user Step 5
+    // Hard Validation (Lowered threshold from 0.60 to 0.40)
     const topScore = top5[0]?.rerankScore || top5[0]?.score || 0;
-    if (topScore < 0.60) { // Using 0.60 for rerank (range 0-1) - typically 0.6 is good for rerank 
+    if (topScore < 0.40) { 
         logger.warn(`RAG Reject: Top score ${topScore.toFixed(2)} below threshold.`);
         return { type: 'rag', results: [], failure: 'insufficient_confidence' };
     }
