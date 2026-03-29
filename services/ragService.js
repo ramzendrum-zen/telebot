@@ -37,10 +37,8 @@ export async function processRAGQuery(chatId, rawText) {
       // A. Entity Processing (Deterministic)
       if (searchData.entityResponse) {
         const ent = searchData.entityResponse;
-        entityPart = `*Staff Record Found*\nName: ${ent.name}\nRole: ${ent.role}\nDepartment: ${ent.department}`;
-        if (ent.content && ent.content.length > 5 && !ent.content.includes(ent.name)) {
-            entityPart += `\n${ent.content}`;
-        }
+        // Check if content already contains formatted info
+        entityPart = ent.content || `Name: ${ent.name}\nRole: ${ent.role}\nDepartment: ${ent.department}`;
       }
 
       // B. RAG Processing (Generative)
@@ -55,9 +53,8 @@ export async function processRAGQuery(chatId, rawText) {
         ragPart = filteredReply;
       }
 
-      // C. Failure Analytics (Hardening Step 6)
+      // C. Failure Analytics
       if (!entityPart && !ragPart) {
-        // Log failure to DB for future dataset training
         db.collection('failed_queries').insertOne({
             query: rawText,
             normalized: normalizedQuery,
@@ -72,12 +69,8 @@ export async function processRAGQuery(chatId, rawText) {
         };
       }
 
-      // D. Combined Response (Production Grade UX)
-      let finalParts = [];
-      if (entityPart) finalParts.push(`[Entity Result]\n${entityPart}`);
-      if (ragPart) finalParts.push(`[Information]\n${ragPart}`);
-
-      const aiReply = finalParts.join('\n\n').trim();
+      // D. Combined Response (CLEAN OUTPUT)
+      const aiReply = [entityPart, ragPart].filter(p => p.length > 0).join('\n\n').trim();
 
       // Memory & Logging
       if (searchData.entityResponse) {

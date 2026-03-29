@@ -195,7 +195,7 @@ function rankEntities(query, results) {
 }
 
 /**
- * PRODUCTION-GRADE HYBRID SEARCH (Final Hardening)
+ * PRODUCTION-GRADE HYBRID SEARCH (Final Hardening + Fix)
  */
 export const performHybridSearch = async (queryText) => {
     // 1. Smart Cache Check
@@ -205,17 +205,21 @@ export const performHybridSearch = async (queryText) => {
         return cached;
     }
 
-    const { entityPart, ragPart } = splitQuery(queryText);
+    const lower = queryText.toLowerCase().trim();
+    const parts = lower.split(/\s+and\s+|[,&]|\s+also\s+/).map(s => s.trim());
+    
     const db = mongoose.connection.db;
     const coll = db.collection(config.mongodb.entitiesCollection || 'entities_master');
 
     let entityResult = null;
     let ragResults = [];
+    const usedParts = new Set();
 
-    // ─── STAGE 1: ENTITY FLOW ───────────────────────────
-    if (entityPart) {
-        const detection = await detectEntities(entityPart);
-        const dept = detectDepartment(entityPart);
+    // ─── STAGE 1: ENTITY-FIRST SCAN FOR ALL PARTS ──────
+    for (let i = 0; i < parts.length; i++) {
+        const p = parts[i];
+        const detection = await detectEntities(p);
+        const dept = detectDepartment(p);
 
         if (detection.type === 'multi_entity' || detection.type === 'entity') {
             let rawData = [];
@@ -229,28 +233,36 @@ export const performHybridSearch = async (queryText) => {
             if (dept) {
                 const deptFiltered = rawData.filter(e => 
                     (e.department && e.department.toUpperCase() === dept) || 
-                    (e.role && e.role.toUpperCase().includes(dept))
+                    (e.role && (e.role || '').toUpperCase().includes(dept))
                 );
                 if (deptFiltered.length > 0) rawData = deptFiltered;
             }
 
             if (rawData.length > 0) {
-                const ranked = rankEntities(entityPart, rawData);
+                const ranked = rankEntities(p, rawData);
                 const top = ranked[0];
-                entityResult = {
-                    type: 'entity',
-                    name: top.name,
-                    role: top.role,
-                    department: top.department,
-                    content: top.content,
-                    source: 'entities_master'
-                };
+                
+                // If we already have an entity, combine or pick top (usually pick top for single query)
+                if (!entityResult) {
+                    entityResult = {
+                        type: 'entity',
+                        name: top.name,
+                        role: top.role,
+                        department: top.department,
+                        content: top.content,
+                        source: 'entities_master'
+                    };
+                    usedParts.add(i);
+                }
             }
         }
     }
 
-    // ─── STAGE 2: RAG FLOW ─────────────────────────────
-    if (ragPart) {
+    // ─── STAGE 2: RAG FLOW FOR UNUSED PARTS ───────────
+    for (let i = 0; i < parts.length; i++) {
+        if (usedParts.has(i)) continue;
+        const ragPart = parts[i];
+        
         logger.info(`RAG START: ${ragPart}`);
         const vectorColl = db.collection(config.mongodb.vectorCollection);
         const embedding = await generateEmbedding(ragPart, 'query');
@@ -277,17 +289,18 @@ export const performHybridSearch = async (queryText) => {
             const reranked = await rerankChunks(ragPart, candidates);
             const top5 = reranked.slice(0, 5);
 
-            // Dynamic Thresholding
-            const threshold = ragPart.length < 15 ? 0.65 : 0.75;
+            // Dynamic Thresholding (Relaxed slightly for better recall)
+            const threshold = ragPart.length < 12 ? 0.60 : 0.70;
             const topScore = top5[0]?.rerankScore || top5[0]?.score || 0;
 
             if (topScore >= threshold) {
-                ragResults = top5.map(c => ({
+                ragResults = [...ragResults, ...top5.map(c => ({
                     text: c.text || c.content,
                     metadata: c.metadata || {},
                     category: c.category,
                     score: topScore
-                }));
+                }))];
+                usedParts.add(i);
             }
         }
     }
@@ -295,7 +308,7 @@ export const performHybridSearch = async (queryText) => {
     const finalResponse = {
         type: 'hybrid',
         entityResponse: entityResult,
-        ragResults: ragResults,
+        ragResults: Array.from(new Set(ragResults.map(r => r.text))).map(t => ragResults.find(r => r.text === t)),
         hasResults: !!(entityResult || ragResults.length > 0),
         timestamp: Date.now()
     };
@@ -304,5 +317,6 @@ export const performHybridSearch = async (queryText) => {
     setInCache(queryText, finalResponse);
     return finalResponse;
 };
+
 
 
